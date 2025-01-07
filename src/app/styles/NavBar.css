@@ -1,0 +1,16 @@
+.nav-padding {
+    padding: 0; 
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-gray {
+    background-color: #eee;
+}
+
+.bc-gray {
+    background-color: #f9f9f9;
+}
+
+.logocustom {
+    padding-right: 13px;
+}
