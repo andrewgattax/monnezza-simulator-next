@@ -8,7 +8,6 @@ type Props = {
 };
 
 const GravatarImage = ({email}: Props) => {
-
     const hash = MD5(email).toString();
     const url = `https://www.gravatar.com/avatar/${hash}?s=32&amp;d=mp`;
 
