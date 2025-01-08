@@ -20,15 +20,19 @@ enum CausaleOperazione {
 
 
 enum TipologiaRespingimento {
-
+    PARZIALE,
+    TOTALE
 }
 
 enum UnitaDiMisura {
-
+    KG,
+    L
 }
 
 enum CausaleRespingimento {
-
+    NON_CONFORME,
+    IRRICEVIBILE,
+    ALTRO
 }
 
 

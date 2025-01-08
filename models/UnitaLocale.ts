@@ -18,7 +18,7 @@ export interface IUnitaLocale extends Document {
     nome: string,
     provincia: string,
     proprietario: mongoose.Types.ObjectId
-    utente_delegati: [mongoose.Types.ObjectId]
+    utenti_delegati: [mongoose.Types.ObjectId]
     tipoAttivita: [AttivitaENUM]
 }
 
@@ -29,7 +29,7 @@ const UnitaLocaleSchema: Schema = new Schema<IUnitaLocale>({
     nome: { type: String, required: true },
     provincia: { type: String, required: true },
     proprietario: { type: Schema.Types.ObjectId, ref: 'Utente', required: true },
-    utente_delegati: [{ type: Schema.Types.ObjectId, ref: 'Utente' }],
+    utenti_delegati: [{ type: Schema.Types.ObjectId, ref: 'Utente' }],
     tipoAttivita: [{ type: String, enum: Object.values(AttivitaENUM), required: true }]
 });
 
