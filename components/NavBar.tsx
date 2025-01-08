@@ -1,9 +1,10 @@
-import '../styles/NavBar.css'
-import LogoSoftware from '../images/full-logo.svg'
-
 import React, { ReactNode } from 'react';
+import LogoSoftware from '../images/full-logo.svg';
+import styles from '../styles/NavBar.module.css'
 import Image from 'next/image'
 import Link from 'next/link'
+import NavItem from './NavItem';
+import GravatarImage from './GravatarImage';
 
 interface NavBarProps {
   children: ReactNode;
@@ -12,9 +13,9 @@ interface NavBarProps {
 const NavBar: React.FC<NavBarProps> = ({ children }) => {
   return (
     <div>
-      <nav className="navbar navbar-expand-lg nav-padding nav-gray">
+      <nav className={`navbar navbar-expand-lg ${styles.navpadding} ${styles.navgray}`}>
         <div className="container-fluid">
-          <Link className="logocustom" href="/">
+          <Link className={styles.logocustom} href="/">
             <Image src={LogoSoftware} height={30} alt="Logo software" />
           </Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
@@ -27,27 +28,17 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
             </ul>
           </div>
         </div>
-        <div className="flex-shrink-0 dropdown mr-15">
-          <a href="#" className="d-block link-body-emphasis text-decoration-none dropdown-toggle bl" 
+        <div className="flex-shrink-0 dropdown">
+          <a href="#" className={`d-block link-body-emphasis text-decoration-none dropdown-toggle ${styles.bl} ${styles.mr15}`}
             data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="https://www.gravatar.com/avatar/4072386ac5856a7da9aef2aa911fed1d?s=32&amp;d=mp"
-                  alt="profile picture" width="30" height="30" className="rounded-circle mtb5" />
-              <span className="username">vitto</span>
+              <GravatarImage email="hi@vitto.dev" />
+              <span className={styles.username}>Vittorio Lo Mele</span>
           </a>
-          <ul className="dropdown-menu text-small shadow customDropDown" data-popper-placement="bottom-end">
-              <li><a className="dropdown-item disabled" href="#">
-                      <i className="bi bi-person spo"></i>
-                      Vittorio Lo Mele </a></li>
-              <li><a className="dropdown-item disabled" href="#">
-                      <i className="bi bi-envelope-at spo"></i>
-                      hi@vitto.dev </a></li>
-              <li>
-                  <hr className="dropdown-divider" />
-              </li>
-              <li><a className="dropdown-item" href="/logout.php">
-                      <i className="bi bi-box-arrow-right spo"></i>
-                      Esci
-                  </a></li>
+          <ul className={`dropdown-menu dropdown-menu-end text-small shadow ${styles.customDropDown}`} data-popper-placement="bottom-end">
+              <NavItem href="#" name="vitto" icon="person" disabled />
+              <NavItem href="#" name="hi@vitto.dev" icon="envelope" disabled />
+              <NavItem />
+              <NavItem href="/logout" name="Esci" icon="box-arrow-right" />
           </ul>
         </div>
       </nav>

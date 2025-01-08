@@ -6,13 +6,14 @@ interface NavItemProps {
   name?: string,
   icon?: string,
   href?: string,
+  disabled?: boolean,
 }
 
-const NavItem: React.FC<NavItemProps> = ({ href, name, icon }) => {
+const NavItem: React.FC<NavItemProps> = ({ href, name, icon, disabled }) => {
   if (href && name && icon) {
     return (
       <li>
-        <Link className="dropdown-item" href={href}>
+        <Link className={`dropdown-item ${disabled ? "disabled" : ""}`} href={href} >
           <IconB iconName={icon} />
           {name}
         </Link>

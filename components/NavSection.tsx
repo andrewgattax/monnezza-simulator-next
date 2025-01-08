@@ -1,7 +1,6 @@
-import "../styles/NavSection.css"
-
 import React, { ReactNode } from 'react';
 import IconB from './IconB'
+import styles from "../styles/NavSection.module.css"
 
 interface NavSectionProps {
   children: ReactNode,
@@ -11,7 +10,7 @@ interface NavSectionProps {
 
 const NavSection: React.FC<NavSectionProps> = ({ children, name, icon }) => {
   return (
-    <li className="nav-item dropdown navsec">
+    <li className={`nav-item dropdown ${styles.navsec}`}>
       <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         <IconB iconName={icon} />
         {name}

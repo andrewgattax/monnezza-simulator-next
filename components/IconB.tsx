@@ -1,4 +1,4 @@
-import '../styles/IconB.css';
+import styles from '../styles/IconB.module.css';
 import React from 'react';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 
 const IconB = ({iconName, hasPadding = true}: Props) => {
     return (
-        <i className={`bi bi-${iconName} ${hasPadding ? "spo" : ""}`}></i>
+        <i className={`bi bi-${iconName} ${hasPadding ? styles.spo : ""}`}></i>
     );
 }
 
