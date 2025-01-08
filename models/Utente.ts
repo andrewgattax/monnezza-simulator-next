@@ -7,10 +7,11 @@ export interface IUtente extends Document {
     email: string,
     codice_fiscale: string,
     passwordHash: string,
-    ruolo: Ruolo
+    ruolo: Ruolo,
+    totpSecret: string
 }
 
-const utenteSchema = new Schema<IUtente>({
+const utenteSchema: Schema = new Schema<IUtente>({
     nome: {
         type: String,
         required: true,
@@ -39,6 +40,9 @@ const utenteSchema = new Schema<IUtente>({
         required: true,
         default: Ruolo.CLIENTE
     },
+    totpSecret: {
+        type: String,
+    }
 });
 
 const Utente = mongoose.model<IUtente>('Utente', utenteSchema);

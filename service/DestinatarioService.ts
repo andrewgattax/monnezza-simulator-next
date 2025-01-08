@@ -28,4 +28,11 @@ class DestinatarioService {
         await dbConnect();
         return await Destinatario.findByIdAndDelete(id);
     }
+
+    async trovaPerUtente(utenteId: mongoose.Types.ObjectId): Promise<IDestinatario[]> {
+        await dbConnect();
+        return await Destinatario.find({utente: utenteId}).exec();
+    }
 }
+
+export default new DestinatarioService();

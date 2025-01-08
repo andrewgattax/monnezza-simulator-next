@@ -34,7 +34,6 @@ class RegistroService {
         return await Registro.find({unitaLocale: unitaId}).exec();
     }
 
-
 }
 
 export default new RegistroService();
