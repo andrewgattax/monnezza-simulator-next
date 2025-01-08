@@ -1,3 +1,9 @@
+import "./global.css"
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
+
+import BootstrapClient from "../components/BootstrapClient";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -8,6 +14,7 @@ export default function RootLayout({
       <body>
         {children}
       </body>
+      <BootstrapClient />
     </html>
   );
 }

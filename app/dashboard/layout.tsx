@@ -1,11 +1,8 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-
 import styles from "../../styles/DashboardLayout.module.css";
 import NavBar from "../../components/NavBar";
 import NavSection from "../../components/NavSection";
 import NavItem from "../../components/NavItem";
-import BootstrapClient from "../../components/BootstrapClient";
+import AppFooter from "../../components/AppFooter";
 
 export default function DashboardLayout({
   children,
@@ -24,7 +21,7 @@ export default function DashboardLayout({
         </NavBar>
       </header>
       <main className={styles.main}>{children}</main>
-      <BootstrapClient />
+      <AppFooter />
     </div>
   );
 }

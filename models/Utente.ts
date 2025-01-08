@@ -1,9 +1,5 @@
 import mongoose, {Document, Schema} from "mongoose"
-
-export enum Ruolo {
-    ADMIN = 'admin',
-    CLIENTE = 'cliente'
-}
+import { RuoloUtente as Ruolo } from "./enum/RuoloUtente"
 
 export interface IUtente extends Document {
     nome: string,
