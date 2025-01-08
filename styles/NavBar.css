@@ -1,0 +1,41 @@
+.nav-padding {
+    padding: 0; 
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-gray {
+    background-color: #eee;
+}
+
+.bc-gray {
+    background-color: #f9f9f9;
+}
+
+.logocustom {
+    padding-right: 13px;
+}
+
+.bl {
+    border-left: 1px solid #ddd;
+    padding-left: 13px;
+}
+
+.mtb5 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.username {
+    margin-left: 5px;
+    font-weight: bold;
+    padding-top: 7px;
+    display: inline-block;
+    color: #585858;
+}
+
+.customDropDown {
+    position: absolute; 
+    inset: 0px 0px auto auto; 
+    margin: 0px; transform: 
+    translate3d(0.5px, 34px, 0px);
+}

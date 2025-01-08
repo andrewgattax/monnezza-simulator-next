@@ -1,7 +1,7 @@
 import "../styles/NavSection.css"
 
 import React, { ReactNode } from 'react';
-import IconB from '../components/IconB'
+import IconB from './IconB'
 
 interface NavSectionProps {
   children: ReactNode,
