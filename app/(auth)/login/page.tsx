@@ -26,9 +26,9 @@ export default function Login() {
 
   return (
     <form action={credentialsAction}>
-      <InputWithIcon type="text" name="email" placeholder="Indirizzo email" iconName="person" required />
+      <InputWithIcon type="text" name="email" placeholder="Indirizzo email" iconName="envelope" required />
       <InputWithIcon type="password" name="password" placeholder="Password" iconName="key" required />
-      <InputWithIcon type="text" name="tfatoken" placeholder="Codice Temporaneo (se richiesto)" iconName="key" />
+      <InputWithIcon type="text" name="tfatoken" placeholder="Codice Temporaneo (se richiesto)" iconName="phone" />
       {error && <div className="alert alert-danger">
         <IconB iconName="exclamation-triangle" />
         Credenziali errate o codice temporaneo non valido
