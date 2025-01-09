@@ -1,4 +1,4 @@
-import mongoose, {Document, Schema} from "mongoose"
+import mongoose, {Document, model, Model, Schema} from "mongoose"
 import { RuoloUtente as Ruolo } from "./enum/RuoloUtente"
 
 export interface IUtente extends Document {
@@ -11,7 +11,7 @@ export interface IUtente extends Document {
     totpSecret: string
 }
 
-const utenteSchema: Schema = new Schema<IUtente>({
+const UtenteSchema: Schema = new Schema<IUtente>({
     nome: {
         type: String,
         required: true,
@@ -23,12 +23,10 @@ const utenteSchema: Schema = new Schema<IUtente>({
     email: {
         type: String,
         required: true,
-        unique: true,
     },
     codice_fiscale: {
         type: String,
         required: true,
-        unique: true,
     },
     passwordHash: {
         type: String,
@@ -45,6 +43,13 @@ const utenteSchema: Schema = new Schema<IUtente>({
     }
 });
 
-const Utente = mongoose.model<IUtente>('Utente', utenteSchema);
+UtenteSchema.index({ email: 1 }, { unique: true });
+UtenteSchema.index({ codice_fiscale: 1 }, { unique: true });
+
+const Utente: Model<IUtente> = mongoose.models.Utente || model<IUtente>("Utente", UtenteSchema);
+
+(async () => {
+    await Utente.syncIndexes(); // Sincronizza gli indici nel database
+  })();
 
 export default Utente;

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "add-first-user": "ts-node scripts/AddUtenteProva.ts",
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
