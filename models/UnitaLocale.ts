@@ -1,8 +1,8 @@
 
-import mongoose, {Document, Schema} from "mongoose";
+import mongoose, {Document, Model, model, Schema} from "mongoose";
 import { TipoAttivita } from "./TipoAttivita";
 
-enum AttivitaENUM {
+export enum AttivitaENUM {
     PRODUZIONE = 'produzione',
     RECUPERO = 'recupero',
     SMALTIMENTO = 'smaltimento',
@@ -33,6 +33,12 @@ const UnitaLocaleSchema: Schema = new Schema<IUnitaLocale>({
     tipoAttivita: [{ type: String, enum: Object.values(AttivitaENUM), required: true }]
 });
 
-const UnitaLocale = mongoose.model<IUnitaLocale>('UnitaLocale', UnitaLocaleSchema);
+UnitaLocaleSchema.index({nome: 1}, { unique: true })
+
+const UnitaLocale: Model<IUnitaLocale> = mongoose.models.UnitaLocale || model<IUnitaLocale>("UnitaLocale", UnitaLocaleSchema);
+
+(async () => {
+    await UnitaLocale.syncIndexes(); // Sincronizza gli indici nel database
+  })();
 
 export default UnitaLocale;

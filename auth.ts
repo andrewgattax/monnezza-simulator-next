@@ -15,7 +15,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // mock auth 
         let user = null; 
         user = {
-          id: "test",
+          id: "677fa6f28e17f2888f4a86ed",
           name: "Test User",
           email: "pincopallo@vitto.dev",
           role: RuoloUtente.ADMIN,

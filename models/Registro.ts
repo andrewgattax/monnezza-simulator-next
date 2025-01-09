@@ -27,7 +27,8 @@ export interface IRegistro extends Document {
     isAttivo: boolean,
     unitaLocale: mongoose.Types.ObjectId,
     dataApertura: Date,
-    tipoAttivita: [TipoAttivita]
+    tipoAttivita: [TipoAttivita],
+    progressivoCounter: Number
 }
 
 const RegistroSchema: Schema = new Schema<IRegistro>({
@@ -38,7 +39,8 @@ const RegistroSchema: Schema = new Schema<IRegistro>({
     tipoAttivita: [{
         tipo: { type: String, enum: Object.values(AttivitaENUM), required: true },
         codiciRifiuto: [{ type: String, enum: Object.values(CodiciRifiuto), required: true }]
-    }]
+    }],
+    progressivoCounter: { type: Number, default: 0}
 });
 
 const Registro = mongoose.model<IRegistro>('Registro', RegistroSchema);
