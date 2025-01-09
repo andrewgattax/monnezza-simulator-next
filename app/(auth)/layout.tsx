@@ -2,6 +2,7 @@ import AppFooter from "../../components/AppFooter";
 import styles from "../../styles/AuthLayout.module.css";
 import Image from "next/image";
 import LogoSoftware from '../../images/full-logo.svg';
+import { SessionProvider } from "next-auth/react";
 
 export default function LoginLayout({
   children,
@@ -16,7 +17,9 @@ export default function LoginLayout({
             <Image src={LogoSoftware} height={60} alt="Logo software" />
           </center>
           <br />
-          {children}
+          <SessionProvider>
+            {children}
+          </SessionProvider>
         </div>
       </div>
       <AppFooter />

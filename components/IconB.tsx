@@ -1,3 +1,4 @@
+"use client"
 import styles from '../styles/IconB.module.css';
 import React from 'react';
 

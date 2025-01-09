@@ -1,3 +1,4 @@
+"use client"
 import { version } from '../package.json';
 import styles from '../styles/AppFooter.module.css';
 import React from 'react';
