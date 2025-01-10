@@ -52,8 +52,7 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
                 href="#" name="Esci" icon="box-arrow-right" 
                 onClick={(e) => {
                   e.preventDefault();
-                  signOut({ callbackUrl: '/' , redirect: false });
-                  router.push('/'); // evita full page reload (non ci piace)
+                  signOut({ callbackUrl: '/'});
                 }}
               />
           </ul>
