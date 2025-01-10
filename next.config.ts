@@ -6,7 +6,7 @@ const config: NextConfig = {
   },
   experimental: {
     authInterrupts: true,
-  },
+  }
 }
 
 export default config;

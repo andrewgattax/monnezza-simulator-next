@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import UtenteService from "./service/UtenteService";
+import Credentials from "next-auth/providers/credentials"
 import {compareSync } from "bcrypt-ts";
+import { getUserByEmail } from "./services/userService";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -12,16 +12,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         tfatoken: { required: false },
       },
       authorize: async (credentials) => {
-        const emailDaCercare = credentials.email?.toString() ? credentials.email.toString() : "";
-        const passwordDaVerificare = credentials.password?.toString() ? credentials.password.toString() : "";
-        const tokenDaValidare = credentials.tfatoken?.toString() ? credentials.tfatoken.toString() : "";
-        const utente = await UtenteService.trovaPerEmail(emailDaCercare);
-        
+
+        // TODO: implementa verifica modello con zod
+
+        let utente = null;
+        try {
+          utente = await getUserByEmail(credentials.email as string);
+        } catch (error) {
+          return null;
+        }
+
         if (!utente) {
           return null;
         }
 
-        if(!compareSync(passwordDaVerificare, utente.passwordHash)) {
+        if(!compareSync(credentials.password as string, utente.passwordHash)) {
           return null;
         }
 
