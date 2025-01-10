@@ -5,7 +5,7 @@ import NavItem from "../../components/NavItem";
 import AppFooter from "../../components/AppFooter";
 import { SessionProvider } from "next-auth/react"
 import { auth } from "../../auth"
-import { unauthorized } from "next/navigation";
+import { redirect, unauthorized } from "next/navigation";
 
 
 export default async function DashboardLayout({
@@ -14,7 +14,10 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth()
-  if (!session) unauthorized()
+  if (!session){
+    redirect('/login');
+    return;
+  }
   return (
     <div>
       <header>

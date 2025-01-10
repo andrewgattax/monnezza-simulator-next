@@ -8,6 +8,8 @@ import NavItem from './NavItem';
 import GravatarImage from './GravatarImage';
 import { signOut } from 'next-auth/react'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation';
+
 
 interface NavBarProps {
   children: ReactNode
@@ -15,6 +17,7 @@ interface NavBarProps {
 
 const NavBar: React.FC<NavBarProps> = ({ children }) => {
   const { data: session } = useSession()
+  const router = useRouter();
 
   return (
     <div>
@@ -49,7 +52,8 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
                 href="#" name="Esci" icon="box-arrow-right" 
                 onClick={(e) => {
                   e.preventDefault();
-                  signOut({ callbackUrl: '/' });
+                  signOut({ callbackUrl: '/' , redirect: false });
+                  router.push('/'); // evita full page reload (non ci piace)
                 }}
               />
           </ul>

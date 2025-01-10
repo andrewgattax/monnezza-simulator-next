@@ -1,13 +1,16 @@
 "use client"
 import InputWithIcon from "../../../components/InputWithIcon";
-import { signIn } from "next-auth/react"
-import { useSession } from "next-auth/react"
-import { redirect } from "next/navigation"
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import IconB from "../../../components/IconB";
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { data: session } = useSession();
 
   const credentialsAction = async (formData: FormData) => {
     setError(null);
@@ -16,15 +19,19 @@ export default function Login() {
     if (result?.error) {
       setError(result.error);
     } else {
-      redirect('/dashboard');
+      router.push('/dashboard');
+      return;
     }
   }
 
   // se gia loggato redirecta alla dashboard
-  const { data: session } = useSession()
-  if (session?.user) redirect('/dashboard');
+  useEffect(() => {
+    if (session?.user) {
+      router.push('/dashboard');
+    }
+  }, [session?.user, router]);
 
-  return (
+  return !session?.user ? (
     <form action={credentialsAction}>
       <InputWithIcon type="text" name="email" placeholder="Indirizzo email" iconName="envelope" required />
       <InputWithIcon type="password" name="password" placeholder="Password" iconName="key" required />
@@ -35,5 +42,5 @@ export default function Login() {
       </div>}
       <button type="submit" className="btn btn-primary btn-overcolor w-100">Accedi</button> 
     </form>
-  );
+  ) : null;
 }

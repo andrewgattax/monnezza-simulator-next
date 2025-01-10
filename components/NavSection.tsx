@@ -1,4 +1,3 @@
-"use client"
 import React, { ReactNode } from 'react';
 import IconB from './IconB'
 import styles from "../styles/NavSection.module.css"

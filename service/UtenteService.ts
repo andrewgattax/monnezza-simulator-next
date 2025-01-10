@@ -16,10 +16,9 @@ class UtenteService {
     }
 
     // Trova un utente per email e ritorna l'hashed password
-    async trovaPerEmail(email: string): Promise<string | null> {
+    async trovaPerEmail(email: string): Promise<IUtente | null> {
         await dbConnect();
-        const utente = await Utente.findOne({ email });
-        return utente ? utente.passwordHash : null;
+        return await Utente.findOne({ email });
     }
   
     // Crea un nuovo utente

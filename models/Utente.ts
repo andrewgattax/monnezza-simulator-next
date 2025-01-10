@@ -46,10 +46,10 @@ const UtenteSchema: Schema = new Schema<IUtente>({
 UtenteSchema.index({ email: 1 }, { unique: true });
 UtenteSchema.index({ codice_fiscale: 1 }, { unique: true });
 
-const Utente: Model<IUtente> = mongoose.models.Utente || model<IUtente>("Utente", UtenteSchema);
+const Utente: Model<IUtente> = mongoose.models.Utente ? mongoose.models.Utente : model<IUtente>("Utente", UtenteSchema);
 
 (async () => {
     await Utente.syncIndexes(); // Sincronizza gli indici nel database
-  })();
+})();
 
 export default Utente;
