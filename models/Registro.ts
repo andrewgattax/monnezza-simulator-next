@@ -1,6 +1,6 @@
 import mongoose, {Document, Schema} from "mongoose";
 
-enum AttivitaENUM {
+export enum AttivitaENUM {
     PRODUZIONE,
     RECUPERO,
     SMALTIMENTO,
@@ -9,7 +9,7 @@ enum AttivitaENUM {
     INTERMEDIAZIONE
 }
 
-enum CodiciRifiuto {
+export enum CodiciRifiuto {
     R1,
     R3,
     R5,

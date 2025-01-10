@@ -3,12 +3,12 @@ import mongoose, {Document, Model, model, Schema} from "mongoose";
 import { TipoAttivita } from "./TipoAttivita";
 
 export enum AttivitaENUM {
-    PRODUZIONE = 'produzione',
-    RECUPERO = 'recupero',
-    SMALTIMENTO = 'smaltimento',
-    TRASPORTO = 'trasporto',
-    CENTRO_DI_RACCOLTA = 'centro_di_raccolta',
-    INTERMEDIAZIONE = 'intermediazione',
+    PRODUZIONE = 'PRODUZIONE',
+    RECUPERO = 'RECUPERO',
+    SMALTIMENTO = 'SMALTIMENTO',
+    TRASPORTO = 'TRASPORTO',
+    CENTRO_DI_RACCOLTA = 'CENTRO_DI_RACCOLTA',
+    INTERMEDIAZIONE = 'INTERMEDIAZIONE',
   }
 
 export interface IUnitaLocale extends Document {
