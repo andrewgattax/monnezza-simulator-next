@@ -1,7 +1,18 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials"
 import {compareSync } from "bcrypt-ts";
-import { getUserByEmail } from "./services/userService";
+import { PrismaClient, Ruolo } from "@prisma/client";
+
+const prisma = new PrismaClient();
+
+export async function getUserByEmail(email: string) {
+  const user = await prisma.utente.findUnique({
+    where: {
+      email,
+    },
+  });
+  return user;
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [

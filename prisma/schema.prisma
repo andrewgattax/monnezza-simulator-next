@@ -8,23 +8,23 @@ datasource db {
 }
 
 model Utente {
-  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  id                    String            @id @default(auto()) @map("_id") @db.ObjectId
   nome                  String
   cognome               String
-  email                 String              @unique
-  codice_fiscale        String              @unique
+  email                 String            @unique
+  codice_fiscale        String            @unique
   passwordHash          String
   ruolo                 Ruolo
   totpSecret            String?
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  unitaLocali           UnitaLocale[]       @relation("ProprietarioUnita")
-  unitaLocaliDelegate   UnitaLocale[]       @relation("DelegatiUnita", fields: [unitaLocaliDelegateId], references: [id])
-  unitaLocaliDelegateId String[]            @db.ObjectId
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+  unitaLocali           UnitaLocale[]     @relation("ProprietarioUnita")
+  unitaLocaliDelegate   UnitaLocale[]     @relation("DelegatiUnita", fields: [unitaLocaliDelegateId], references: [id])
+  unitaLocaliDelegateId String[]          @db.ObjectId
   trasportatori         Trasportatore[]
   destinatari           Destinatario[]
   intermediari          Intermediario[]
-  luoghiDiProduzione    LuogoDiProduzione[]
+  luoghiDiProduzione    LuogoProduzione[]
   produttori            Produttore[]
 }
 
@@ -86,8 +86,9 @@ model Produttore {
   registrazioni Registrazione[]
 }
 
-model LuogoDiProduzione {
+model LuogoProduzione {
   id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  nome          String
   indirizzo     String
   civico        String
   cap           String
@@ -97,6 +98,8 @@ model LuogoDiProduzione {
   utente        Utente          @relation(fields: [utenteId], references: [id])
   utenteId      String          @db.ObjectId
   registrazioni Registrazione[]
+
+  @@map("LuogoDiProduzione")
 }
 
 model Registro {
@@ -141,7 +144,7 @@ model Registrazione {
   destinatarioId                       String                  @db.ObjectId
   intermediario                        Intermediario           @relation(fields: [intermediarioId], references: [id])
   intermediarioId                      String                  @db.ObjectId
-  luogoDiProduzione                    LuogoDiProduzione       @relation(fields: [luogoDiProduzioneId], references: [id])
+  luogoDiProduzione                    LuogoProduzione         @relation(fields: [luogoDiProduzioneId], references: [id])
   luogoDiProduzioneId                  String                  @db.ObjectId
   produttore                           Produttore              @relation(fields: [produttoreId], references: [id])
   produttoreId                         String                  @db.ObjectId

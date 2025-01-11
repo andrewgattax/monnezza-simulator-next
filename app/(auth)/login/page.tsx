@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import IconB from "../../../components/IconB";
+import DbLoading from "../../../components/DbLoading";
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
@@ -45,12 +46,7 @@ export default function Login() {
     <form onSubmit={handleSubmit} className="form-signin">
       {
         loading ? (
-          <section>
-            <div className="alert alert-secondary">
-              <IconB iconName="database-down" />
-              Caricamento in corso...
-            </div>
-          </section>
+          <DbLoading />
         ) : (
           <section>
             <InputWithIcon type="text" name="email" placeholder="Indirizzo email" iconName="envelope" required />

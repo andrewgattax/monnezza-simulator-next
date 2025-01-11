@@ -5,3 +5,16 @@
 .btn-overcolor:hover {
     background-color: #4558cc !important;
 }
+
+.accordion {
+    --bs-accordion-active-bg: #EEEEEE !important;
+}
+
+.pr-1{
+    padding-right: 4px;
+}
+
+body {
+    --bs-focus-ring-color: rgba(108, 117, 125, 0.25) !important;
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.25) !important;
+}
