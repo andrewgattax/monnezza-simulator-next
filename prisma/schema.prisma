@@ -8,19 +8,278 @@ datasource db {
 }
 
 model Utente {
-  id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  nome            String
-  cognome         String
-  email           String   @unique
-  codice_fiscale  String   @unique
-  passwordHash    String
-  ruolo           Ruolo
-  totpSecret      String
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                    String              @id @default(auto()) @map("_id") @db.ObjectId
+  nome                  String
+  cognome               String
+  email                 String              @unique
+  codice_fiscale        String              @unique
+  passwordHash          String
+  ruolo                 Ruolo
+  totpSecret            String?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  unitaLocali           UnitaLocale[]       @relation("ProprietarioUnita")
+  unitaLocaliDelegate   UnitaLocale[]       @relation("DelegatiUnita", fields: [unitaLocaliDelegateId], references: [id])
+  unitaLocaliDelegateId String[]            @db.ObjectId
+  trasportatori         Trasportatore[]
+  destinatari           Destinatario[]
+  intermediari          Intermediario[]
+  luoghiDiProduzione    LuogoDiProduzione[]
+  produttori            Produttore[]
+}
+
+model UnitaLocale {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  nome             String
+  comune           String
+  indirizzo        String
+  n_civico         String
+  provincia        String
+  tipiAttivita     TipoAttivita[]
+  proprietarioId   String         @db.ObjectId
+  proprietario     Utente         @relation("ProprietarioUnita", fields: [proprietarioId], references: [id])
+  utentiDelegati   Utente[]       @relation("DelegatiUnita", fields: [utentiDelegatiId], references: [id])
+  utentiDelegatiId String[]       @db.ObjectId
+  registri         Registro[]
+}
+
+model Trasportatore {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  denominazione   String
+  codiceFiscale   String
+  nIscrizioneAlbo String
+  nazione         String
+  utente          Utente          @relation(fields: [utenteId], references: [id])
+  utenteId        String          @db.ObjectId
+  registrazioni   Registrazione[]
+}
+
+model Destinatario {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  nazione         String
+  denominazione   String
+  codiceFiscale   String
+  nAutorizzazione String
+  utente          Utente          @relation(fields: [utenteId], references: [id])
+  utenteId        String          @db.ObjectId
+  registrazioni   Registrazione[]
+}
+
+model Intermediario {
+  id              String          @id @default(auto()) @map("_id") @db.ObjectId
+  denominazione   String
+  codiceFiscale   String
+  nIscrizioneAlbo String
+  nazione         String
+  utente          Utente          @relation(fields: [utenteId], references: [id])
+  utenteId        String          @db.ObjectId
+  registrazioni   Registrazione[]
+}
+
+model Produttore {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  denominazione String
+  codiceFiscale String
+  nazione       String
+  utente        Utente          @relation(fields: [utenteId], references: [id])
+  utenteId      String          @db.ObjectId
+  registrazioni Registrazione[]
+}
+
+model LuogoDiProduzione {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  indirizzo     String
+  civico        String
+  cap           String
+  nazione       String
+  provincia     String
+  comune        String
+  utente        Utente          @relation(fields: [utenteId], references: [id])
+  utenteId      String          @db.ObjectId
+  registrazioni Registrazione[]
+}
+
+model Registro {
+  id                 String          @id @default(auto()) @map("_id") @db.ObjectId
+  nome               String
+  isAttivo           Boolean
+  createdAt          DateTime        @default(now())
+  progressivoCounter Int
+  tipiAttivita       TipoAttivita[]
+  unitaLocale        UnitaLocale     @relation(fields: [unitaLocaleId], references: [id])
+  unitaLocaleId      String          @db.ObjectId
+  registrazioni      Registrazione[]
+}
+
+model Registrazione {
+  id                                   String                  @id @default(auto()) @map("_id") @db.ObjectId
+  dataOraRegistrazione                 DateTime
+  tipoOperazione                       TipoOperazione
+  tipoAttivita                         AttivitaENUM
+  causaleOperazione                    CausaleOperazione
+  categoriaRAAE                        CategoriaRAEE?
+  numeroRegistrazionePubblicaSicurezza String?
+  dataRegistrazionePubblicaSicurezza   DateTime?
+  numeroFIR                            String?
+  trasportoFrontaliero                 Boolean                 @default(false)
+  dataInizioTrasporto                  DateTime?
+  dataFineTrasporto                    DateTime?
+  isVeicoloFuoriUso                    Boolean                 @default(false)
+  pesoADestino                         Float?
+  respinto                             Boolean                 @default(false)
+  tipologiaRespingimento               TipologiaRespingimento?
+  unitaDiMisuraRespingimento           UnitaMisura?
+  causaleRespingimento                 CausaleRespingimento?
+  causaleRespingimentoDesc             String?
+  registrazioniFiglie                  String[]                @db.ObjectId
+  annotazioni                          String
+  isStoccaggioInstant                  Boolean                 @default(false)
+  dataCalcoloStoccaggio                DateTime?
+  trasportatore                        Trasportatore           @relation(fields: [trasportatoreId], references: [id])
+  trasportatoreId                      String                  @db.ObjectId
+  destinatario                         Destinatario            @relation(fields: [destinatarioId], references: [id])
+  destinatarioId                       String                  @db.ObjectId
+  intermediario                        Intermediario           @relation(fields: [intermediarioId], references: [id])
+  intermediarioId                      String                  @db.ObjectId
+  luogoDiProduzione                    LuogoDiProduzione       @relation(fields: [luogoDiProduzioneId], references: [id])
+  luogoDiProduzioneId                  String                  @db.ObjectId
+  produttore                           Produttore              @relation(fields: [produttoreId], references: [id])
+  produttoreId                         String                  @db.ObjectId
+  rifiuto                              Rifiuto
+  registro                             Registro                @relation(fields: [registroId], references: [id])
+  registroId                           String                  @db.ObjectId
+}
+
+enum CategoriaRAEE {
+  CAT1
+  CAT2
+  CAT3
+  CAT4
+  CAT5
+  CAT6
+  PF
+}
+
+enum TipoOperazione {
+  CARICO
+  SCARICO
+}
+
+enum CausaleOperazione {
+  NP
+  TERZI
+  DT
+  RE
+  I
+  AT
+  M
+  TR
+}
+
+enum TipologiaRespingimento {
+  PARZIALE
+  TOTALE
+}
+
+enum CausaleRespingimento {
+  NON_CONFORME
+  IRRICEVIBILE
+  ALTRO
+}
+
+enum StatoFisicoRifiuto {
+  FANGOSO
+  IN_POLVERE
+  LIQUIDO
+  SOLIDO
+  VISCHIOSO_SCIROPPOSO
+}
+
+enum PericoloRifiuto {
+  ESPLOSIVO
+  COMBURENTE
+  INFIAMMABILE
+  IRRITANTE
+  TOSSICITA_SPECIFICA
+  TOSSICITA_ACUTA
+  CANCEROGENO
+  CORROSIVO
+  INFETTIVO
+  TOSSICO_PER_RIPRODUZIONE
+  MUTAGENO
+  LIBERAZIONE_DI_GAS
+  SENSIBILIZZANTE
+  ECOTOSSICO
+  NON_DEFINITO
+}
+
+enum ProvenienzaRifiuto {
+  SPECIALE
+  URBANO
+}
+
+enum UnitaMisura {
+  KG
+  L
+}
+
+type Rifiuto {
+  codiceEER          String
+  provenienzaRifiuto ProvenienzaRifiuto
+  descrizione        String
+  isConferito        Boolean
+  statoFisicoRifiuto StatoFisicoRifiuto
+  pericoloRifiuto    PericoloRifiuto
+  quantita           Float
+  unitaDiMisura      UnitaMisura
 }
 
 enum Ruolo {
   ADMIN
   USER
+}
+
+enum AttivitaENUM {
+  PRODUZIONE
+  RECUPERO
+  SMALTIMENTO
+  TRASPORTO
+  CENTRO_DI_RACCOLTA
+  INTERMEDIAZIONE
+}
+
+enum CodiceAttivita {
+  R1
+  R2
+  R3
+  R4
+  R5
+  R6
+  R7
+  R8
+  R9
+  R10
+  R11
+  R12
+  R13
+  D1
+  D2
+  D3
+  D4
+  D5
+  D6
+  D7
+  D8
+  D9
+  D10
+  D11
+  D12
+  D13
+  D14
+  D15
+}
+
+type TipoAttivita {
+  attivita      AttivitaENUM
+  codiciRifiuto CodiceAttivita[]
 }
