@@ -104,7 +104,7 @@ model LuogoProduzione {
 
 model Registro {
   id                 String          @id @default(auto()) @map("_id") @db.ObjectId
-  nome               String
+  descrizione        String
   isAttivo           Boolean
   createdAt          DateTime        @default(now())
   progressivoCounter Int

@@ -11,12 +11,10 @@ type Props = {
 const InputFloating = ({type, name, label, required}: Props) => {
   const id = "itt_" + name.replace(/\s+/g, '-').toLowerCase();
   return (
-    <div className="mb-2">
       <div className="form-floating">
         <input type={type} className="form-control" name={name} id={id} required={required} />
         <label htmlFor={id}> {label} </label>
       </div>
-    </div>
   );
 }
 
