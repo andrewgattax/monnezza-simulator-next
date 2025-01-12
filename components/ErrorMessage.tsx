@@ -7,9 +7,10 @@ import { useRouter } from 'next/navigation';
 interface ErrorMessageProps {
   title: string;
   message: string;
+  noBack?: boolean;
 }
 
-const ErrorMessage: React.FC<ErrorMessageProps> = ({ title, message }) => {
+const ErrorMessage: React.FC<ErrorMessageProps> = ({ title, message, noBack }) => {
   const router = useRouter();
 
   const tornaIndietro = () => {
@@ -28,10 +29,12 @@ const ErrorMessage: React.FC<ErrorMessageProps> = ({ title, message }) => {
           </h4>
         </div>
         <div className="col col-auto">
-          <button className="btn btn-outline-danger" onClick={tornaIndietro}>
-            <IconB iconName="arrow-left-square" />
-            Torna indietro
-          </button>
+          {!noBack && (
+            <button className="btn btn-outline-danger" onClick={tornaIndietro}>
+              <IconB iconName="arrow-left-square" />
+              Torna indietro
+            </button>
+          )}
         </div>
       </div>
       <hr />

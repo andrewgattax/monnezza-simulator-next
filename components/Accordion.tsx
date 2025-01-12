@@ -7,7 +7,7 @@ interface AccordionProps {
 
 const Accordion: React.FC<AccordionProps> = ({ children, accordionId }) => {
   return (
-    <div className="accordion mt-4 mb-4" id={accordionId}>
+    <div className="accordion mt-3 mb-3" id={accordionId}>
       {children}
     </div>
   );

@@ -1,5 +1,11 @@
+export const metadata = {
+  title: "Dashboard · Ri.fiuto"
+};
+
 export default function Home() {
   return (
-    <h1>Home della dashboard</h1>
+    <section>
+      <h1>Home</h1>
+    </section>
   );
 }

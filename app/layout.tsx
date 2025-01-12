@@ -4,6 +4,11 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 
 import BootstrapClient from "../components/BootstrapClient";
 
+export const metadata = {
+  title: "Ri.fiuto",
+  description: "Software gestionale pre-rentri",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
