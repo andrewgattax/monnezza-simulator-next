@@ -1,25 +1,22 @@
 "use client";
 import React, {useActionState} from 'react';
-import LuogoProduzioneForm from './LuogoProduzioneForm';
+import RegistrazioneForm from './RegistrazioneForm';
 import IconB from '../../../../../components/IconB';
-import luogoProduzioneServerAction from '../action';
+import RegistrazioneServerAction from '../action';
 import DbLoading from '../../../../../components/DbLoading';
 import ErrorMessage from '../../../../../components/ErrorMessage';
-import ObjectId from '../../../../../components/ObjectId';
 import ConditionalHider from '../../../../../components/ConditionalHider';
-import { LuogoProduzione } from '@prisma/client';
+import { Registrazione } from '@prisma/client';
 import { use, useState, useEffect } from 'react';
 import FormAction from '../../../../../components/FormAction';
 
-interface LuogoProduzioneFormProps {
-  dbResult?: Promise<Partial<LuogoProduzione>>;
-  objectId?: string;
+interface RegistrazioneFormProps {
+  dbResult?: Promise<Partial<Registrazione>>;
 }
 
-const LuogoProduzioneCreateUI: React.FC<LuogoProduzioneFormProps> = ({ dbResult, objectId }) => {
-  const [state, formAction, pending] = useActionState(luogoProduzioneServerAction, {message: ''});
-  const initialFormData = dbResult ? use(dbResult) : {};
-  const [formData, setFormData] = useState(initialFormData);
+const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult }) => {
+  const [state, formAction, pending] = useActionState(RegistrazioneServerAction, {message: ''});
+  const [formData, setFormData] = useState(() => (dbResult ? use(dbResult) : {}));
 
   const handleFormChange = (updatedData: any) => {
     setFormData(updatedData); // Keep track of form changes
@@ -32,14 +29,13 @@ const LuogoProduzioneCreateUI: React.FC<LuogoProduzioneFormProps> = ({ dbResult,
   return (
     <form action={formAction}>
       {dbResult ? <FormAction update/> : <FormAction create/>}
-      <ObjectId objectId={objectId} />
       <ConditionalHider hidden={!pending}>
         <DbLoading />
       </ConditionalHider>
       <ConditionalHider hidden={!state.message || pending}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
       </ConditionalHider>
-      <LuogoProduzioneForm luogoProduzione={formData} onChange={handleFormChange}/>
+      <RegistrazioneForm registrazione={formData} onChange={handleFormChange}/>
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>
@@ -54,4 +50,4 @@ const LuogoProduzioneCreateUI: React.FC<LuogoProduzioneFormProps> = ({ dbResult,
   );
 };
 
-export default LuogoProduzioneCreateUI;
+export default RegistrazioneCreateUI;

@@ -6,6 +6,7 @@ import AppFooter from "../../components/AppFooter";
 import { SessionProvider } from "next-auth/react"
 import { auth } from "../../auth"
 import { redirect } from "next/navigation";
+import { ToastContainer } from "react-toastify";
 
 
 export default async function DashboardLayout({
@@ -42,6 +43,7 @@ export default async function DashboardLayout({
         </SessionProvider>
       </header>
       <main className={styles.main}>{children}</main>
+      <ToastContainer position="bottom-right" />
       <AppFooter />
     </div>
   );

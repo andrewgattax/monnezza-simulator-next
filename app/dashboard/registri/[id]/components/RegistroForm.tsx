@@ -5,6 +5,7 @@ import SelettoreComuni from '../../../../../components/SelettoreComuni';
 import InputFloating from '../../../../../components/InputFloating';
 import { Registro } from '@prisma/client';
 import SelettoreAttivita from '../../../../../components/SelettoreAttivita';
+import InputCheckbox from '../../../../../components/InputCheckbox';
 
 interface RegistroFormProps {
   registro?: Partial<Registro>;

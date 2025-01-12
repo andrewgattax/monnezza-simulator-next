@@ -24,7 +24,22 @@ interface Country {
   code: string;
 }
 
-const SelettoreComuni: React.FC = () => {
+export interface SelettoreComuniData {
+  country: string | undefined;
+  region: string | undefined;
+  province: string | undefined;
+  comune: string | undefined;
+  cap: string | null;
+  regionText: string | null;
+  provinceText: string | null;
+  comuneText: string | null;
+}
+
+interface SelettoreComuniProps {
+  onChange: (data: SelettoreComuniData) => void;
+}
+
+const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>({
     name: "Italia",
     code: "IT"
@@ -34,6 +49,25 @@ const SelettoreComuni: React.FC = () => {
   const [selectedComune, setSelectedComune] = useState<Comune | null>(null);
   const [capList, setCapList] = useState<string[]>([]);
 
+  const [selectedRegionText, setSelectedRegionText] = useState<string | null>(null);
+  const [selectedProvinceText, setSelectedProvinceText] = useState<string | null>(null);
+  const [selectedComuneText, setSelectedComuneText] = useState<string | null>(null);
+
+  const [cap, setCap] = useState<string>("");
+
+  const notifyChange = () => {
+    onChange({
+      country: selectedCountry?.name,
+      region: selectedRegion?.nome,
+      province: selectedProvince?.sigla,
+      comune: selectedComune?.nome,
+      cap: cap,
+      regionText: selectedRegionText,
+      provinceText: selectedProvinceText,
+      comuneText: selectedComuneText,
+    });
+  };
+
   const handleCountryChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const country = countryData.find((c: Country) => c.name === e.target.value);
     setSelectedCountry(country || null)
@@ -41,6 +75,8 @@ const SelettoreComuni: React.FC = () => {
     setSelectedProvince(null);
     setSelectedComune(null);
     setCapList([]);
+    setCap("");
+    notifyChange();
   };
 
   const handleRegionChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -49,6 +85,8 @@ const SelettoreComuni: React.FC = () => {
     setSelectedProvince(null);
     setSelectedComune(null);
     setCapList([]);
+    setCap("");
+    notifyChange();
   };
 
   const handleProvinceChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -57,6 +95,8 @@ const SelettoreComuni: React.FC = () => {
       setSelectedProvince(province || null);
       setSelectedComune(null);
       setCapList([]);
+      setCap("");
+      notifyChange();
     }
   };
 
@@ -65,12 +105,19 @@ const SelettoreComuni: React.FC = () => {
       const comune = selectedProvince.comuni.find((c: Comune) => c.nome === e.target.value);
       setSelectedComune(comune || null);
       setCapList(comune ? comune.cap : []);
+      setCap("");
+      notifyChange();
     }
+  };
+
+  const handleCapChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setCap(e.target.value);
+    notifyChange();
   };
 
   return (
     <div className="row g-2">
-      <div className='col-3'>
+      <div className='col-12'>
         <div className="form-floating">
           <select className="form-select" id="country" name='nazione' onChange={handleCountryChange} defaultValue="Italia">
             {countryData.map((country: Country) => (
@@ -81,9 +128,9 @@ const SelettoreComuni: React.FC = () => {
         </div>
       </div>
       {selectedCountry?.code == "IT" ? (
-        <div className='col-9'>
+        <div className='col-12'>
           <div className="row g-2">
-            <div className='col-3'>
+            <div className='col-6'>
               <div className="form-floating">
                 <select className="form-select" id="region" onChange={handleRegionChange} defaultValue="">
                   <option value="" disabled>Seleziona...</option>
@@ -95,7 +142,7 @@ const SelettoreComuni: React.FC = () => {
               </div>
             </div>
 
-            <div className='col-2'>
+            <div className='col-6'>
               {selectedRegion && (
                 <div className="form-floating">
                   <select className="form-select" id="province" name="provincia" onChange={handleProvinceChange} defaultValue="">
@@ -118,7 +165,7 @@ const SelettoreComuni: React.FC = () => {
               )}
             </div>
 
-            <div className='col-5'>
+            <div className='col-9'>
               {selectedProvince && (
                 <div className="form-floating">
                   <select className="form-select" id="comune" name="comune" onChange={handleComuneChange} defaultValue="">
@@ -141,10 +188,10 @@ const SelettoreComuni: React.FC = () => {
               )}
             </div>
 
-            <div className='col-2'>
+            <div className='col-3'>
               {capList.length > 0 && (
                 <div className="form-floating">
-                  <select className="form-select" id="cap" name="cap" defaultValue="">
+                  <select className="form-select" id="cap" name="cap" defaultValue="" onChange={handleCapChange}>
                     <option value="">Seleziona...</option>
                     {capList.map((cap, index) => (
                       <option key={index} value={cap}>{cap}</option>
@@ -166,19 +213,31 @@ const SelettoreComuni: React.FC = () => {
           </div>
         </div>
       ) : (
-        <div className='col-9'>
+        <div className='col-12'>
           <div className="row g-2">
+            <div className='col-6'>
+              <InputFloating label="Regione" name='regione' type='text' onChange={(e) => {
+                setSelectedRegionText(e.target.value);
+                notifyChange();
+              }} required />
+            </div>
+            <div className='col-6'>
+              <InputFloating label="Provincia" name='provincia' type='text' onChange={(e) => {
+                setSelectedProvinceText(e.target.value);
+                notifyChange();
+              }} required />
+            </div>
+            <div className='col-9'>
+              <InputFloating label="Comune" name='comune' type='text' onChange={(e) => {
+                setSelectedComuneText(e.target.value);
+                notifyChange();
+              }} required />
+            </div>
             <div className='col-3'>
-              <InputFloating label="Regione" name='regione' type='text' required />
-            </div>
-            <div className='col-2'>
-              <InputFloating label="Provincia" name='provincia' type='text' required />
-            </div>
-            <div className='col-5'>
-              <InputFloating label="Comune" name='comune' type='text' required />
-            </div>
-            <div className='col-2'>
-              <InputFloating label="CAP" name='cap' type='text' required />
+              <InputFloating label="CAP" name='cap' type='text' onChange={(e) => {
+                setCap(e.target.value);
+                notifyChange();
+              }} required />
             </div>
 
           </div>

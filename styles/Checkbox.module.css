@@ -1,0 +1,11 @@
+.sos {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding: 0px 10px !important;
+}
+
+.inputgay {
+    margin: 10px;
+    
+}

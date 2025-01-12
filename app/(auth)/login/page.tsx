@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import IconB from "../../../components/IconB";
 import DbLoading from "../../../components/DbLoading";
+import ConditionalHider from "../../../components/ConditionalHider";
+import ErrorMessageCompact from "../../../components/ErrorMessageCompact";
 
 export default function Login() {
   const [error, setError] = useState<string | null>(null);
@@ -52,10 +54,9 @@ export default function Login() {
             <InputWithIcon type="text" name="email" placeholder="Indirizzo email" iconName="envelope" required />
             <InputWithIcon type="password" name="password" placeholder="Password" iconName="key" required />
             <InputWithIcon type="text" name="tfatoken" placeholder="Codice Temporaneo (se richiesto)" iconName="phone" />
-            {error && <div className="alert alert-danger">
-              <IconB iconName="exclamation-triangle" />
-              Credenziali errate o codice temporaneo non valido
-            </div>}
+            <ConditionalHider hidden={!error}>
+              <ErrorMessageCompact message="Le credenziali inserite non sono valide" />
+            </ConditionalHider>
             <button type="submit" className="btn btn-primary btn-overcolor w-100" disabled={loading}>
               Accedi
             </button>

@@ -1,6 +1,6 @@
 import { PrismaClient, LuogoProduzione } from '@prisma/client'
 import React, { Suspense } from 'react'
-import LuogoProduzioneCreateUI from './components/LuogoProduzioneCreateUI';
+import LuogoProduzioneCreateUI from './components/RegistrazioneCreateUI';
 import DbLoading from '../../../../components/DbLoading';
 import { getLuogoProduzioneById } from './database';
 
@@ -26,7 +26,7 @@ export default async function LuoghiProduzioneContainer({
 
     return (
       <Suspense fallback={<DbLoading />}>
-        <LuogoProduzioneCreateUI objectId={paramId} dbResult={luogoProduzione} />
+        <LuogoProduzioneCreateUI dbResult={luogoProduzione} />
       </Suspense>
     )
   }

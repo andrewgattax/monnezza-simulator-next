@@ -21,11 +21,8 @@ model Utente {
   unitaLocali           UnitaLocale[]     @relation("ProprietarioUnita")
   unitaLocaliDelegate   UnitaLocale[]     @relation("DelegatiUnita", fields: [unitaLocaliDelegateId], references: [id])
   unitaLocaliDelegateId String[]          @db.ObjectId
-  trasportatori         Trasportatore[]
-  destinatari           Destinatario[]
-  intermediari          Intermediario[]
   luoghiDiProduzione    LuogoProduzione[]
-  produttori            Produttore[]
+  anagrafiche           Anagrafica[]
 }
 
 model UnitaLocale {
@@ -35,6 +32,7 @@ model UnitaLocale {
   indirizzo        String
   n_civico         String
   provincia        String
+  regione          String
   tipiAttivita     TipoAttivita[]
   proprietarioId   String         @db.ObjectId
   proprietario     Utente         @relation("ProprietarioUnita", fields: [proprietarioId], references: [id])
@@ -43,47 +41,27 @@ model UnitaLocale {
   registri         Registro[]
 }
 
-model Trasportatore {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  denominazione   String
-  codiceFiscale   String
-  nIscrizioneAlbo String
-  nazione         String
-  utente          Utente          @relation(fields: [utenteId], references: [id])
-  utenteId        String          @db.ObjectId
-  registrazioni   Registrazione[]
+enum TipoAnagrafica {
+  TRASPORTATORE
+  DESTINATARIO
+  PRODUTTORE
+  INTERMEDIARIO
 }
 
-model Destinatario {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  nazione         String
-  denominazione   String
-  codiceFiscale   String
-  nAutorizzazione String
-  utente          Utente          @relation(fields: [utenteId], references: [id])
-  utenteId        String          @db.ObjectId
-  registrazioni   Registrazione[]
-}
-
-model Intermediario {
-  id              String          @id @default(auto()) @map("_id") @db.ObjectId
-  denominazione   String
-  codiceFiscale   String
-  nIscrizioneAlbo String
-  nazione         String
-  utente          Utente          @relation(fields: [utenteId], references: [id])
-  utenteId        String          @db.ObjectId
-  registrazioni   Registrazione[]
-}
-
-model Produttore {
-  id            String          @id @default(auto()) @map("_id") @db.ObjectId
-  denominazione String
-  codiceFiscale String
-  nazione       String
-  utente        Utente          @relation(fields: [utenteId], references: [id])
-  utenteId      String          @db.ObjectId
-  registrazioni Registrazione[]
+model Anagrafica {
+  id                             String          @id @default(auto()) @map("_id") @db.ObjectId
+  tipoAnagrafica                 TipoAnagrafica
+  denominazione                  String
+  codiceFiscale                  String
+  nIscrizioneAlbo                String
+  nAutorizzazione                String
+  nazione                        String
+  utente                         Utente          @relation(fields: [utenteId], references: [id])
+  utenteId                       String          @db.ObjectId
+  RegistrazioneComeTrasportatore Registrazione[] @relation("TrasportatoreRifuto")
+  RegistrazioneComeDestinatario  Registrazione[] @relation("DestinatarioRifiuto")
+  RegistrazioneComeIntermediario Registrazione[] @relation("IntermediarioRifiuto")
+  RegistrazioneComeProduttore    Registrazione[] @relation("ProduttoreRifiuto")
 }
 
 model LuogoProduzione {
@@ -94,6 +72,7 @@ model LuogoProduzione {
   cap           String
   nazione       String
   provincia     String
+  regione       String
   comune        String
   utente        Utente          @relation(fields: [utenteId], references: [id])
   utenteId      String          @db.ObjectId
@@ -115,42 +94,42 @@ model Registro {
 }
 
 model Registrazione {
-  id                                   String                  @id @default(auto()) @map("_id") @db.ObjectId
+  id                                   String                    @id @default(auto()) @map("_id") @db.ObjectId
   dataOraRegistrazione                 DateTime
   tipoOperazione                       TipoOperazione
   tipoAttivita                         AttivitaENUM
   causaleOperazione                    CausaleOperazione
-  categoriaRAAE                        CategoriaRAEE?
   numeroRegistrazionePubblicaSicurezza String?
   dataRegistrazionePubblicaSicurezza   DateTime?
   numeroFIR                            String?
-  trasportoFrontaliero                 Boolean                 @default(false)
+  trasportoFrontaliero                 Boolean                   @default(false)
+  tipoTrasportoFrontaliero             TipoTrasportoFrontaliero?
   dataInizioTrasporto                  DateTime?
   dataFineTrasporto                    DateTime?
-  isVeicoloFuoriUso                    Boolean                 @default(false)
+  isVeicoloFuoriUso                    Boolean                   @default(false)
   pesoADestino                         Float?
-  respinto                             Boolean                 @default(false)
+  respinto                             Boolean                   @default(false)
   tipologiaRespingimento               TipologiaRespingimento?
   unitaDiMisuraRespingimento           UnitaMisura?
   causaleRespingimento                 CausaleRespingimento?
   causaleRespingimentoDesc             String?
-  registrazioniFiglie                  String[]                @db.ObjectId
+  registrazioniFiglie                  String[]                  @db.ObjectId
   annotazioni                          String
-  isStoccaggioInstant                  Boolean                 @default(false)
+  isStoccaggioInstant                  Boolean                   @default(false)
   dataCalcoloStoccaggio                DateTime?
-  trasportatore                        Trasportatore           @relation(fields: [trasportatoreId], references: [id])
-  trasportatoreId                      String                  @db.ObjectId
-  destinatario                         Destinatario            @relation(fields: [destinatarioId], references: [id])
-  destinatarioId                       String                  @db.ObjectId
-  intermediario                        Intermediario           @relation(fields: [intermediarioId], references: [id])
-  intermediarioId                      String                  @db.ObjectId
-  luogoDiProduzione                    LuogoProduzione         @relation(fields: [luogoDiProduzioneId], references: [id])
-  luogoDiProduzioneId                  String                  @db.ObjectId
-  produttore                           Produttore              @relation(fields: [produttoreId], references: [id])
-  produttoreId                         String                  @db.ObjectId
+  trasportatore                        Anagrafica                @relation("TrasportatoreRifuto", fields: [trasportatoreId], references: [id])
+  trasportatoreId                      String                    @db.ObjectId
+  destinatario                         Anagrafica                @relation("DestinatarioRifiuto", fields: [destinatarioId], references: [id])
+  destinatarioId                       String                    @db.ObjectId
+  intermediario                        Anagrafica                @relation("IntermediarioRifiuto", fields: [intermediarioId], references: [id])
+  intermediarioId                      String                    @db.ObjectId
+  luogoDiProduzione                    LuogoProduzione           @relation(fields: [luogoDiProduzioneId], references: [id])
+  luogoDiProduzioneId                  String                    @db.ObjectId
+  produttore                           Anagrafica                @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
+  produttoreId                         String                    @db.ObjectId
   rifiuto                              Rifiuto
-  registro                             Registro                @relation(fields: [registroId], references: [id])
-  registroId                           String                  @db.ObjectId
+  registro                             Registro                  @relation(fields: [registroId], references: [id])
+  registroId                           String                    @db.ObjectId
 }
 
 enum CategoriaRAEE {
@@ -235,6 +214,7 @@ type Rifiuto {
   pericoloRifiuto    PericoloRifiuto
   quantita           Float
   unitaDiMisura      UnitaMisura
+  categoriaRAAE      CategoriaRAEE?
 }
 
 enum Ruolo {
@@ -249,6 +229,11 @@ enum AttivitaENUM {
   TRASPORTO
   CENTRO_DI_RACCOLTA
   INTERMEDIAZIONE
+}
+
+enum TipoTrasportoFrontaliero {
+  DOCUMENTO_DI_ACCOMPAGNAMENTO
+  DOCUMENTO_DI_MOVIMENTO
 }
 
 enum CodiceAttivita {

@@ -2,13 +2,8 @@
 import React, { useState, ChangeEvent } from 'react';
 import InputFloating from './InputFloating';
 import { AttivitaENUM, CodiceAttivita } from '@prisma/client';
+import { enumToName } from '../utils';
 
-function enumToName(activity: string): string {
-    return activity
-        .split('_')
-        .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-        .join(' ');
-}
 
 interface SelettoreAttivitaProps {
     onActivitySelected?: () => void;

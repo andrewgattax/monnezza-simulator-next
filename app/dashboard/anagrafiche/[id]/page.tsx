@@ -1,8 +1,8 @@
-import { PrismaClient, LuogoProduzione } from '@prisma/client'
+import { PrismaClient, UnitaLocale } from '@prisma/client'
 import React, { Suspense } from 'react'
-import LuogoProduzioneCreateUI from './components/LuogoProduzioneCreateUI';
+import UnitaLocaleCreateUI from './components/UnitaLocaleCreateUI';
 import DbLoading from '../../../../components/DbLoading';
-import { getLuogoProduzioneById } from './database';
+import { getUnitaLocaleById } from './database';
 
 export const metadata = {
   title: "Aggiunta Luogo di Produzione · Ri.fiuto",
@@ -19,14 +19,14 @@ export default async function LuoghiProduzioneContainer({
 
   if (paramId == "new") {
     return (
-      <LuogoProduzioneCreateUI />
+      <UnitaLocaleCreateUI />
     );
   } else {
-    let luogoProduzione = getLuogoProduzioneById(paramId)
+    let unitaLocale = getUnitaLocaleById(paramId)
 
     return (
       <Suspense fallback={<DbLoading />}>
-        <LuogoProduzioneCreateUI objectId={paramId} dbResult={luogoProduzione} />
+        <UnitaLocaleCreateUI dbResult={unitaLocale} />
       </Suspense>
     )
   }

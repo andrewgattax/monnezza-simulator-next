@@ -14,6 +14,14 @@
     padding-right: 4px;
 }
 
+.modal-bg {
+    background-color: #00000069 !important;
+}
+
+.mt-10 {
+    margin-top: 7rem !important;
+}
+
 body {
     --bs-focus-ring-color: rgba(108, 117, 125, 0.25) !important;
     --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.25) !important;
