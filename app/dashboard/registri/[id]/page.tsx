@@ -2,7 +2,33 @@ import { PrismaClient, LuogoProduzione } from '@prisma/client'
 import React, { Suspense } from 'react'
 import RegistroCreateUI from './components/RegistroCreateUI';
 import DbLoading from '../../../../components/DbLoading';
-import { getRegistroById } from './database';
+import { getRegistroByIdAndUserId } from '../database';
+import BreadcrumbInjector from "../../../../components/BreadcrumbInjector";
+import { breadcrumb as oldBreadcrumb } from '../page';
+import { BreadcrumbItem } from '../../../../components/BreadcrumbContext';
+import { auth } from '../../../../auth';
+
+export const breadcrumb: BreadcrumbItem[] = {
+  ...oldBreadcrumb
+}
+
+export const breadcrumbAggiungi: BreadcrumbItem[] = [
+  ...oldBreadcrumb,
+  {
+    title: "Aggiungi",
+    href: "/dashboard/registri/new",
+    icon: "plus-circle",
+  },
+];
+
+export const breadcrumbModifica: BreadcrumbItem[] = [
+  ...oldBreadcrumb,
+  {
+    title: "Modifica",
+    href: "/dashboard/registri/[id]",
+    icon: "pencil-square",
+  },
+];
 
 export const metadata = {
   title: "Aggiunta Registro · Ri.fiuto",
@@ -19,15 +45,24 @@ export default async function RegistriContainer({
 
   if (paramId == "new") {
     return (
-      <RegistroCreateUI />
+      <section>
+        <BreadcrumbInjector items={breadcrumbAggiungi} />
+        <RegistroCreateUI />
+      </section>
+
     );
   } else {
-    let registro = getRegistroById(paramId)
+    const session = await auth();
+    let registro = getRegistroByIdAndUserId(paramId, session?.user?.id!)
 
     return (
-      <Suspense fallback={<DbLoading />}>
-        <RegistroCreateUI dbResult={registro} />
-      </Suspense>
+      <section>
+        <Suspense fallback={<DbLoading />}>
+          <BreadcrumbInjector items={breadcrumbModifica} />
+          <RegistroCreateUI dbResult={registro} />
+        </Suspense>
+      </section>
+
     )
   }
 }

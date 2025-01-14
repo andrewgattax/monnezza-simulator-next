@@ -23,17 +23,9 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
   };
 
   const handleSave = () => {
-    console.log(value);
-    if (value?.cap && value?.country) {
-      if(value?.comune && value?.province && value?.region) {
-        onSave(value);
-        onClose();
-      } else if(value?.comuneText && value?.provinceText && value?.regionText) {
-        onSave(value);
-        onClose();
-      } else {
-        toast.error('Per favore, compila tutti i campi');
-      }
+    if(value?.cap && value?.country && value?.comune && value?.province && value?.region) {
+      onSave(value);
+      onClose();
     } else {
       toast.error('Per favore, compila tutti i campi');
     }

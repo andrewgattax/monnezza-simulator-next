@@ -27,6 +27,7 @@ export default async function luogoProduzioneServerAction(prevState: any, formDa
   }
 
   // TODO: VALIDA QUA I CAMPI!!!
+  // TODO: verifica che l'utente sia effettivamente proprietario di quel luogo
 
   if (action === 'update') {
     objectId = formData.get('objectId')
@@ -50,6 +51,23 @@ export default async function luogoProduzioneServerAction(prevState: any, formDa
       });
     } catch (error) {
       return { message: 'Errore del database durante l\'aggiornamento del luogo di produzione' }
+    }
+
+    redirect(`/dashboard/luoghiproduzione`);
+  }
+
+  if (action === 'remove') {
+    objectId = formData.get('objectId')
+    if (!objectId) {
+      return { message: 'ID non fornito per la rimozione' }
+    }
+
+    try {
+      await prisma.luogoProduzione.delete({
+        where: { id: objectId.toString() }, //TODO: aggiungere filtro per utente
+      });
+    } catch (error) {
+      return { message: 'Errore del database durante la rimozione del luogo di produzione' }
     }
 
     redirect(`/dashboard/luoghiproduzione`);

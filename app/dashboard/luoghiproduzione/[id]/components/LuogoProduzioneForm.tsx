@@ -4,6 +4,8 @@ import AccordionItem from '../../../../../components/AccordionItem';
 import InputFloating from '../../../../../components/InputFloating';
 import { LuogoProduzione } from '@prisma/client';
 import InputCheckbox from '../../../../../components/InputCheckbox';
+import SelettoreComuniFormComponent from '../../../../../components/SelettoreComuniFormComponent';
+import { SelettoreComuniData } from '../../../../../components/SelettoreComuni';
 
 interface LuogoProduzioneFormProps {
   luogoProduzione?: Partial<LuogoProduzione>;
@@ -12,6 +14,7 @@ interface LuogoProduzioneFormProps {
 
 const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzione, onChange }) => {
   const [formValues, setFormValues] = useState(luogoProduzione || {});
+  const [selettoreData, setSelettoreData] = useState<SelettoreComuniData | undefined>(undefined);
 
   useEffect(() => {
     setFormValues(luogoProduzione || {});
@@ -23,6 +26,22 @@ const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzio
     setFormValues(updatedData);
     onChange(updatedData);
   };
+
+  const handleSelettoreChange = (updatedData: SelettoreComuniData) => {
+    console.log(updatedData);
+    setFormValues({
+      ...formValues,
+      cap: updatedData.cap || undefined,
+      comune: updatedData.comune || undefined,
+      provincia: updatedData.province || undefined,
+      regione: updatedData.region || undefined,
+      nazione: updatedData.country,
+    });
+  };
+
+  useEffect(() => {
+    onChange(formValues);
+  }, [formValues])
 
   return  (
     <div>
@@ -42,28 +61,17 @@ const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzio
                 value={formValues.civico || ''} onChange={handleChange}/>
             </div>
           </div>
-          <div className="row g-2 mt-2 mb-3">
-            <div className='col-3 mt-0'>
-              <InputFloating name='comune' label='Comune' type='text' required
-                value={formValues.comune || ''} onChange={handleChange} />
-            </div>
-            <div className='col-2 mt-0'>
-              <InputFloating name='provincia' label='Provincia' type='text' required
-                value={formValues.provincia || ''} onChange={handleChange} />
-            </div>
-            <div className='col-1 mt-0'>
-              <InputFloating name='cap' label='CAP' type='text' required
-                value={formValues.cap || ''} onChange={handleChange} />
-            </div>
-            <div className='col-3 mt-0'>
-              <InputFloating name='regione' label='Regione' type='text' required
-                value={formValues.regione || ''} onChange={handleChange} />
-            </div>
-            <div className='col-3 mt-0'>
-              <InputFloating name='nazione' label='Nazione' type='text' required
-                value={formValues.nazione || ''} onChange={handleChange} />
-            </div>
-          </div>
+          <SelettoreComuniFormComponent 
+            data={
+              {cap: formValues.cap || "",
+              comune: formValues.comune || "",
+              province: formValues.provincia || "",
+              region: formValues.regione || "",
+              country: formValues.nazione || "",
+              }
+            } 
+            onChange={handleSelettoreChange} 
+          />
         </AccordionItem>
       </Accordion>
     </div>

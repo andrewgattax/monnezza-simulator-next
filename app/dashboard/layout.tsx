@@ -7,7 +7,8 @@ import { SessionProvider } from "next-auth/react"
 import { auth } from "../../auth"
 import { redirect } from "next/navigation";
 import { ToastContainer } from "react-toastify";
-
+import { EpochProvider } from "../../components/EpochContext";
+import { BreadcrumbProvider } from "../../components/BreadcrumbContext";
 
 export default async function DashboardLayout({
   children,
@@ -20,7 +21,7 @@ export default async function DashboardLayout({
     return;
   }
   return (
-    <div>
+    <BreadcrumbProvider>
       <header>
         <SessionProvider>
           <NavBar>
@@ -42,9 +43,11 @@ export default async function DashboardLayout({
           </NavBar>
         </SessionProvider>
       </header>
-      <main className={styles.main}>{children}</main>
-      <ToastContainer position="bottom-right" />
+      <EpochProvider>
+        <main className={styles.main}>{children}</main>
+      </EpochProvider>
+      <ToastContainer position="bottom-right" limit={1}/>
       <AppFooter />
-    </div>
+    </BreadcrumbProvider>
   );
 }

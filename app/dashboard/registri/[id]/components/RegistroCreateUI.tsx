@@ -1,5 +1,5 @@
 "use client";
-import React, {useActionState} from 'react';
+import React, {useActionState, useEffect, useState} from 'react';
 import registroForm from './RegistroForm';
 import IconB from '../../../../../components/IconB';
 import registroServerAction from '../action';
@@ -10,34 +10,45 @@ import { Registro } from '@prisma/client';
 import { use } from 'react';
 import FormAction from '../../../../../components/FormAction';
 import RegistroForm from './RegistroForm';
+import ObjectId from '../../../../../components/ObjectId';
 
 interface RegistroFormProps {
   dbResult?: Promise<Partial<Registro>>;
+  objectId?: string;
 }
 
-const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult }) => {
+const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId }) => {
   const [state, formAction, pending] = useActionState(registroServerAction, {message: ''});
-  let registro = undefined;
-  if(dbResult) {
-    let registro = use(dbResult)
-  }
+  const initialFormData = dbResult ? use(dbResult) : {};
+  const [formData, setFormData] = useState(initialFormData);
+
+  const handleFormChange = (updatedData: any) => {
+      setFormData(updatedData); // Keep track of form changes
+    };
+  
+    useEffect(() => {
+      setFormData(formData); // dovrebbe forzare un re-render??
+    }, [state]);
+
+
   return (
     <form action={formAction}>
-      {registro ? <FormAction update/> : <FormAction create/>}
+      {dbResult ? <FormAction update/> : <FormAction create/>}
+      <ObjectId objectId={objectId} />
       <ConditionalHider hidden={!pending}>
         <DbLoading />
       </ConditionalHider>
       <ConditionalHider hidden={!state.message}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
       </ConditionalHider>
-      <RegistroForm registro={registro}/>
+      <RegistroForm registro={formData} onChange={handleFormChange}/>
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>
             <span className="pr-1">
               <IconB iconName='floppy' />
             </span>
-            {registro ? 'Salva modifiche' : 'Salva nuovo'}
+            {dbResult ? 'Salva modifiche' : 'Salva nuovo'}
           </button>
         </center>
       </ConditionalHider>

@@ -29,6 +29,8 @@ model UnitaLocale {
   id               String         @id @default(auto()) @map("_id") @db.ObjectId
   nome             String
   comune           String
+  cap              String
+  nazione          String         @default("Italia")
   indirizzo        String
   n_civico         String
   provincia        String
@@ -101,15 +103,18 @@ model Registrazione {
   causaleOperazione                    CausaleOperazione
   numeroRegistrazionePubblicaSicurezza String?
   dataRegistrazionePubblicaSicurezza   DateTime?
+  isIntegratoFIR                       Boolean                   @default(false)
   numeroFIR                            String?
   trasportoFrontaliero                 Boolean                   @default(false)
   tipoTrasportoFrontaliero             TipoTrasportoFrontaliero?
   dataInizioTrasporto                  DateTime?
   dataFineTrasporto                    DateTime?
   isVeicoloFuoriUso                    Boolean                   @default(false)
+  isConferito                          Boolean                   @default(false)
   pesoADestino                         Float?
-  respinto                             Boolean                   @default(false)
+  isRespinto                           Boolean                   @default(false)
   tipologiaRespingimento               TipologiaRespingimento?
+  quantitaRespingimento                Float?
   unitaDiMisuraRespingimento           UnitaMisura?
   causaleRespingimento                 CausaleRespingimento?
   causaleRespingimentoDesc             String?
@@ -117,18 +122,18 @@ model Registrazione {
   annotazioni                          String
   isStoccaggioInstant                  Boolean                   @default(false)
   dataCalcoloStoccaggio                DateTime?
-  trasportatore                        Anagrafica                @relation("TrasportatoreRifuto", fields: [trasportatoreId], references: [id])
-  trasportatoreId                      String                    @db.ObjectId
-  destinatario                         Anagrafica                @relation("DestinatarioRifiuto", fields: [destinatarioId], references: [id])
-  destinatarioId                       String                    @db.ObjectId
-  intermediario                        Anagrafica                @relation("IntermediarioRifiuto", fields: [intermediarioId], references: [id])
-  intermediarioId                      String                    @db.ObjectId
-  luogoDiProduzione                    LuogoProduzione           @relation(fields: [luogoDiProduzioneId], references: [id])
-  luogoDiProduzioneId                  String                    @db.ObjectId
-  produttore                           Anagrafica                @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
-  produttoreId                         String                    @db.ObjectId
+  trasportatore                        Anagrafica?               @relation("TrasportatoreRifuto", fields: [trasportatoreId], references: [id])
+  trasportatoreId                      String?                   @db.ObjectId
+  destinatario                         Anagrafica?               @relation("DestinatarioRifiuto", fields: [destinatarioId], references: [id])
+  destinatarioId                       String?                   @db.ObjectId
+  intermediario                        Anagrafica?               @relation("IntermediarioRifiuto", fields: [intermediarioId], references: [id])
+  intermediarioId                      String?                   @db.ObjectId
+  luogoDiProduzione                    LuogoProduzione?          @relation(fields: [luogoDiProduzioneId], references: [id])
+  luogoDiProduzioneId                  String?                   @db.ObjectId
+  produttore                           Anagrafica?               @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
+  produttoreId                         String?                   @db.ObjectId
   rifiuto                              Rifiuto
-  registro                             Registro                  @relation(fields: [registroId], references: [id])
+  registro                             Registro?                 @relation(fields: [registroId], references: [id])
   registroId                           String                    @db.ObjectId
 }
 
@@ -149,11 +154,11 @@ enum TipoOperazione {
 
 enum CausaleOperazione {
   NP
-  TERZI
+  T
   DT
   RE
   I
-  AT
+  aT
   M
   TR
 }
@@ -206,15 +211,15 @@ enum UnitaMisura {
 }
 
 type Rifiuto {
-  codiceEER          String
-  provenienzaRifiuto ProvenienzaRifiuto
-  descrizione        String
-  isConferito        Boolean
-  statoFisicoRifiuto StatoFisicoRifiuto
-  pericoloRifiuto    PericoloRifiuto
-  quantita           Float
-  unitaDiMisura      UnitaMisura
-  categoriaRAAE      CategoriaRAEE?
+  codiceEER           String
+  provenienzaRifiuto  ProvenienzaRifiuto?
+  descrizione         String?
+  statoFisicoRifiuto  StatoFisicoRifiuto
+  pericoloRifiuto     PericoloRifiuto?
+  quantita            Float
+  unitaDiMisura       UnitaMisura
+  categoriaRAAE       CategoriaRAEE?
+  destinazioneRifiuto CodiceAttivita?
 }
 
 enum Ruolo {

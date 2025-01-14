@@ -26,13 +26,10 @@ interface Country {
 
 export interface SelettoreComuniData {
   country: string | undefined;
-  region: string | undefined;
-  province: string | undefined;
-  comune: string | undefined;
+  region: string | null;
+  province: string | null;
+  comune: string | null;
   cap: string | null;
-  regionText: string | null;
-  provinceText: string | null;
-  comuneText: string | null;
 }
 
 interface SelettoreComuniProps {
@@ -58,13 +55,10 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
   const notifyChange = () => {
     onChange({
       country: selectedCountry?.name,
-      region: selectedRegion?.nome,
-      province: selectedProvince?.sigla,
-      comune: selectedComune?.nome,
-      cap: cap,
-      regionText: selectedRegionText,
-      provinceText: selectedProvinceText,
-      comuneText: selectedComuneText,
+      region: selectedRegion?.nome || selectedRegionText,
+      province: selectedProvince?.sigla || selectedProvinceText,
+      comune: selectedComune?.nome || selectedComuneText,
+      cap: cap
     });
   };
 
@@ -74,9 +68,11 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
     setSelectedRegion(null);
     setSelectedProvince(null);
     setSelectedComune(null);
+    setSelectedComuneText(null);
+    setSelectedProvinceText(null);
+    setSelectedRegionText(null);
     setCapList([]);
     setCap("");
-    notifyChange();
   };
 
   const handleRegionChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -86,7 +82,6 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
     setSelectedComune(null);
     setCapList([]);
     setCap("");
-    notifyChange();
   };
 
   const handleProvinceChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -96,7 +91,6 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
       setSelectedComune(null);
       setCapList([]);
       setCap("");
-      notifyChange();
     }
   };
 
@@ -105,15 +99,30 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
       const comune = selectedProvince.comuni.find((c: Comune) => c.nome === e.target.value);
       setSelectedComune(comune || null);
       setCapList(comune ? comune.cap : []);
-      setCap("");
-      notifyChange();
+      if(comune?.cap.length == 1) {
+        setCap(comune.cap[0]);
+      } else {
+        setCap("");
+      }
     }
   };
 
   const handleCapChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setCap(e.target.value);
-    notifyChange();
   };
+
+  React.useEffect(() => {
+    notifyChange();
+  }, [
+    cap, 
+    selectedComune, 
+    selectedProvince, 
+    selectedRegion, 
+    selectedCountry, 
+    selectedComuneText, 
+    selectedProvinceText, 
+    selectedRegionText
+  ]);
 
   return (
     <div className="row g-2">
@@ -191,7 +200,7 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
             <div className='col-3'>
               {capList.length > 0 && (
                 <div className="form-floating">
-                  <select className="form-select" id="cap" name="cap" defaultValue="" onChange={handleCapChange}>
+                  <select className="form-select" id="cap" name="cap" onChange={handleCapChange} value={cap}>
                     <option value="">Seleziona...</option>
                     {capList.map((cap, index) => (
                       <option key={index} value={cap}>{cap}</option>
@@ -216,7 +225,7 @@ const SelettoreComuni: React.FC<SelettoreComuniProps> = ({ onChange }) => {
         <div className='col-12'>
           <div className="row g-2">
             <div className='col-6'>
-              <InputFloating label="Regione" name='regione' type='text' onChange={(e) => {
+              <InputFloating label="Regione / Stato" name='regione' type='text' onChange={(e) => {
                 setSelectedRegionText(e.target.value);
                 notifyChange();
               }} required />

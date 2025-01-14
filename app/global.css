@@ -22,7 +22,20 @@
     margin-top: 7rem !important;
 }
 
+.textarea-custom {
+    height: 150px !important;
+}
+
 body {
     --bs-focus-ring-color: rgba(108, 117, 125, 0.25) !important;
     --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.25) !important;
+}
+
+.table-group-divider {
+    border-top: calc(var(--bs-border-width)* 2) solid #b3b3b3 !important;
+}
+
+.row-margin-fix {
+    margin-left: 0px !important;
+    margin-right: 0px !important;
 }
