@@ -14,7 +14,12 @@ interface RegistroFormProps {
 
 const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLocali, isUpdating }) => {
   const [formValues, setFormValues] = useState(registro || {});
-  const [selectedUnitaLocale, setSelectedUnitaLocale] = useState(unitaLocali[0])
+  const [selectedUnitaLocale, setSelectedUnitaLocale] = useState(() => {
+    if (isUpdating && registro?.unitaLocaleId) {
+      return unitaLocali.find((ul) => ul.id === registro.unitaLocaleId)!;
+    }
+    return unitaLocali[0];
+  });
 
   useEffect(() => {
     setFormValues(registro || {});
@@ -46,16 +51,19 @@ const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLo
           <div className="row g-2 mt-3">
             <div className="col-4 mt-0">
               <div className="form-floating">
-                <select className='form-select' id='selectUnitaLocale' name="unitaLocaleId" value={selectedUnitaLocale.id} onChange={handleChangeUnitaLocale} disabled={isUpdating}>
+                <select className='form-select' id='selectUnitaLocale' name="unitaLocaleId" 
+                  value={selectedUnitaLocale.id} onChange={handleChangeUnitaLocale} disabled={isUpdating}>
+
                   {unitaLocali.map((unitaLocale) => (
                     <option key={unitaLocale.id} value={unitaLocale.id}>
                       {unitaLocale.nome}
                     </option>
                   ))}
+
                 </select>
                 <label htmlFor="selectUnitaLocale">Seleziona Unita Locale</label>
               </div>
-              <input type='hidden' value={selectedUnitaLocale.id} name='unitaLocaleId' disabled={!isUpdating} />
+              <input type='hidden' defaultValue={selectedUnitaLocale.id} name='unitaLocaleId' disabled={!isUpdating} />
             </div>
             <div className='col-4 mt-0'>
               <InputFloating name='descrizione' label='Descrizione Registro' type='text' required value={formValues.descrizione} onChange={handleChange} />

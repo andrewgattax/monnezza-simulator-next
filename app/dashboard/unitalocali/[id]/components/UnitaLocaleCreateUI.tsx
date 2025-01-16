@@ -25,10 +25,6 @@ const UnitaLocaleCreateUI: React.FC<UnitaLocaleFormProps> = ({ dbResult, objectI
     setFormData(updatedData); // Keep track of form changes
   };
 
-  const diogay = () => {
-    console.log(formData);
-  }
-
   useEffect(() => {
     setFormData(formData); // dovrebbe forzare un re-render??
   }, [state]);

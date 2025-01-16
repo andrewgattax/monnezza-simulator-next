@@ -5,6 +5,8 @@ import BreadcrumbInjector from "../../../../../components/BreadcrumbInjector";
 import DeleteFormTemplate from "../../../../../components/DeleteFormTemplate";
 import registroServerAction from "../action";
 import { breadcrumb as oldBreadcrumb } from '../../page';
+import { auth } from '../../../../../auth';
+import ErrorMessage from '../../../../../components/ErrorMessage';
 
 export const metadata = {
   title: "Eliminazione Registro · Ri.fiuto",
@@ -25,13 +27,18 @@ export default async function RegistroDelete({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) {
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+
   const paramId = (await params).id;
 
   return (
     <section>
       <BreadcrumbInjector items={breadcrumb} />
-      <DeleteFormTemplate 
-        serverAction={registroServerAction} 
+      <DeleteFormTemplate
+        serverAction={registroServerAction}
         objectId={paramId}
         itemFormalName="registro"
         hrefBack="/dashboard/registri"

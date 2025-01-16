@@ -7,6 +7,7 @@ import { auth } from '../../../../auth';
 import { BreadcrumbItem } from "../../../../components/BreadcrumbContext";
 import BreadcrumbInjector from "../../../../components/BreadcrumbInjector";
 import { breadcrumb as oldBreadcrumb } from '../page';
+import ErrorMessage from '../../../../components/ErrorMessage';
 
 
 export const metadata = {
@@ -41,6 +42,10 @@ export default async function LuoghiProduzioneContainer({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) {
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
   const paramId = (await params).id
   const prisma = new PrismaClient()
 
@@ -52,8 +57,7 @@ export default async function LuoghiProduzioneContainer({
       </section>
     );
   } else {
-    const session = await auth();
-    let luogoProduzione = getLuogoProduzioneByIdAndUser(paramId, session?.user?.id!)
+    let luogoProduzione = getLuogoProduzioneByIdAndUser(paramId, session?.user?.dbId!)
 
     return (
       <section>

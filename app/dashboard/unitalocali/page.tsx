@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import DbLoading from "../../../components/DbLoading";
 import UnitaLocaleTable from "./table";
 import { PrismaClient } from "@prisma/client";
+import ErrorMessage from "../../../components/ErrorMessage";
 
 
 export const metadata = {
@@ -23,7 +24,7 @@ export const breadcrumb: BreadcrumbItem[] = [
   },
   {
     title: "Unità Locali",
-    href: "/dashboard/unitalocale",
+    href: "/dashboard/unitalocali",
     icon: "door-closed-fill",
   },
 ];
@@ -31,7 +32,10 @@ export const breadcrumb: BreadcrumbItem[] = [
 const prisma = new PrismaClient();
 
 export default async function UnitaLocalePage({ searchParams }: { searchParams: { [key: string]: string } }) {
-    const session = await auth();
+  const session = await auth();
+  if(!session){
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
     const data = getUnitaLocaliByUserId(session?.user?.dbId!); //TODO: capire perchè userId è undefined
     return (
       <section>

@@ -5,6 +5,8 @@ import BreadcrumbInjector from "../../../../../components/BreadcrumbInjector";
 import DeleteFormTemplate from "../../../../../components/DeleteFormTemplate";
 import { breadcrumb as oldBreadcrumb } from '../page';
 import unitaLocaleServerAction from '../action';
+import { auth } from '../../../../../auth';
+import ErrorMessage from '../../../../../components/ErrorMessage';
 
 export const metadata = {
   title: "Eliminazione Unita Locale · Ri.fiuto",
@@ -25,13 +27,19 @@ export default async function UnitaLocaleDelete({
 }: {
   params: Promise<{ id: string }>;
 }) {
+
+  const session = await auth();
+  if (!session) {
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+
   const paramId = (await params).id;
 
   return (
     <section>
       <BreadcrumbInjector items={breadcrumb} />
-      <DeleteFormTemplate 
-        serverAction={unitaLocaleServerAction} 
+      <DeleteFormTemplate
+        serverAction={unitaLocaleServerAction}
         objectId={paramId}
         itemFormalName="unita locale"
         hrefBack="/dashboard/unitalocali"

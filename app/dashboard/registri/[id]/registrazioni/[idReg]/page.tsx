@@ -10,6 +10,7 @@ import { breadcrumb as oldBreadcrumb } from '../page';
 import { BreadcrumbItem } from '../../../../../../components/BreadcrumbContext';
 import BreadcrumbInjector from '../../../../../../components/BreadcrumbInjector';
 import { auth } from '../../../../../../auth';
+import ErrorMessage from '../../../../../../components/ErrorMessage';
 
 export const breadcrumb: BreadcrumbItem[] = [
   ...oldBreadcrumb,
@@ -47,6 +48,11 @@ export default async function RegistrazioniContainer({
   params: Promise<{ idReg: string, id: string }>;
 }) {
   const awaitedParams = await params;
+
+  const session = await auth();
+  if (!session) {
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
   const paramId = awaitedParams.idReg
   const registroId = awaitedParams.id
   const prisma = new PrismaClient()
@@ -61,7 +67,6 @@ export default async function RegistrazioniContainer({
       </section>
     );
   } else {
-    const session = await auth();
     let registrazione = getRegistrazioneByIdAndUserId(paramId, session?.user?.id!)
 
     return (

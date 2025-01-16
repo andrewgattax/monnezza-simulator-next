@@ -16,7 +16,6 @@ const SelettoreAttivitaMenoGay: React.FC<SelettoreAttivitaMenoGayProps> = ({ for
             const updatedTipiAttivita = checked
                 ? [...(prevValues.tipiAttivita || []), { attivita: name }]
                 : (prevValues.tipiAttivita || []).filter((t) => t.attivita !== name);
-            /*             console.log(updatedTipiAttivita); */
             return {
                 ...prevValues,
                 tipiAttivita: updatedTipiAttivita,

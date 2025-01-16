@@ -5,6 +5,8 @@ import BreadcrumbInjector from '../../../../../../../components/BreadcrumbInject
 import DeleteFormTemplate from '../../../../../../../components/DeleteFormTemplate';
 import { breadcrumb as oldBreadcrumb } from '../page';
 import registrazioneServerAction from '../action';
+import ErrorMessage from '../../../../../../../components/ErrorMessage';
+import { auth } from '../../../../../../../auth';
 
 export const metadata = {
   title: "Eliminazione Registrazione · Ri.fiuto",
@@ -25,13 +27,19 @@ export default async function RegistrazioneDelete({
 }: {
   params: Promise<{ id: string }>;
 }) {
+
+  const session = await auth();
+  if (!session) {
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+
   const paramId = (await params).id;
 
   return (
     <section>
       <BreadcrumbInjector items={breadcrumb} />
-      <DeleteFormTemplate 
-        serverAction={registrazioneServerAction} 
+      <DeleteFormTemplate
+        serverAction={registrazioneServerAction}
         objectId={paramId}
         itemFormalName="luogo di produzione"
         hrefBack="/dashboard/luoghiproduzione"

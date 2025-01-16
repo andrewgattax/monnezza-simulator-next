@@ -29,7 +29,6 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
   };
 
     const handleSelettoreChange = (updatedData: SelettoreComuniData) => {
-      console.log(updatedData);
       setFormValues({
         ...formValues,
         cap: updatedData.cap || undefined,

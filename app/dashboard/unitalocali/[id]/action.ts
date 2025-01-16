@@ -36,6 +36,17 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
       return { message: 'ID non fornito per l\'aggiornamento' }
     }
 
+    //TODO: PORCATA IMMENSA!!
+    try {
+      if (tipiAttivita && tipiAttivita.length > 0) {
+        tipiAttivita = tipiAttivita.map((attivita: any) => ({
+        ...attivita,
+        codiciRifiuto: []
+        }))
+      }
+    } catch (error) {
+      // non me ne frega un cazzo perche probabilmente sono in delete
+    }
 
     try {
       await prisma.unitaLocale.update({
@@ -68,7 +79,8 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
         where: { id: objectId.toString() }
       })
     } catch (error) {
-      return { message: 'Errore del database durante la rimozione dell\'unita locale' }
+      return { message: 'Errore del database durante la rimozione dell\'unita locale, ' +
+        'verifica che l\'unita locale che stai cercando di rimuovere non abbia registri al suo interno.' }
     }
 
     redirect(`/dashboard/unitalocali`);

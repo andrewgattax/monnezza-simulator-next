@@ -7,9 +7,16 @@ import ErrorMessageCompact from '../../../components/ErrorMessageCompact';
 import ConditionalHider from '../../../components/ConditionalHider';
 import InputFloating from '../../../components/InputFloating';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
 const LuogoProduzioneCreateUI: React.FC = ({ }) => {
   const [state, formAction, pending] = useActionState(changePasswordAction, { message: '' });
+  const { data: session } = useSession();
+
+  if (!session?.user) {
+    return <ErrorMessageCompact message='Sessione non valida' />;
+  }
+  
   return (
     <form action={formAction}>
       <ConditionalHider hidden={!pending}>

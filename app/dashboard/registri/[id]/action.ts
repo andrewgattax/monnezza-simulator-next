@@ -33,14 +33,15 @@ export default async function registroServerAction(prevState: any, formData: For
     return { message: 'Errore durante il recupero dei dati dal form' }
   }
 
-  console.log(formData.get("tipiAttivitaJSON"));
-  console.log(tipiAttivita);
-
   //TODO: COSA MOLTO PORCA, TOGLILA QUANDO PUOI
-  tipiAttivita = tipiAttivita.map((tipo: any) => ({
-    ...tipo,
-    codiciRifiuto: []
-  }));
+  try {
+    tipiAttivita = tipiAttivita.map((tipo: any) => ({
+      ...tipo,
+      codiciRifiuto: []
+    }));
+  } catch (error) {
+    // non me ne frega un cazzo viva il duce
+  }
 
   // TODO: VALIDA QUA I CAMPI!!!
   // TODO: verifica che l'utente sia effettivamente proprietario di quel luogo
@@ -51,8 +52,6 @@ export default async function registroServerAction(prevState: any, formData: For
     if (!objectId) {
       return { message: 'ID non fornito per l\'aggiornamento' }
     }
-
-    console.log(descrizione, progressivoCounter, tipiAttivita);
 
     try {
       await prisma.registro.update({
@@ -86,7 +85,6 @@ export default async function registroServerAction(prevState: any, formData: For
 
     redirect(`/dashboard/registri`);
   }
-
 
   let r: Prisma.RegistroCreateInput = {
     descrizione: descrizione ? descrizione.toString() : "",

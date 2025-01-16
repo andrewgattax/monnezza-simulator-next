@@ -11,6 +11,7 @@ import {auth} from "../../../auth";
 import BreadcrumbInjector from "../../../components/BreadcrumbInjector";
 import { BreadcrumbItem } from "../../../components/BreadcrumbContext";
 import { breadcrumb as oldBreadcrumb } from "../page";
+import ErrorMessage from '../../../components/ErrorMessage';
 
 export const metadata = {
   title: "Gestione Luoghi di Produzione · Ri.fiuto",
@@ -29,7 +30,10 @@ const prisma = new PrismaClient();
 
 export default async function LuoghiProduzionePage({ searchParams }: { searchParams: { [key: string]: string } }) {
   const session = await auth();
-  const data = getLuoghiProduzioneByUserId(session?.user?.id!);
+  if(!session){
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+  const data = getLuoghiProduzioneByUserId(session?.user?.dbId!);
   return (
     <section>
       <BreadcrumbInjector items={breadcrumb}/>

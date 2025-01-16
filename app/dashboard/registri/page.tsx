@@ -36,8 +36,10 @@ const prisma = new PrismaClient();
 
 export default async function RegistriPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   const session = await auth();
+  if(!session){
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
   const unitaLocali = await getUnitaLocaliByUserId(session?.user?.dbId!) 
-  const selectedUnitaLocale = (await searchParams).idUL
   if(unitaLocali.length == 0) {
     return (
       <section>
@@ -47,6 +49,7 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
     )
   }
   let registri: Promise<Registro[]>;
+  const selectedUnitaLocale = (await searchParams).idUL || unitaLocali[0].id;
   try {
     registri = getRegistriByUnitaLocaleId(selectedUnitaLocale);
     if (!registri) {

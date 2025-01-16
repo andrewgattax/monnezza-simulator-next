@@ -28,7 +28,6 @@ const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzio
   };
 
   const handleSelettoreChange = (updatedData: SelettoreComuniData) => {
-    console.log(updatedData);
     setFormValues({
       ...formValues,
       cap: updatedData.cap || undefined,

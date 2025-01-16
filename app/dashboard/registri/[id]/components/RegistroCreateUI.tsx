@@ -1,6 +1,5 @@
 "use client";
-import React, {useActionState, useEffect, useState} from 'react';
-import registroForm from './RegistroForm';
+import React, { useActionState, useEffect, useState } from 'react';
 import IconB from '../../../../../components/IconB';
 import registroServerAction from '../action';
 import DbLoading from '../../../../../components/DbLoading';
@@ -19,30 +18,27 @@ interface RegistroFormProps {
 }
 
 const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId, unitaLocali }) => {
-  const [state, formAction, pending] = useActionState(registroServerAction, {message: ''});
+  const [state, formAction, pending] = useActionState(registroServerAction, { message: '' });
   const initialFormData = dbResult ? use(dbResult) : {};
   const [formData, setFormData] = useState(initialFormData);
 
   const handleFormChange = (updatedData: any) => {
-      setFormData(updatedData); // Keep track of form changes
-    };
-  
-    useEffect(() => {
-      setFormData(formData); // dovrebbe forzare un re-render??
-    }, [state]);
+    setFormData(updatedData); // Keep track of form changes
+  };
 
-    console.log(objectId);
-
+  useEffect(() => {
+    setFormData(formData); // dovrebbe forzare un re-render??
+  }, [state]);
 
   return (
     <form action={formAction}>
-      {dbResult ? <FormAction update/> : <FormAction create/>}
+      {dbResult ? <FormAction update /> : <FormAction create />}
       <ObjectId objectId={objectId} />
       <ConditionalHider hidden={!pending}>
         <DbLoading />
       </ConditionalHider>
       <ConditionalHider hidden={!state.message}>
-        <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
+        <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack />
       </ConditionalHider>
       <RegistroForm registro={formData} onChange={handleFormChange} unitaLocali={unitaLocali} isUpdating={dbResult ? true : false} />
       <ConditionalHider hidden={pending}>

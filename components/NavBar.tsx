@@ -48,6 +48,7 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
           <ul className={`dropdown-menu dropdown-menu-end text-small shadow ${styles.customDropDown}`} data-popper-placement="bottom-end">
             <NavItem href="#" name={session?.user?.email ? session?.user?.email : ""} icon="envelope" disabled />
             <NavItem />
+            <NavItem href="https://gravatar.com/connect/" name="Cambia foto profilo" icon="person" />
             <NavItem href="/changepass" name="Cambia password" icon="key" />
             <NavItem href="/2fa" name="Gestisci 2FA" icon="phone" />
             <NavItem />

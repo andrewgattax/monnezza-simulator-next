@@ -4,8 +4,6 @@ const prisma = new PrismaClient();
 
 export async function getRegistroByIdAndUserId(id: string, userId: string): Promise<Partial<Registro>> {
     
-    console.log(userId);
-
     const registro = await prisma.registro.findUnique({
         where: {
             id: id,
@@ -19,8 +17,6 @@ export async function getRegistroByIdAndUserId(id: string, userId: string): Prom
             unitaLocale: true
         }
     });
-
-    console.log(userId);
 
     if (!registro) {
         throw new Error('Registro non trovato');

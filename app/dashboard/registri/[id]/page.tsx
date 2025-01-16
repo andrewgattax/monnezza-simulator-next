@@ -8,6 +8,7 @@ import { breadcrumb as oldBreadcrumb } from '../page';
 import { BreadcrumbItem } from '../../../../components/BreadcrumbContext';
 import { auth } from '../../../../auth';
 import { getUnitaLocaliByUserId } from '@/dashboard/unitalocali/[id]/database';
+import ErrorMessage from '../../../../components/ErrorMessage';
 
 export const breadcrumb: BreadcrumbItem[] = {
   ...oldBreadcrumb
@@ -44,6 +45,11 @@ export default async function RegistriContainer({
   const paramId = (await params).id
   const prisma = new PrismaClient();
   const session = await auth();
+
+  if(!session){
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+
   const unitaLocali = await getUnitaLocaliByUserId(session?.user?.dbId!);
 
   if (paramId == "new") {
@@ -55,9 +61,7 @@ export default async function RegistriContainer({
 
     );
   } else {
-    const session = await auth();
     let registro = getRegistroByIdAndUserId(paramId, session?.user?.dbId!)
-
     return (
       <section>
         <Suspense fallback={<DbLoading />}>

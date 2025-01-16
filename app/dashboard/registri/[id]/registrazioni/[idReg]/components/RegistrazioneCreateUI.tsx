@@ -41,7 +41,6 @@ const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, tip
   const [formData, setFormData] = useState(initialFormData);
 
   const handleFormChange = (updatedData: any) => {
-    console.log("DATI DAL FORM REGISTRAZIONE: ", updatedData)
     setFormData(updatedData); // Keep track of form changes
   };
 

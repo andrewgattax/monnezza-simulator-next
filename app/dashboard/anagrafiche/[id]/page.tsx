@@ -3,6 +3,9 @@ import React, { Suspense } from 'react'
 import UnitaLocaleCreateUI from './components/UnitaLocaleCreateUI';
 import DbLoading from '../../../../components/DbLoading';
 import { getUnitaLocaleById } from './database';
+import WorkInProgress from '../../../../components/WorkInProgress';
+import { auth } from '../../../../auth';
+import ErrorMessage from '../../../../components/ErrorMessage';
 
 export const metadata = {
   title: "Aggiunta Luogo di Produzione · Ri.fiuto",
@@ -14,20 +17,31 @@ export default async function LuoghiProduzioneContainer({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if(!session){
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+
   const paramId = (await params).id
   const prisma = new PrismaClient()
 
   if (paramId == "new") {
     return (
-      <UnitaLocaleCreateUI />
+      <section>
+        {/* <UnitaLocaleCreateUI /> */}
+        <WorkInProgress />
+      </section>
     );
   } else {
     let unitaLocale = getUnitaLocaleById(paramId)
 
     return (
-      <Suspense fallback={<DbLoading />}>
-        <UnitaLocaleCreateUI dbResult={unitaLocale} />
-      </Suspense>
+      <section>
+        {/* <Suspense fallback={<DbLoading />}>
+          <UnitaLocaleCreateUI dbResult={unitaLocale} />
+        </Suspense> */}
+        <WorkInProgress />
+      </section>
     )
   }
 }
