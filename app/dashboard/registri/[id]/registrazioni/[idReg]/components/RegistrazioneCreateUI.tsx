@@ -10,14 +10,16 @@ import ConditionalHider from '../../../../../../../components/ConditionalHider';
 import DbLoading from '../../../../../../../components/DbLoading';
 import ErrorMessage from '../../../../../../../components/ErrorMessage';
 import IconB from '../../../../../../../components/IconB';
+import CustomObjectId from '../../../../../../../components/CustomObjectId';
 
 interface RegistrazioneFormProps {
   dbResult?: Promise<Partial<Registrazione>>;
   tipiAttivita?: TipoAttivita[];
-  objectId?: string
+  objectId?: string,
+  registroId: string
 }
 
-const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, tipiAttivita, objectId }) => {
+const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, tipiAttivita, objectId, registroId }) => {
   const tipiAttivitaProva: TipoAttivita[] = [
     {
       attivita: AttivitaENUM.INTERMEDIAZIONE,
@@ -50,6 +52,7 @@ const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, tip
   return (
     <form action={formAction}>
       {dbResult ? <FormAction update/> : <FormAction create/>}
+      <CustomObjectId nome='registroId' objectId={registroId} />
       <ObjectId objectId={objectId} />
       <ConditionalHider hidden={!pending}>
         <DbLoading />

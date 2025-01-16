@@ -65,6 +65,16 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     handleChange(e);
   }
 
+  const handleRifiutoChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const updatedRifiuto = { ...formValues.rifiuto, [name]: value ? value : "" };
+    const updatedData = { ...formValues, rifiuto: updatedRifiuto };
+    //TODO: GRANDE PORCATA ma FUNZIONA CAZZO
+    // @ts-ignore
+    setFormValues(updatedData);
+    onChange(updatedData);
+  }
+
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -96,7 +106,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
   const handleEERChange = (d: CodiceEER) => {
     let updatedData = formValues;
     if (updatedData.rifiuto) {
-      updatedData.rifiuto.codiceEER = d.codice;
+      updatedData.rifiuto.codiceEER = d.codice ?? '';
       setFormValues(updatedData);
       onChange(updatedData);
     }
@@ -109,7 +119,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           <div className="row g-2 mt-3">
             <div className="col-12">
               <div className="form-floating">
-                <select className="form-select" id="tipoAttivita" name='tipoAttivita' onChange={handleTipoAttivitaChange} defaultValue="" value={formValues.tipoAttivita ?? undefined} required>
+                <select className="form-select" id="tipoAttivita" name='tipoAttivita' onChange={handleTipoAttivitaChange} value={formValues.tipoAttivita ?? ""} required>
                   <option value="" disabled>Seleziona</option>
                   {tipiAttività.map((tipo) => (
                     <option key={tipo.attivita} value={tipo.attivita}>{enumToName(tipo.attivita)}</option>
@@ -134,8 +144,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             {!formValues.isStoccaggioInstant && (
               <div className='col-4'>
                 <div className="form-floating">
-                  <select className="form-select" id="tipoOperazione" name='tipoOperazione' onChange={handleChangeTipoOperazione} defaultValue=""
-                    value={formValues.tipoAttivita === "TRASPORTO" ? "CaricoEScarico" : formValues.tipoAttivita === "INTERMEDIAZIONE" ? "SCARICO" : formValues.tipoOperazione}
+                  <select className="form-select" id="tipoOperazione" name='tipoOperazione' onChange={handleChangeTipoOperazione}
+                    value={formValues.tipoAttivita === "TRASPORTO" ? "CaricoEScarico" : formValues.tipoAttivita === "INTERMEDIAZIONE" ? "SCARICO" : formValues.tipoOperazione ? formValues.tipoOperazione : ""}
                     disabled={formValues.tipoAttivita === "TRASPORTO" || formValues.tipoAttivita === "INTERMEDIAZIONE"}>
 
                     <option value="CaricoEScarico" hidden>Carico & Scarico</option>
@@ -151,8 +161,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             {!formValues.isStoccaggioInstant && (
               <div className='col-4'>
                 <div className="form-floating">
-                  <select className="form-select" id="causaleOperazione" name='causaleOperazione' onChange={handleChange} defaultValue=""
-                    value={formValues.tipoAttivita === "TRASPORTO" ? "tAT" : formValues.tipoAttivita === "INTERMEDIAZIONE" ? "TRI" : formValues.causaleOperazione}
+                  <select className="form-select" id="causaleOperazione" name='causaleOperazione' onChange={handleChange}
+                    value={formValues.tipoAttivita === "TRASPORTO" ? "tAT" : formValues.tipoAttivita === "INTERMEDIAZIONE" ? "TRI" : formValues.causaleOperazione ? formValues.causaleOperazione : ""}
                     disabled={formValues.tipoAttivita === "TRASPORTO" || formValues.tipoAttivita === "INTERMEDIAZIONE"}>
                     <option value="" disabled>Seleziona</option>
                     <option value="TRI" hidden>TR - Intermediario</option>
@@ -184,11 +194,11 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
         <AccordionItem parentId='registrazione' title='Identificazione del rifiuto'>
           <div className="row g-2 mt-2">
             <div className="col-8">
-              <EERSelectorFormComponent data={formValues.rifiuto?.codiceEER} onChange={handleEERChange}/>
+              <EERSelectorFormComponent data={formValues.rifiuto?.codiceEER} onChange={handleEERChange} />
             </div>
             <div className="col-4">
               <div className="form-floating">
-                <select className="form-select" id="provenienzaRifiuto" name='provenienzaRifiuto' onChange={handleChange} defaultValue="" value={formValues.rifiuto?.provenienzaRifiuto ?? ""} required disabled={formValues.tipoAttivita === "INTERMEDIAZIONE"}>
+                <select className="form-select" id="provenienzaRifiuto" name='provenienzaRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.provenienzaRifiuto ?? ""} required disabled={formValues.tipoAttivita === "INTERMEDIAZIONE"}>
                   <option value="" disabled>Seleziona</option>
                   {Object.values(ProvenienzaRifiuto).map((provenienza) => (
                     <option key={provenienza} value={provenienza}>{enumToName(provenienza)}</option>
@@ -200,11 +210,11 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           </div>
           <div className="row g-2 mt-2">
             <div className="col-8">
-              <InputFloating name='descrizioneRifiuto' label='Descrizione' type='text' onChange={handleChange} value={formValues.rifiuto?.descrizione ?? undefined} disabled />
+              <InputFloating name='descrizioneRifiuto' label='Descrizione' type='text' onChange={handleRifiutoChange} value={formValues.rifiuto?.descrizione ?? undefined} disabled />
             </div>
             <div className="col-4">
               <div className="form-floating">
-                <select className="form-select" id="pericoloRifiuto" name='pericoloRifiuto' onChange={handleChange} defaultValue="" value={formValues.rifiuto?.pericoloRifiuto ?? ""} disabled >
+                <select className="form-select" id="pericoloRifiuto" name='pericoloRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.pericoloRifiuto ?? ""} disabled >
                   <option value="">Seleziona</option>
                   {Object.values(PericoloRifiuto).map((pericolo) => (
                     <option key={pericolo} value={pericolo}>{enumToName(pericolo)}</option>
@@ -217,7 +227,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           <div className="row g-2 mt-2">
             <div className="col-4">
               <div className="form-floating">
-                <select className="form-select" id="statoFisico" name='statoFisico' onChange={handleChange} defaultValue="" value={formValues.rifiuto?.statoFisicoRifiuto} required>
+                <select className="form-select" id="statoFisico" name='statoFisico' onChange={handleRifiutoChange} value={formValues.rifiuto?.statoFisicoRifiuto} required>
                   <option value="" disabled>Seleziona</option>
                   {Object.values(StatoFisicoRifiuto).map((statoFisico) => (
                     <option key={statoFisico} value={statoFisico}>{enumToName(statoFisico)}</option>
@@ -227,11 +237,11 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               </div>
             </div>
             <div className="col-3">
-              <InputFloating label='Quantità (*)' type='number' name='quantita' onChange={handleChange} required value={formValues.rifiuto?.quantita?.toString()} />
+              <InputFloating label='Quantità (*)' type='number' name='quantita' onChange={handleRifiutoChange} required value={formValues.rifiuto?.quantita?.toString() ?? ""} />
             </div>
             <div className="col-1">
               <div className="form-floating">
-                <select className="form-select" id="unitaMisura" name='unitaMisura' onChange={handleChange} defaultValue="" value={formValues.rifiuto?.unitaDiMisura} required>
+                <select className="form-select" id="unitaMisura" name='unitaMisura' onChange={handleRifiutoChange} value={formValues.rifiuto?.unitaDiMisura} required>
                   <option value="" disabled>Seleziona</option>
                   {Object.values(UnitaMisura).map((unitaMisura) => (
                     <option key={unitaMisura} value={unitaMisura}>{unitaMisura}</option>
@@ -242,7 +252,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             </div>
             <div className="col-4">
               <div className="form-floating">
-                <select className="form-select" id="destinazioneRifiuto" name='destinazioneRifiuto' onChange={handleChange} defaultValue="" value={formValues.rifiuto?.unitaDiMisura} required disabled={formValues.tipoOperazione === "CARICO"}>
+                <select className="form-select" id="destinazioneRifiuto" name='destinazioneRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.destinazioneRifiuto ?? ""} required disabled={formValues.tipoOperazione === "CARICO"}>
                   <option value="" disabled>Seleziona</option>
                   {Object.values(CodiceAttivita).map((destinazioneRifiuto) => (
                     <option key={destinazioneRifiuto} value={destinazioneRifiuto}>{enumToName(destinazioneRifiuto)}</option>
@@ -256,7 +266,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             <div className="row g-2 mt-3">
               <div className="col-4">
                 <div className="form-floating">
-                  <select className="form-select" id="categoriaRAEE" name='categoriaRAEE' onChange={handleChange} defaultValue="" value={formValues.rifiuto?.categoriaRAAE ?? undefined}>
+                  <select className="form-select" id="categoriaRAEE" name='categoriaRAEE' onChange={handleRifiutoChange} value={formValues.rifiuto?.categoriaRAAE ?? undefined}>
                     <option value="" disabled>Seleziona</option>
                     {Object.values(CategoriaRAEE).map((categoriaRAAE) => (
                       <option key={categoriaRAAE} value={categoriaRAAE}>{categoriaRAAE}</option>
@@ -300,7 +310,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               {formValues.trasportoFrontaliero && (
                 <div className="col-2">
                   <div className="form-floating">
-                    <select className="form-select" id="tipoTrasporto" name='tipoTrasporto' onChange={handleChange} defaultValue="" value={formValues.tipoTrasportoFrontaliero ?? undefined} disabled={!formValues.isIntegratoFIR}>
+                    <select className="form-select" id="tipoTrasporto" name='tipoTrasporto' onChange={handleChange} value={formValues.tipoTrasportoFrontaliero ?? undefined} disabled={!formValues.isIntegratoFIR}>
                       <option value="" disabled>Seleziona</option>
                       {Object.values(TipoTrasportoFrontaliero).map((tipoTrasporto) => (
                         <option key={tipoTrasporto} value={tipoTrasporto}>{enumToName(tipoTrasporto)}</option>
@@ -339,7 +349,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="row g-2 mt-2">
                 <div className="col-4">
                   <div className="form-floating">
-                    <select className="form-select" id="tipologiaRespingimento" name='tipologiaRespingimento' onChange={handleChange} defaultValue="" value={formValues.tipologiaRespingimento ?? undefined}>
+                    <select className="form-select" id="tipologiaRespingimento" name='tipologiaRespingimento' onChange={handleChange} value={formValues.tipologiaRespingimento ?? undefined}>
                       <option value="" disabled>Seleziona</option>
                       {Object.values(TipologiaRespingimento).map((tipologia) => (
                         <option key={tipologia} value={tipologia}>{enumToName(tipologia)}</option>
@@ -353,7 +363,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                 </div>
                 <div className="col-4">
                   <div className="form-floating">
-                    <select className="form-select" id="unitaDiMisuraRespingimento" name='unitaDiMisuraRespingimento' onChange={handleChange} defaultValue="" value={formValues.unitaDiMisuraRespingimento ?? undefined}>
+                    <select className="form-select" id="unitaDiMisuraRespingimento" name='unitaDiMisuraRespingimento' onChange={handleChange} value={formValues.unitaDiMisuraRespingimento ?? undefined}>
                       <option value="" disabled>Seleziona</option>
                       {Object.values(UnitaMisura).map((unita) => (
                         <option key={unita} value={unita}>{enumToName(unita)}</option>
@@ -366,7 +376,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="row g-2 mt-2">
                 <div className="col-4">
                   <div className="form-floating">
-                    <select className="form-select" id="causaleRespingimento" name='causaleRespingimento' onChange={handleChange} defaultValue="" value={formValues.causaleRespingimento ?? undefined}>
+                    <select className="form-select" id="causaleRespingimento" name='causaleRespingimento' onChange={handleChange} value={formValues.causaleRespingimento ?? undefined}>
                       <option value="" disabled>Seleziona</option>
                       {Object.values(CausaleRespingimento).map((causale) => (
                         <option key={causale} value={causale}>{enumToName(causale)}</option>

@@ -43,14 +43,14 @@ const EERSelectorFormComponent: React.FC<EERSelectorFormComponentProps> = ({ dat
 
   return(
     <section>
-      <input type='hidden' name='codiceEER' value={selectedData?.codice} />
+      <input type='hidden' name='codiceEER' defaultValue={selectedData?.codice} />
       <div className="row mb-2 g-2">
         <div className='col'>
           <InputFloating
             type="text"
             name='codiceEER'
             label="Codice EER"
-            value={
+            defaultValue={
               selectedData ?
               `${selectedData?.codice} - ${selectedData?.descrizione}` :
               ""

@@ -23,9 +23,19 @@ export async function getRegistrazioneByIdAndUserId(id: string, userId: string):
     return registrazione!;
 }
 
-export async function getLuoghiProduzioneByRegistroId(registroId: string): Promise<Registrazione[]> {
+export async function getRegistrazioniByRegistroIdAndUserId(registroId: string, userId: string): Promise<Registrazione[]> {
     const registrazione = await prisma.registrazione.findMany({
-        where: { registroId: registroId },
+        where: {
+            registroId: registroId,
+            registro: {
+                unitaLocale: {
+                    OR: [
+                        { proprietarioId: userId },
+                        { utentiDelegatiId: { has: userId } }
+                    ]
+                }
+            }
+        },
     });
     return registrazione;
 }

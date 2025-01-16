@@ -44,9 +44,11 @@ export const breadcrumbModifica: BreadcrumbItem[] = [
 export default async function RegistrazioniContainer({
   params,
 }: {
-  params: Promise<{ idReg: string }>;
+  params: Promise<{ idReg: string, id: string }>;
 }) {
-  const paramId = (await params).idReg
+  const awaitedParams = await params;
+  const paramId = awaitedParams.idReg
+  const registroId = awaitedParams.id
   const prisma = new PrismaClient()
 
   //TODO: get tipi attivita da registro in utilizzo
@@ -54,8 +56,8 @@ export default async function RegistrazioniContainer({
   if (paramId == "new") {
     return (
       <section>
-        <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <RegistrazioneCreateUI />
+        {/* <BreadcrumbInjector items={breadcrumbAggiungi} /> */}
+        <RegistrazioneCreateUI registroId={registroId}/>
       </section>
     );
   } else {
@@ -66,7 +68,7 @@ export default async function RegistrazioniContainer({
       <section>
         <BreadcrumbInjector items={breadcrumbModifica} />
         <Suspense fallback={<DbLoading />}>
-          <RegistrazioneCreateUI dbResult={registrazione} />
+          <RegistrazioneCreateUI registroId={registroId} dbResult={registrazione} />
         </Suspense>
       </section>
 

@@ -93,12 +93,14 @@ model Registro {
   tipiAttivita       TipoAttivita[]
   unitaLocale        UnitaLocale     @relation(fields: [unitaLocaleId], references: [id])
   unitaLocaleId      String          @db.ObjectId
-  registrazioni      Registrazione[] 
+  registrazioni      Registrazione[]
 }
 
 model Registrazione {
   id                                   String                    @id @default(auto()) @map("_id") @db.ObjectId
+  progressivo                          Int
   dataOraRegistrazione                 DateTime
+  isTrasmessa                          Boolean                   @default(false)
   tipoOperazione                       TipoOperazione
   tipoAttivita                         AttivitaENUM
   causaleOperazione                    CausaleOperazione

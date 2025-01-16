@@ -43,3 +43,7 @@ body {
 .mr-1 {
     margin-right: 6px;
 }
+
+.custom-dashcard {
+    background-color: #f8f8f8;
+}
