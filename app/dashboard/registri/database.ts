@@ -3,20 +3,24 @@ import { PrismaClient, Registro } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function getRegistroByIdAndUserId(id: string, userId: string): Promise<Partial<Registro>> {
+    
+    console.log(userId);
+
     const registro = await prisma.registro.findUnique({
         where: {
-            id: id
+            id: id,
+            OR: [
+                { unitaLocale: { proprietarioId: userId } },
+                { unitaLocale: { utentiDelegati: { some: { id: userId } } } }
+                //TODO: CONTROLLARE SE FUNZIONA QUANDO ABBIAMO FATTO DELEGATI
+            ]
         },
         include: {
             unitaLocale: true
         }
     });
 
-    if (registro?.unitaLocale?.proprietarioId !== userId) {
-        throw new Error('Utente non autorizzato');
-    } else if (!(registro.unitaLocale.utentiDelegatiId.includes(userId))) {
-        throw new Error('Utente non autorizzato');
-    }
+    console.log(userId);
 
     if (!registro) {
         throw new Error('Registro non trovato');

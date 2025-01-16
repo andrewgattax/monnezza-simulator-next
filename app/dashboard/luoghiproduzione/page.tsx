@@ -1,7 +1,5 @@
-import Link from "next/link";
-import { SelettoreComuniData } from "../../../components/SelettoreComuni";
-import SelettoreComuniModal from "../../../components/SelettoreComuniModal";
-import { PrismaClient, LuogoProduzione, Prisma } from '@prisma/client'
+
+import { PrismaClient } from '@prisma/client'
 import { Suspense } from "react";
 import DbLoading from "../../../components/DbLoading";
 import { toast } from "react-toastify";
@@ -12,22 +10,19 @@ import { getLuoghiProduzioneByUserId } from "./database";
 import {auth} from "../../../auth";
 import BreadcrumbInjector from "../../../components/BreadcrumbInjector";
 import { BreadcrumbItem } from "../../../components/BreadcrumbContext";
+import { breadcrumb as oldBreadcrumb } from "../page";
 
 export const metadata = {
   title: "Gestione Luoghi di Produzione · Ri.fiuto",
 }
 
 export const breadcrumb: BreadcrumbItem[] = [
-  {
-    title: "Dashboard",
-    href: "/dashboard",
-    icon: "house",
-  },
+  ...oldBreadcrumb,
   {
     title: "Luoghi di Produzione",
     href: "/dashboard/luoghiproduzione",
     icon: "postcard",
-  },
+  }
 ];
 
 const prisma = new PrismaClient();

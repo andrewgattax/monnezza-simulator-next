@@ -6,18 +6,19 @@ import registroServerAction from '../action';
 import DbLoading from '../../../../../components/DbLoading';
 import ErrorMessage from '../../../../../components/ErrorMessage';
 import ConditionalHider from '../../../../../components/ConditionalHider';
-import { Registro } from '@prisma/client';
+import { Registro, UnitaLocale } from '@prisma/client';
 import { use } from 'react';
 import FormAction from '../../../../../components/FormAction';
 import RegistroForm from './RegistroForm';
 import ObjectId from '../../../../../components/ObjectId';
 
 interface RegistroFormProps {
+  unitaLocali: UnitaLocale[]
   dbResult?: Promise<Partial<Registro>>;
   objectId?: string;
 }
 
-const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId }) => {
+const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId, unitaLocali }) => {
   const [state, formAction, pending] = useActionState(registroServerAction, {message: ''});
   const initialFormData = dbResult ? use(dbResult) : {};
   const [formData, setFormData] = useState(initialFormData);
@@ -30,6 +31,8 @@ const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId }) =
       setFormData(formData); // dovrebbe forzare un re-render??
     }, [state]);
 
+    console.log(objectId);
+
 
   return (
     <form action={formAction}>
@@ -41,7 +44,7 @@ const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId }) =
       <ConditionalHider hidden={!state.message}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
       </ConditionalHider>
-      <RegistroForm registro={formData} onChange={handleFormChange}/>
+      <RegistroForm registro={formData} onChange={handleFormChange} unitaLocali={unitaLocali} isUpdating={dbResult ? true : false} />
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>

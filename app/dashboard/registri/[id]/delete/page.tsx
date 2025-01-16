@@ -4,13 +4,13 @@ import { BreadcrumbItem } from "../../../../../components/BreadcrumbContext";
 import BreadcrumbInjector from "../../../../../components/BreadcrumbInjector";
 import DeleteFormTemplate from "../../../../../components/DeleteFormTemplate";
 import registroServerAction from "../action";
-import { breadcrumb as oldBreadcrumb } from '../page';
+import { breadcrumb as oldBreadcrumb } from '../../page';
 
 export const metadata = {
   title: "Eliminazione Registro · Ri.fiuto",
 };
 
-const breadcrumb: BreadcrumbItem[] = [
+export const breadcrumb: BreadcrumbItem[] = [
   ...oldBreadcrumb,
   {
     title: "Elimina",

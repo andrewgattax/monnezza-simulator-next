@@ -1,5 +1,5 @@
 "use client";
-import React, {useActionState, useEffect, useState} from 'react';
+import React, { useActionState, useEffect, useState } from 'react';
 import UnitaLocaleForm from "./UnitaLocaleForm"
 import IconB from '../../../../../components/IconB';
 import unitaLocaleServerAction from '../action';
@@ -17,29 +17,33 @@ interface UnitaLocaleFormProps {
 }
 
 const UnitaLocaleCreateUI: React.FC<UnitaLocaleFormProps> = ({ dbResult, objectId }) => {
-  const [state, formAction, pending] = useActionState(unitaLocaleServerAction, {message: ''});
+  const [state, formAction, pending] = useActionState(unitaLocaleServerAction, { message: '' });
   const initialFormData = dbResult ? use(dbResult) : {};
-    const [formData, setFormData] = useState(initialFormData);
+  const [formData, setFormData] = useState(initialFormData);
 
-    const handleFormChange = (updatedData: any) => {
-      setFormData(updatedData); // Keep track of form changes
-    };
+  const handleFormChange = (updatedData: any) => {
+    setFormData(updatedData); // Keep track of form changes
+  };
 
-      useEffect(() => {
-        setFormData(formData); // dovrebbe forzare un re-render??
-      }, [state]);
- 
+  const diogay = () => {
+    console.log(formData);
+  }
+
+  useEffect(() => {
+    setFormData(formData); // dovrebbe forzare un re-render??
+  }, [state]);
+
   return (
     <form action={formAction}>
-      {dbResult ? <FormAction update/> : <FormAction create/>}
+      {dbResult ? <FormAction update /> : <FormAction create />}
       <ObjectId objectId={objectId} />
       <ConditionalHider hidden={!pending}>
         <DbLoading />
       </ConditionalHider>
       <ConditionalHider hidden={!state.message}>
-        <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
+        <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack />
       </ConditionalHider>
-      <UnitaLocaleForm unitaLocale={formData} onChange={handleFormChange}/>
+      <UnitaLocaleForm unitaLocale={formData} onChange={handleFormChange} />
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>

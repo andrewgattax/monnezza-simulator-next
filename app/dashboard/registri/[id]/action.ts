@@ -20,56 +20,55 @@ export default async function registroServerAction(prevState: any, formData: For
     return { message: "Errore durante il recupero dei dati" }
   }
 
-  /*
-  let objectId, action, nome, indirizzo, civico, cap, comune, provincia, regione, nazione;
+  let descrizione, progressivoCounter, tipiAttivita, unitaLocaleId;
+
+
   try {
     action = formData.get('action')
-    nome = formData.get('nome')
-    indirizzo = formData.get('indirizzo')
-    civico = formData.get('civico')
-    cap = formData.get('cap')
-    comune = formData.get('comune')
-    provincia = formData.get('provincia')
-    regione = formData.get('regione')
-    nazione = formData.get('nazione')
+    descrizione = formData.get("descrizione")
+    progressivoCounter = formData.get("progressivoCounter")
+    tipiAttivita = JSON.parse(formData.get("tipiAttivitaJSON") as string)
+    unitaLocaleId = formData.get("unitaLocaleId");
   } catch (error) {
     return { message: 'Errore durante il recupero dei dati dal form' }
   }
-    */
+
+  console.log(formData.get("tipiAttivitaJSON"));
+  console.log(tipiAttivita);
+
+  //TODO: COSA MOLTO PORCA, TOGLILA QUANDO PUOI
+  tipiAttivita = tipiAttivita.map((tipo: any) => ({
+    ...tipo,
+    codiciRifiuto: []
+  }));
 
   // TODO: VALIDA QUA I CAMPI!!!
   // TODO: verifica che l'utente sia effettivamente proprietario di quel luogo
+  // TODO: METTI IL CREATED AT E UPDATEDAT A TUTTI
 
-  /*
-  
-    if (action === 'update') {
-      objectId = formData.get('objectId')
-      if (!objectId) {
-        return { message: 'ID non fornito per l\'aggiornamento' }
-      }
-  
-      try {
-        await prisma.luogoProduzione.update({
+  if (action === 'update') {
+    objectId = formData.get('objectId')
+    if (!objectId) {
+      return { message: 'ID non fornito per l\'aggiornamento' }
+    }
+
+    console.log(descrizione, progressivoCounter, tipiAttivita);
+
+    try {
+      await prisma.registro.update({
         where: { id: objectId.toString() },
         data: {
-          nome: nome ? nome.toString() : "",
-          indirizzo: indirizzo ? indirizzo.toString() : "",
-          civico: civico ? civico.toString() : "",
-          cap: cap ? cap.toString() : "",
-          comune: comune ? comune.toString() : "",
-          provincia: provincia ? provincia.toString() : "",
-          regione: regione ? regione.toString() : "",
-          nazione: nazione ? nazione.toString() : "",
+          descrizione: descrizione ? descrizione.toString() : "",
+          progressivoCounter: progressivoCounter ? parseInt(progressivoCounter.toString(), 10) : 0,
+          tipiAttivita: tipiAttivita ? tipiAttivita : []
         },
-        });
-      } catch (error) {
-        return { message: 'Errore del database durante l\'aggiornamento del luogo di produzione' }
-      }
-  
-      redirect(`/dashboard/luoghiproduzione`);
+      });
+    } catch (error) {
+      return { message: 'Errore del database durante l\'aggiornamento del registro' }
     }
-  
-    */
+
+    redirect(`/dashboard/registri`);
+  }
 
   if (action === 'remove') {
     objectId = formData.get('objectId')
@@ -88,31 +87,27 @@ export default async function registroServerAction(prevState: any, formData: For
     redirect(`/dashboard/registri`);
   }
 
-  /*
-  let lp: Prisma.LuogoProduzioneCreateInput = {
-    nome: nome ? nome.toString() : "",
-    indirizzo: indirizzo ? indirizzo.toString() : "",
-    civico: civico ? civico.toString() : "",
-    cap: cap ? cap.toString() : "",
-    comune: comune ? comune.toString() : "",
-    provincia: provincia ? provincia.toString() : "",
-    regione: regione ? regione.toString() : "",
-    nazione: nazione ? nazione.toString() : "",
-    utente: {
+
+  let r: Prisma.RegistroCreateInput = {
+    descrizione: descrizione ? descrizione.toString() : "",
+    progressivoCounter: progressivoCounter ? parseInt(progressivoCounter.toString(), 10) : 0,
+    tipiAttivita: tipiAttivita ? tipiAttivita : [],
+    isAttivo: true,
+    unitaLocale: {
       connect: {
-        id: session.user.dbId
+        id: unitaLocaleId?.toString()
       }
     }
   }
 
   try {
-    await prisma.luogoProduzione.create({
-      data: lp,
+    await prisma.registro.create({
+      data: r,
     });
   } catch (error) {
     return { message: 'Errore del database durante la creazione del luogo di produzione' }
   }
-*/
+
   redirect(`/dashboard/registri`);
-  
+
 }

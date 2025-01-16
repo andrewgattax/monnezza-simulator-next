@@ -1,7 +1,9 @@
+
+
 import Link from "next/link";
 import { breadcrumb as oldBreadcrumb } from "../page";
 import { BreadcrumbItem } from "../../../components/BreadcrumbContext";
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient, UnitaLocale } from "@prisma/client";
 import { auth } from "../../../auth";
 import { getRegistriByUnitaLocaleId } from "./database";
 import BreadcrumbInjector from "../../../components/BreadcrumbInjector";
@@ -11,6 +13,11 @@ import { Suspense } from "react";
 import DbLoading from "../../../components/DbLoading";
 import { Registro } from "@prisma/client";
 import RegistroTable from "./table";
+import { getUnitaLocaliByUserId } from "../unitalocali/[id]/database";
+import SelettoreUnitaPerRegistro from "./SelettoreUnitaPerRegistro";
+import ErrorMessage from "../../../components/ErrorMessage";
+import NoResult from "../../../components/NoResult";
+import { revalidatePath } from "next/cache";
 
 export const breadcrumb: BreadcrumbItem[] = [
   ...oldBreadcrumb,
@@ -28,24 +35,36 @@ export const metadata = {
 const prisma = new PrismaClient();
 
 export default async function RegistriPage({ searchParams }: { searchParams: { [key: string]: string } }) {
-  /*
   const session = await auth();
-  const data = getRegistriByUnitaLocaleId()
-  */
-  //TODO: UNITA LOCALE ID (in sessione o nel link?)
-  const tempData: Registro[] = [];
+  const unitaLocali = await getUnitaLocaliByUserId(session?.user?.dbId!) 
+  const selectedUnitaLocale = (await searchParams).idUL
+  if(unitaLocali.length == 0) {
+    return (
+      <section>
+        <BreadcrumbInjector items={breadcrumb} />
+        <NoResult formalItemName="unita locale" sesso="f" />
+      </section>
+    )
+  }
+  let registri: Promise<Registro[]>;
+  try {
+    registri = getRegistriByUnitaLocaleId(selectedUnitaLocale);
+    if (!registri) {
+      registri = getRegistriByUnitaLocaleId(unitaLocali[0].id);
+    }
+  } catch (error) {
+    registri = getRegistriByUnitaLocaleId(unitaLocali[0].id);
+  }
+
   return (
     <section>
       <BreadcrumbInjector items={breadcrumb} />
       <ConditionalHider hidden={(await searchParams).success != "1"}>
         <SuccessfulOperationToast />
       </ConditionalHider>
-      <Suspense fallback={<DbLoading />}>
-      {/*<RegistroTable dataPromise={tempData} />*/}
-      <h1>Da implenentare</h1>
-      {
-        //TODO: Pronto con dataPromise sopra
-      }       
+      <SelettoreUnitaPerRegistro unitaLocali={unitaLocali} selectedId={selectedUnitaLocale} />
+      <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={selectedUnitaLocale}>
+        <RegistroTable dataPromise={registri}/>
       </Suspense>
     </section>
   );

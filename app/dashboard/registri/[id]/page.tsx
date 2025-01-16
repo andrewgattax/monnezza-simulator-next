@@ -7,6 +7,7 @@ import BreadcrumbInjector from "../../../../components/BreadcrumbInjector";
 import { breadcrumb as oldBreadcrumb } from '../page';
 import { BreadcrumbItem } from '../../../../components/BreadcrumbContext';
 import { auth } from '../../../../auth';
+import { getUnitaLocaliByUserId } from '@/dashboard/unitalocali/[id]/database';
 
 export const breadcrumb: BreadcrumbItem[] = {
   ...oldBreadcrumb
@@ -41,25 +42,27 @@ export default async function RegistriContainer({
   params: Promise<{ id: string }>;
 }) {
   const paramId = (await params).id
-  const prisma = new PrismaClient()
+  const prisma = new PrismaClient();
+  const session = await auth();
+  const unitaLocali = await getUnitaLocaliByUserId(session?.user?.dbId!);
 
   if (paramId == "new") {
     return (
       <section>
         <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <RegistroCreateUI />
+        <RegistroCreateUI unitaLocali={unitaLocali}/>
       </section>
 
     );
   } else {
     const session = await auth();
-    let registro = getRegistroByIdAndUserId(paramId, session?.user?.id!)
+    let registro = getRegistroByIdAndUserId(paramId, session?.user?.dbId!)
 
     return (
       <section>
         <Suspense fallback={<DbLoading />}>
           <BreadcrumbInjector items={breadcrumbModifica} />
-          <RegistroCreateUI dbResult={registro} />
+          <RegistroCreateUI unitaLocali={unitaLocali} dbResult={registro} objectId={paramId} />
         </Suspense>
       </section>
 

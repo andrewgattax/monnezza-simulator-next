@@ -11,7 +11,7 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
     return { message: "Sessione non valida, riautenticarsi" }
   }
 
-  let objectId, action, nome, indirizzo, n_civico, cap, nazione, comune, provincia, regione;
+  let objectId, action, nome, indirizzo, n_civico, cap, nazione, comune, provincia, regione, tipiAttivita;
 
   try {
     action = formData.get("action")
@@ -24,9 +24,11 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
     comune = formData.get("comune")
     provincia = formData.get("provincia")
     regione = formData.get("regione")
+    tipiAttivita = JSON.parse(formData.get("tipiAttivitaJSON") as string)
   } catch (error) {
     return { message: 'Errore durante il recupero dei dati dal form' }
   }
+
 
   if (action === "update") {
     objectId = formData.get('objectId')
@@ -47,6 +49,7 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
           comune: comune ? comune.toString() : "",
           provincia: provincia ? provincia.toString() : "",
           regione: regione ? regione.toString() : "",
+          tipiAttivita: tipiAttivita ? tipiAttivita : []
         }
       })
     } catch (error) {
@@ -55,7 +58,7 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
 
     redirect(`/dashboard/unitalocali`);
 
-  } else if (action === "delete") {
+  } else if (action === "remove") {
     objectId = formData.get('objectId')
     if (!objectId) {
       return { message: 'ID non fornito per l\'aggiornamento' }
@@ -80,7 +83,8 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
       comune: comune ? comune.toString() : "",
       provincia: provincia ? provincia.toString() : "",
       regione: regione ? regione.toString() : "",
-      proprietario: { connect: { id: session.user.dbId } }
+      proprietario: { connect: { id: session.user.dbId } },
+      tipiAttivita: tipiAttivita ? tipiAttivita : []
     }
 
     try {

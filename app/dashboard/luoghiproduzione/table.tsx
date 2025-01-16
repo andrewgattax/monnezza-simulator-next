@@ -72,6 +72,11 @@ const LuogoProduzioneTable: React.FC<LuogoProduzioneTableProps> = ({ dataPromise
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  const router = useRouter();
+  const handleNew = () => {
+    router.push(`/dashboard/luoghiproduzione/new`);
+  }
+
   return (
     <div className="mt-3">
       <table className="table table-striped table-bordered table-hover">
@@ -160,19 +165,29 @@ const LuogoProduzioneTable: React.FC<LuogoProduzioneTableProps> = ({ dataPromise
         </div>
 
         <div className="col col-auto mt-1 mb-1">
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-            className="form-select form-select-sm"
-          >
-            {[5, 10, 20].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Mostra {pageSize} elementi
-              </option>
-            ))}
-          </select>
+          <div className="row g-2">
+            <div className="col col-auto">
+              <button onClick={handleNew} className="btn btn-sm btn-outline-secondary d-flex flex-row">
+                <IconB iconName="plus-square" />
+                Aggiungi nuovo
+              </button>
+            </div>
+            <div className="col col-auto">
+              <select
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+                className="form-select form-select-sm"
+              >
+                {[5, 10, 20].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Mostra {pageSize} elementi
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
       </div>
 

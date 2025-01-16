@@ -20,7 +20,7 @@ export const breadcrumbAggiungi: BreadcrumbItem[] = [
   ...oldBreadcrumb,
   {
     title: "Aggiungi",
-    href: "/dashboard/luoghiproduzione/new",
+    href: "/dashboard/unitalocali/new",
     icon: "plus-circle",
   },
 ];
@@ -29,13 +29,13 @@ export const breadcrumbModifica: BreadcrumbItem[] = [
   ...oldBreadcrumb,
   {
     title: "Modifica",
-    href: "/dashboard/luoghiproduzione/[id]",
+    href: "/dashboard/unitalocali/[id]",
     icon: "pencil-square",
   },
 ];
 
 // PAGINA
-export default async function LuoghiProduzioneContainer({
+export default async function UnitaLocaleContainer({
   params,
 }: {
   params: Promise<{ id: string }>;

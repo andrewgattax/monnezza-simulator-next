@@ -8,6 +8,7 @@ import SuccessfulOperationToast from "../../../components/SuccessfulOperationToa
 import { Suspense } from "react";
 import DbLoading from "../../../components/DbLoading";
 import UnitaLocaleTable from "./table";
+import { PrismaClient } from "@prisma/client";
 
 
 export const metadata = {
@@ -21,15 +22,17 @@ export const breadcrumb: BreadcrumbItem[] = [
     icon: "house",
   },
   {
-    title: "Luoghi di Produzione",
+    title: "Unità Locali",
     href: "/dashboard/unitalocale",
     icon: "door-closed-fill",
   },
 ];
 
+const prisma = new PrismaClient();
+
 export default async function UnitaLocalePage({ searchParams }: { searchParams: { [key: string]: string } }) {
     const session = await auth();
-    const data = getUnitaLocaliByUserId(session?.user?.id!); //TODO: capire perchè userId è undefined
+    const data = getUnitaLocaliByUserId(session?.user?.dbId!); //TODO: capire perchè userId è undefined
     return (
       <section>
         <BreadcrumbInjector items={breadcrumb}/>

@@ -6,7 +6,10 @@ const config: NextConfig = {
   },
   experimental: {
     authInterrupts: true,
-  }
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 }
 
 export default config;

@@ -88,11 +88,12 @@ model Registro {
   descrizione        String
   isAttivo           Boolean
   createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @default(now())
   progressivoCounter Int
   tipiAttivita       TipoAttivita[]
   unitaLocale        UnitaLocale     @relation(fields: [unitaLocaleId], references: [id])
   unitaLocaleId      String          @db.ObjectId
-  registrazioni      Registrazione[]
+  registrazioni      Registrazione[] 
 }
 
 model Registrazione {

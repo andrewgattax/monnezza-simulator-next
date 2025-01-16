@@ -32,10 +32,6 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
   // Define columns with strict typing
   const columns: ColumnDef<Registro>[] = [
     {
-      accessorKey: 'nome',
-      header: 'Nome',
-    },
-    {
       id: 'descrizione',
       header: 'Descrizione',
       cell: ({ row }) => {
@@ -52,12 +48,29 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
       },
     },
     {
-        id: 'tipiAttivita',
-        header: 'Tipi Attivita',
-        cell: ({ row }) => {
-            const tipiAttivita = row.original.tipiAttivita;
-            return tipiAttivita.map((tipo) => tipo.attivita).join(' - ');
-        }
+      id: 'tipiAttivita',
+      header: 'Tipi Attivita',
+      cell: ({ row }) => {
+        const tipiAttivita = row.original.tipiAttivita;
+        return (
+          <>
+            {tipiAttivita.map((tipo, index) => (
+              <div key={index} className="badge text-bg-secondary mr-1">
+                {tipo.attivita.replaceAll("_", " ")}
+              </div>
+            ))}
+          </>
+        );
+      }
+    },
+    {
+      id: "isAttivo",
+      header: "Stato",
+      cell: ({ row }) => (
+        <span className={row.original.isAttivo ? "badge text-bg-success" : "badge text-bg-danger"}>
+          {row.original.isAttivo ? "ATTIVO" : "NON ATTIVO"}
+        </span>
+      )
     },
     {
       id: 'actions',
@@ -204,8 +217,7 @@ const ActionsCell: React.FC<ActionsCellProps> = ({ id }) => {
   };
 
   const handleSelect = () => {
-    router.push(`/dashboard/registri/registrazioni`)
-    //TODO: mi devo portare ID registro (in sessione? o nel link?)
+    router.push(`/dashboard/registri/${id}/registrazioni`)
   }
 
   return (

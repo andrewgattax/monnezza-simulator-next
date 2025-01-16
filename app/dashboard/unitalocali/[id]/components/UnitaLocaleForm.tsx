@@ -6,6 +6,7 @@ import InputFloating from '../../../../../components/InputFloating';
 import { UnitaLocale } from '@prisma/client';
 import SelettoreAttivita from '../../../../../components/SelettoreAttivita';
 import SelettoreComuniFormComponent from '../../../../../components/SelettoreComuniFormComponent';
+import SelettoreAttivitaGay from '../../../../../components/SelettoreAttivitaGay';
 
 interface UnitaLocaleFormProps {
   unitaLocale?: Partial<UnitaLocale>;
@@ -44,19 +45,20 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
   }, [formValues])
 
 
+
   return (
     <div>
       <Accordion accordionId='unitaLocale'>
         <AccordionItem parentId='unitaLocale' title='Unita Locale' isShown>
-          <div className="row g-2 mt-3">
+          <div className="row g-2 mt-3 mb-2">
             <div className='col-6 mt-0'>
-              <InputFloating name='nome' label='Nome Luogo' type='text' required value={formValues.nome || ""}/>
+              <InputFloating name='nome' label='Nome Luogo' type='text' required value={formValues.nome || ""} onChange={handleChange}/>
             </div>
             <div className='col-4 my-0'>
-              <InputFloating name='indirizzo' label='Indirizzo' type='text' required value={formValues.indirizzo || ""} />
+              <InputFloating name='indirizzo' label='Indirizzo' type='text' required value={formValues.indirizzo || ""} onChange={handleChange}/>
             </div>
             <div className='col-2 my-0'>
-              <InputFloating name='n_civico' label='Civico' type='text' required value={formValues.n_civico || ""} />
+              <InputFloating name='n_civico' label='Civico' type='text' required value={formValues.n_civico || ""} onChange={handleChange}/>
             </div>
           </div>
           <SelettoreComuniFormComponent 
@@ -73,9 +75,8 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
           <div className="mt-2">
           </div>
           <div className="mt-2">
-          {
-            //TODO: SELETTORE ATTIVITA
-          }
+          <SelettoreAttivitaGay formValues={formValues} setFormValues={setFormValues} />
+          <input type="hidden" name="tipiAttivitaJSON" value={JSON.stringify(formValues.tipiAttivita || [])} />
           </div>
         </AccordionItem>
       </Accordion>
