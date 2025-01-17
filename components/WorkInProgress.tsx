@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const WorkInProgress: React.FC = () => {
     return (
-        <div className="d-flex justify-content-center mt-5 r vh-100">
+        <div className="d-flex justify-content-center mt-5">
             <div className="text-center">
                 <div className="spinner-border text-primary" role="status">
                     <span className="sr-only"></span>

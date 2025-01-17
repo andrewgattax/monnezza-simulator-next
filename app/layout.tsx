@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="it">
-      <body>
+    <html lang="it" className="h-100">
+      <body className="h-100">
         {children}
       </body>
       <BootstrapClient />

@@ -32,6 +32,9 @@ export async function getUserByEmail(email: string) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  pages: {
+    signIn: "/login",
+  },
   providers: [
     Credentials({
       credentials: {
@@ -82,6 +85,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         // Add custom fields to the token during login
         token.dbId = user.dbId;
         token.role = user.role; // Assuming 'role' is available in your user data
+        //TODO: siamo sicuri non esploda?
       }
       return token;
     },

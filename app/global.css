@@ -1,9 +1,11 @@
 .btn-overcolor{
     background-color: #5771ff !important;
+    color: #fff !important;
 }
 
 .btn-overcolor:hover {
     background-color: #4558cc !important;
+    color: #fff !important;
 }
 
 .accordion {
@@ -46,4 +48,13 @@ body {
 
 .custom-dashcard {
     background-color: #f8f8f8;
+}
+
+.costruzia-bg {
+    background: rgb(87,112,253);
+    background: radial-gradient(circle, rgba(87,112,253,1) 0%, rgba(0,0,0,1) 94%);
+}
+
+.border-bottom-grigio {
+    border-bottom: 1px solid #aaa;
 }
