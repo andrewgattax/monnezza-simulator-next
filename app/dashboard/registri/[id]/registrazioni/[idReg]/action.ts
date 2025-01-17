@@ -16,7 +16,7 @@ export default async function registrazioneServerAction(prevState: any, formData
   let objectId, action, registroId, progressivo;
   let tipoAttivita, isStoccaggioInstant, dataOraRegistrazione, tipoOperazione, causaleOperazione, dataCalcoloStoccaggio, riferimentoRegistrazione, codiceEER;
   let provenienzaRifiuto, descrizioneRifiuto, pericoloRifiuto, statoFisico, quantita, unitaDiMisura, destinazioneRifiuto, categoriaRAEE, isVeicoloFuoriUso;
-  let numeroRegistrazionePubblicaSicurezza, dataRegistrazionePubblicaSicurezza, isIntegratoFIR, numeroFIR, trasportoFrontaliero, tipoTrasporto, dataInizioTrasporto, isConferito, pesoADestino, isRespinto;
+  let numeroRegistrazionePubblicaSicurezza, dataRegistrazionePubblicaSicurezza, isIntegratoFIR, numeroFIR, trasportoFrontaliero, tipoTrasporto, dataInizioTrasporto, dataFineTrasporto, isConferito, pesoADestino, isRespinto;
   let tipologiaRespingimento, quantitaRespingimento, unitaDiMisuraRespingimento, causaleRespingimento, causaleRespingimentoDesc, annotazioni;
 
   try {
@@ -46,7 +46,8 @@ export default async function registrazioneServerAction(prevState: any, formData
     trasportoFrontaliero = formData.get("trasportoFrontaliero");
     tipoTrasporto = formData.get("tipoTrasporto");
     dataInizioTrasporto = formData.get("dataInizioTrasporto");
-    isConferito = formData.get("isConferito");
+    dataFineTrasporto = formData.get("dataFineTrasporto"),
+      isConferito = formData.get("isConferito");
     pesoADestino = formData.get("pesoADestino");
     isRespinto = formData.get("isRespinto");
     tipologiaRespingimento = formData.get("tipologiaRespingimento");
@@ -62,32 +63,13 @@ export default async function registrazioneServerAction(prevState: any, formData
   //TODO: TOGLI LA BUCCIA DI BANANA DAL CASSETTO
 
 
-  try {
-    const registro = await prisma.registro.findUnique({
-      where: { id: registroId!.toString() },
-      select: { progressivoCounter: true }
-    });
-    progressivo = (registro!.progressivoCounter) + 1;
-  } catch (error) {
-    return { message: "Registro non trovato" };
-  }
-  console.log(progressivo);
+
 
   let registrazioniAssociate = [
     riferimentoRegistrazione
   ].filter((item): item is string => item !== null);
 
-  let rifiuto: Rifiuto = {
-    codiceEER: codiceEER ? codiceEER.toString() : "",
-    provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto as ProvenienzaRifiuto : null,
-    descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : "",
-    pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto as PericoloRifiuto : null,
-    statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
-    quantita: Number(quantita),
-    unitaDiMisura: unitaDiMisura as UnitaMisura,
-    categoriaRAAE: categoriaRAEE ? categoriaRAEE as CategoriaRAEE : null,
-    destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : null
-  }
+
 
 
   if (action === "update") {
@@ -97,49 +79,94 @@ export default async function registrazioneServerAction(prevState: any, formData
     }
 
     try {
+
+      let rifiuto = {
+        codiceEER: codiceEER ? codiceEER.toString() : "",
+        provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto as ProvenienzaRifiuto : undefined,
+        descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : "",
+        pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto as PericoloRifiuto : undefined,
+        statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
+        quantita: Number(quantita),
+        unitaDiMisura: unitaDiMisura as UnitaMisura,
+        categoriaRAAE: categoriaRAEE ? categoriaRAEE as CategoriaRAEE : undefined,
+        destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : undefined
+      }
+
+      let updatedRegistrazione = {
+        tipoAttivita: tipoAttivita ? tipoAttivita as AttivitaENUM : undefined,
+        isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : undefined,
+        dataOraRegistrazione: dataOraRegistrazione ? new Date(dataOraRegistrazione.toString()) : undefined,
+        tipoOperazione: tipoOperazione ? tipoOperazione as TipoOperazione : undefined,
+        causaleOperazione: causaleOperazione ? causaleOperazione as CausaleOperazione : undefined,
+        dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : undefined,
+        registrazioniFiglie: [],
+        rifiuto: rifiuto,
+        isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : undefined,
+        numeroRegistrazionePubblicaSicurezza: numeroRegistrazionePubblicaSicurezza ? numeroRegistrazionePubblicaSicurezza.toString() : undefined,
+        dataRegistrazionePubblicaSicurezza: dataRegistrazionePubblicaSicurezza ? new Date(dataRegistrazionePubblicaSicurezza.toString()) : undefined,
+        isIntegratoFIR: isIntegratoFIR ? Boolean(isIntegratoFIR) : undefined,
+        numeroFIR: numeroFIR ? numeroFIR.toString() : undefined,
+        trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : undefined,
+        tipoTrasportoFrontaliero: tipoTrasporto ? tipoTrasporto as TipoTrasportoFrontaliero : undefined,
+        dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : undefined,
+        dataFineTrasporto: dataFineTrasporto ? new Date(dataFineTrasporto.toString()) : undefined,
+        isConferito: isConferito ? Boolean(isConferito) : undefined,
+        pesoADestino: pesoADestino ? Number(pesoADestino) : undefined,
+        isRespinto: isRespinto ? Boolean(isRespinto) : undefined,
+        tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento as TipologiaRespingimento : undefined,
+        quantitaRespingimento: quantitaRespingimento ? Number(quantitaRespingimento) : undefined,
+        unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento as UnitaMisura : undefined,
+        causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : undefined,
+        causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : undefined,
+        annotazioni: annotazioni ? annotazioni.toString() : undefined,
+      }
+
+      const cleanedData = Object.fromEntries(
+        Object.entries(updatedRegistrazione).filter(([_, value]) => value !== undefined)
+      );
+
+      console.log(cleanedData);
+      console.log(objectId)
       await prisma.registrazione.update({
         where: { id: objectId?.toString() },
-        data: {
-          tipoAttivita: tipoAttivita ? tipoAttivita as AttivitaENUM : undefined,
-          isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : undefined,
-          dataOraRegistrazione: dataOraRegistrazione ? new Date(dataOraRegistrazione.toString()) : undefined,
-          tipoOperazione: tipoOperazione ? tipoOperazione as TipoOperazione : undefined,
-          causaleOperazione: causaleOperazione ? causaleOperazione as CausaleOperazione : undefined,
-          dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : undefined,
-          registrazioniFiglie: registrazioniAssociate,
-          rifiuto: rifiuto,
-          isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : undefined,
-          numeroRegistrazionePubblicaSicurezza: numeroRegistrazionePubblicaSicurezza ? numeroRegistrazionePubblicaSicurezza.toString() : undefined,
-          dataRegistrazionePubblicaSicurezza: dataRegistrazionePubblicaSicurezza ? new Date(dataRegistrazionePubblicaSicurezza.toString()) : undefined,
-          isIntegratoFIR: isIntegratoFIR ? Boolean(isIntegratoFIR) : undefined,
-          numeroFIR: numeroFIR ? numeroFIR.toString() : undefined,
-          trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : undefined,
-          tipoTrasportoFrontaliero: tipoTrasporto as TipoTrasportoFrontaliero,
-          dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : undefined,
-          isConferito: isConferito ? Boolean(isConferito) : undefined,
-          pesoADestino: pesoADestino ? Number(pesoADestino) : undefined,
-          isRespinto: isRespinto ? Boolean(isRespinto) : undefined,
-          tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento as TipologiaRespingimento : undefined,
-          quantitaRespingimento: quantitaRespingimento ? Number(quantitaRespingimento) : undefined,
-          unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento as UnitaMisura : undefined,
-          causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : undefined,
-          causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : undefined,
-          annotazioni: annotazioni ? annotazioni.toString() : undefined,
-        }
+        data: cleanedData
       });
     } catch (error) {
+      console.error(error)
       return { message: "Errore del database durante l\'aggiornamento della registrazione" }
     }
 
     //TODO: Aggiustare questo redirect
     // redirect(`/dashboard/luoghiproduzione?success=1`);
   } else if (action === "create") {
+
+    try {
+      const registro = await prisma.registro.findUnique({
+        where: { id: registroId!.toString() },
+        select: { progressivoCounter: true }
+      });
+      progressivo = (registro!.progressivoCounter) + 1;
+    } catch (error) {
+      return { message: "Registro non trovato" };
+    }
+
+    let rifiuto: Rifiuto = {
+      codiceEER: codiceEER ? codiceEER.toString() : "",
+      provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto as ProvenienzaRifiuto : null,
+      descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : "",
+      pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto as PericoloRifiuto : null,
+      statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
+      quantita: Number(quantita),
+      unitaDiMisura: unitaDiMisura as UnitaMisura,
+      categoriaRAAE: categoriaRAEE ? categoriaRAEE as CategoriaRAEE : null,
+      destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : null
+    }
+
     const nuovaRegistrazione = {
-      isTrasmessa: false, 
-      dataFineTrasporto: null, 
-      trasportatoreId: null, 
-      destinatarioId: null, 
-      intermediarioId: null, 
+      isTrasmessa: false,
+      trasportatoreId: null,
+      destinatarioId: null,
+      intermediarioId: null,
       luogoDiProduzioneId: null,
       produttoreId: null,
       registroId: registroId!.toString(),
@@ -160,6 +187,7 @@ export default async function registrazioneServerAction(prevState: any, formData
       trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : false,
       tipoTrasportoFrontaliero: tipoTrasporto as TipoTrasportoFrontaliero,
       dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : null,
+      dataFineTrasporto: dataFineTrasporto ? new Date(dataFineTrasporto.toString()) : null,
       isConferito: isConferito ? Boolean(isConferito) : false,
       pesoADestino: pesoADestino ? Number(pesoADestino) : null,
       isRespinto: isRespinto ? Boolean(isRespinto) : false,
@@ -190,13 +218,26 @@ export default async function registrazioneServerAction(prevState: any, formData
       }
       return { message: "Errore del database nella creazione della registrazione" }
     }
-  
+
+  } else if (action === "remove") {
+    objectId = formData.get('objectId')
+    if (!objectId) {
+      return { message: 'ID non fornito per la rimozione' }
+    }
+
+    try {
+      await prisma.registrazione.delete({
+        where: { id: objectId.toString() }, //TODO: aggiungere filtro per utente
+      });
+    } catch (error) {
+      return { message: 'Errore del database durante la rimozione della registrazione' }
+    }
+
+    redirect(formData.get('hrefBack')?.toString() || "/dashboard"); //TODO: cosa super porca
+    //TODO: STANDARDIZZARE TUTTI I REDIRECT INDIETRO NELLE ACTION CON l'hrefBack!!!!
   }
 
   redirect(`/dashboard/registri/${registroId}/registrazioni/?success=1`);
-
-
-
   //TODO: Controllare utente che chiama action.ts
 
 }

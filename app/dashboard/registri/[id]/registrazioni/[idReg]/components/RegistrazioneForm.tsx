@@ -44,6 +44,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     const updatedData = { ...formValues, [name]: value };
     setFormValues(updatedData);
     onChange(updatedData);
+    console.log(formValues)
   };
 
   const handleChangeTipoOperazione = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -99,6 +100,12 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
         { codice: "T", descrizione: "Ricevuto da terzi" },
       ];
       formValues.causaleOperazione = "NP";
+    } else if (e.target.value === "INTERMEDIAZIONE") {
+      formValues.tipoOperazione = "SCARICO";
+      formValues.causaleOperazione = "TR";
+    } else if (e.target.value === "TRASPORTO") {
+      formValues.tipoOperazione = "CARICOSCARICO";
+      formValues.causaleOperazione = "T_AT";
     }
     handleChange(e);
   }
@@ -151,8 +158,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           )}
           <div className="row g-2 mt-2">
             <div className='col-4'>
-              <InputFloating name="dataRegistrazione" label='Data Registrazione' type='date' required
-              value={formValues.dataOraRegistrazione ? new Date(formValues.dataOraRegistrazione).toISOString().split('T')[0] : ''} onChange={handleChange} />
+              <InputFloating name="dataOraRegistrazione" label='Data Registrazione' type='date' required
+                value={formValues.dataOraRegistrazione ? new Date(formValues.dataOraRegistrazione).toISOString().split('T')[0] : ''} onChange={handleChange} />
             </div>
             {!formValues.isStoccaggioInstant && (
               <div className='col-4'>
@@ -169,6 +176,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   </select>
                   <label htmlFor="tipoOperazione">Tipo Operazione: </label>
                 </div>
+                <input type='hidden' value={formValues.tipoOperazione} name='tipoOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
               </div>
             )}
             {!formValues.isStoccaggioInstant && (
@@ -186,6 +194,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   </select>
                   <label htmlFor="causaleOperazione">Causale Operazione: </label>
                 </div>
+                <input type='hidden' value={formValues.causaleOperazione} name='causaleOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
               </div>
             )}
             {formValues.isStoccaggioInstant && (

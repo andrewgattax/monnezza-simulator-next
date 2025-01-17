@@ -18,3 +18,4 @@ export function toNiceDate(data: Date): string {
     const minutes = String(data.getMinutes()).padStart(2, '0');
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
+

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import ConditionalHider from './ConditionalHider';
 import DbLoading from './DbLoading';
 import ErrorMessage from './ErrorMessage';
+import CustomObjectId from './CustomObjectId';
 
 interface DeleteFormTemplateProps {
   serverAction: (prevState: any, formData: FormData) => Promise<{ message: string }>;
@@ -23,6 +24,7 @@ const DeleteFormTemplate: React.FC<DeleteFormTemplateProps> = ({ serverAction, o
     <form action={formAction}>
       <FormAction remove />
       <ObjectId objectId={objectId} />
+      <CustomObjectId nome="hrefBack" objectId={hrefBack} />
       <ConditionalHider hidden={!pending}>
         <DbLoading />
       </ConditionalHider>

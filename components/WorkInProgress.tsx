@@ -3,9 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const WorkInProgress: React.FC = () => {
     return (
-        <div className="d-flex justify-content-center mt-5">
-            <div className="text-center">
-                <div className="spinner-border text-primary" role="status">
+        <div className="d-flex justify-content-center mt-4">
+            <div className="text-center mt-2">
+                <div className="spinner-border text-overcolor" role="status">
                     <span className="sr-only"></span>
                 </div>
                 <h1 className="mt-3">Work In Progress</h1>

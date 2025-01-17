@@ -91,7 +91,7 @@ const LuogoProduzioneTable: React.FC<LuogoProduzioneTableProps> = ({ dataPromise
                     cursor: header.column.getCanSort() ? 'pointer' : 'default',
                     width: header.column.id === 'actions' ? '1px' : 'auto'
                   }}
-                  className="" // implementare qualcosa?
+                  className={header.column.id === 'actions' ? 'no-print' : ''}  // implementare qualcosa?
                 >
                   {flexRender(
                     header.column.columnDef.header,
@@ -132,7 +132,7 @@ const LuogoProduzioneTable: React.FC<LuogoProduzioneTableProps> = ({ dataPromise
       </table>
 
       {/* Pagination Controls */}
-      <div className="row mt-3 p-2 g-2 border row-margin-fix">
+      <div className="row mt-3 p-2 g-2 border row-margin-fix no-print">
         <div className="col mt-1 mb-1">
 
           <div className="btn-group" role="group" aria-label="Paginazione">
@@ -210,7 +210,7 @@ const ActionsCell: React.FC<ActionsCellProps> = ({ id }) => {
   };
 
   return (
-    <div className="d-flex flex-row gap-2">
+    <div className="d-flex flex-row gap-2 no-print">
       <button onClick={handleEdit} className="btn btn-sm btn-outline-secondary d-flex flex-row">
         <IconB iconName="pencil-square" />
         Modifica

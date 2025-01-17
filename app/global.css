@@ -51,10 +51,50 @@ body {
 }
 
 .costruzia-bg {
-    background: rgb(87,112,253);
-    background: radial-gradient(circle, rgba(87,112,253,1) 0%, rgba(0,0,0,1) 94%);
+    background-color: #000000;
+    opacity: 1;
+    background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, #000000 70px ), repeating-linear-gradient( #5771ff55, #5771ffaa );
 }
 
 .border-bottom-grigio {
     border-bottom: 1px solid #aaa;
+}
+
+.my-detail {
+    background-color: #EEEEEE;
+    padding: 1em;
+}
+
+.section-title {
+    margin-bottom: 30px;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+.blur {
+    background: rgba(0,0,0,0.5) !important;
+    -webkit-backdrop-filter: blur(9px) !important;
+    backdrop-filter: blur(9px) !important;
+    border: 1px solid rgba(56, 56, 56, 0.25) !important;
+}
+
+.text-overcolor {
+    color: #4558cc !important;
+}
+
+.only-print {
+    display: none;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+        width: 0px !important;
+        opacity: 0 !important;
+        height: 0px !important;
+    }
+
+    .only-print {
+        display: block !important;
+    }
 }

@@ -6,10 +6,22 @@ import { getUnitaLocaleById } from './database';
 import WorkInProgress from '../../../../components/WorkInProgress';
 import { auth } from '../../../../auth';
 import ErrorMessage from '../../../../components/ErrorMessage';
+import { breadcrumb as oldBreadcrumb } from '../page';
+import { BreadcrumbItem } from '../../../../components/BreadcrumbContext';
+import BreadcrumbInjector from '../../../../components/BreadcrumbInjector';
 
 export const metadata = {
-  title: "Aggiunta Luogo di Produzione · Ri.fiuto",
+  title: "Aggiunta Anagrafica · Ri.fiuto",
 };
+
+export const breadcrumb: BreadcrumbItem[] = [
+  ...oldBreadcrumb,
+  {
+    title: "Aggiungi",
+    href: `/dashboard/anagrafiche/new`,
+    icon: "plus-circle",
+  },
+];
 
 // PAGINA
 export default async function LuoghiProduzioneContainer({
@@ -28,20 +40,16 @@ export default async function LuoghiProduzioneContainer({
   if (paramId == "new") {
     return (
       <section>
-        {/* <UnitaLocaleCreateUI /> */}
+        <BreadcrumbInjector items={breadcrumb} />
         <WorkInProgress />
       </section>
     );
   } else {
-    let unitaLocale = getUnitaLocaleById(paramId)
-
     return (
       <section>
-        {/* <Suspense fallback={<DbLoading />}>
-          <UnitaLocaleCreateUI dbResult={unitaLocale} />
-        </Suspense> */}
+        <BreadcrumbInjector items={breadcrumb} />
         <WorkInProgress />
       </section>
-    )
+    );
   }
 }

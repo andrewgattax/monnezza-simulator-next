@@ -2,7 +2,7 @@ import { PrismaClient, Registrazione } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function getRegistrazioneByIdAndUserId(id: string, userId: string): Promise<Partial<Registrazione>> {
+export async function getRegistrazioneByIdAndUserId(id: string, userId: string): Promise<Registrazione> {
     const registrazione = await prisma.registrazione.findUnique({
         where: { 
             id: id,

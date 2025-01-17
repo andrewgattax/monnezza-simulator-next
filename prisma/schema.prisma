@@ -98,6 +98,7 @@ model Registro {
 
 model Registrazione {
   id                                   String                    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt                            DateTime                  @default(now())
   progressivo                          Int
   dataOraRegistrazione                 DateTime
   isTrasmessa                          Boolean                   @default(false)
@@ -136,7 +137,7 @@ model Registrazione {
   produttore                           Anagrafica?               @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
   produttoreId                         String?                   @db.ObjectId
   rifiuto                              Rifiuto
-  registro                            Registro?                 @relation(fields: [registroId], references: [id])
+  registro                             Registro?                 @relation(fields: [registroId], references: [id])
   registroId                           String                    @db.ObjectId
 }
 
@@ -153,6 +154,7 @@ enum CategoriaRAEE {
 enum TipoOperazione {
   CARICO
   SCARICO
+  CARICOSCARICO
 }
 
 enum CausaleOperazione {
@@ -164,6 +166,7 @@ enum CausaleOperazione {
   aT
   M
   TR
+  T_AT
 }
 
 enum TipologiaRespingimento {

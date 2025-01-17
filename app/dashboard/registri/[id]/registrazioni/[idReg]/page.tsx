@@ -6,40 +6,12 @@ import DbLoading from '../../../../../../components/DbLoading';
 export const metadata = {
   title: "Aggiunta Registrazione · Ri.fiuto",
 };
-import { breadcrumb as oldBreadcrumb } from '../page';
+import { breadcrumb as oldBreadcrumb } from '../../../page';
 import { BreadcrumbItem } from '../../../../../../components/BreadcrumbContext';
 import BreadcrumbInjector from '../../../../../../components/BreadcrumbInjector';
 import { auth } from '../../../../../../auth';
 import ErrorMessage from '../../../../../../components/ErrorMessage';
-
-export const breadcrumb: BreadcrumbItem[] = [
-  ...oldBreadcrumb,
-  {
-    title: "Elimina",
-    href: "/dashboard/registri/[id]/registrazioni/",
-    icon: "trash",
-  },
-];
-
-export const breadcrumbAggiungi: BreadcrumbItem[] = [
-  ...breadcrumb,
-  {
-    title: "Aggiungi",
-    href: "/dashboard/registri/[id]/registrazioni/new",
-    icon: "plus-circle",
-  },
-];
-
-export const breadcrumbModifica: BreadcrumbItem[] = [
-  ...breadcrumb,
-  {
-    title: "Modifica",
-    href: "/dashboard/registri/[id]/registrazioni/[idReg]",
-    icon: "pencil-square",
-  },
-];
-
-
+import { breadcrumb } from '../page';
 
 // PAGINA
 export default async function RegistrazioniContainer({
@@ -48,6 +20,33 @@ export default async function RegistrazioniContainer({
   params: Promise<{ idReg: string, id: string }>;
 }) {
   const awaitedParams = await params;
+
+  const breadcrumb: BreadcrumbItem[] = [
+    ...oldBreadcrumb,
+    {
+      title: "Registrazioni",
+      href: `/dashboard/registri/${registroId}/registrazioni/`,
+      icon: "clipboard2-data",
+    },
+  ];
+  
+  const breadcrumbAggiungi: BreadcrumbItem[] = [
+    ...breadcrumb,
+    {
+      title: "Aggiungi",
+      href: "/dashboard/registri/[id]/registrazioni/new",
+      icon: "plus-circle",
+    },
+  ];
+  
+  const breadcrumbModifica: BreadcrumbItem[] = [
+    ...breadcrumb,
+    {
+      title: "Modifica",
+      href: "/dashboard/registri/[id]/registrazioni/[idReg]",
+      icon: "pencil-square",
+    },
+  ];
 
   const session = await auth();
   if (!session) {
@@ -62,7 +61,7 @@ export default async function RegistrazioniContainer({
   if (paramId == "new") {
     return (
       <section>
-        {/* <BreadcrumbInjector items={breadcrumbAggiungi} /> */}
+        <BreadcrumbInjector items={breadcrumbAggiungi} />
         <RegistrazioneCreateUI registroId={registroId}/>
       </section>
     );
@@ -71,7 +70,7 @@ export default async function RegistrazioniContainer({
 
     return (
       <section>
-        {/* <BreadcrumbInjector items={breadcrumbModifica} /> */}
+        <BreadcrumbInjector items={breadcrumbModifica} />
         <Suspense fallback={<DbLoading />}>
           <RegistrazioneCreateUI registroId={registroId} dbResult={registrazione} objectId={paramId} />
         </Suspense>
@@ -80,3 +79,4 @@ export default async function RegistrazioniContainer({
     )
   }
 }
+

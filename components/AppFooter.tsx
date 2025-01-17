@@ -4,12 +4,14 @@ import React from 'react';
 
 const AppFooter = React.memo(() => {
 
-    return (
-        <footer className={styles.footer}>
-            Ri.fiuto ver. <b>{version}</b> in <b>{process.env.NODE_ENV}</b> mode <br />
-            Copyright © {new Date().getFullYear()} <b>Apulia Lab S.r.l.</b> | P.Iva IT06804150727
-        </footer>
-    );
+  return (
+    <div className="no-print mb-3">
+      <footer className={`${styles.footer}`}>
+        Ri.fiuto ver. <b>{version}</b> in <b>{process.env.NODE_ENV}</b> mode <br />
+        Copyright © {new Date().getFullYear()} <b>Apulia Lab S.r.l.</b> | P.Iva IT06804150727
+      </footer>
+    </div>
+  );
 });
 
 export default AppFooter;
