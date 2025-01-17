@@ -11,6 +11,7 @@ import RegistrazioneTable from "./table";
 import { Suspense } from "react";
 import DbLoading from "../../../../../components/DbLoading";
 import NoResult from "../../../../../components/NoResult";
+import ErrorMessage from "../../../../../components/ErrorMessage";
 
 export const breadcrumb: BreadcrumbItem[] = [
   ...oldBreadcrumb,
@@ -35,6 +36,10 @@ export default async function RegistrazionePage({
 
   const paramId = (await params).id
   const session = await auth();
+  if (!session) {
+    return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
+  }
+  
   const registrazioni = getRegistrazioniByRegistroIdAndUserId(paramId, session?.user?.dbId!);
 
   return (

@@ -112,6 +112,19 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     }
   }
 
+  if (formValues.tipoOperazione === "CARICO") {
+    causali = [
+      { codice: "NP", descrizione: "Nuovo Produttore" },
+      { codice: "T", descrizione: "Ricevuto da terzi" },
+    ];
+  } else {
+    causali = [
+      { codice: "aT", descrizione: "Scarico a terzi" },
+      { codice: "I", descrizione: "Scarico Interno" },
+      { codice: "M", descrizione: "Scarico per produzione di materiali" },
+    ];
+  }
+
   return (
     <div>
       <Accordion accordionId='registrazione'>
@@ -139,7 +152,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           <div className="row g-2 mt-2">
             <div className='col-4'>
               <InputFloating name="dataRegistrazione" label='Data Registrazione' type='date' required
-                value={formValues.dataOraRegistrazione?.toDateString()} onChange={handleChange} />
+              value={formValues.dataOraRegistrazione ? new Date(formValues.dataOraRegistrazione).toISOString().split('T')[0] : ''} onChange={handleChange} />
             </div>
             {!formValues.isStoccaggioInstant && (
               <div className='col-4'>
@@ -178,7 +191,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             {formValues.isStoccaggioInstant && (
               <div className='col-4'>
                 <InputFloating name="dataCalcoloStoccaggio" label='Data Calcolo Stoccaggio' type='date' required
-                  value={formValues.dataCalcoloStoccaggio?.toDateString()} onChange={handleChange} />
+                  value={formValues.dataCalcoloStoccaggio ? new Date(formValues.dataCalcoloStoccaggio).toISOString().split('T')[0] : ''} onChange={handleChange} />
               </div>
             )}
           </div>
@@ -287,7 +300,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                 <InputFloating label='Numero Registrazione Pubblica Sicurezza' name='numeroRegistrazionePubblicaSicurezza' onChange={handleChange} type='text' value={formValues.numeroRegistrazionePubblicaSicurezza ?? undefined} disabled={!formValues.isVeicoloFuoriUso} />
               </div>
               <div className="col-3">
-                <InputFloating label='Data Registrazione Pubblica Sicurezza' name='dataRegistrazionePubblicaSicurezza' onChange={handleChange} type='date' value={formValues.dataRegistrazionePubblicaSicurezza?.toString() ?? undefined} disabled={!formValues.isVeicoloFuoriUso} />
+                <InputFloating label='Data Registrazione Pubblica Sicurezza' name='dataRegistrazionePubblicaSicurezza' onChange={handleChange} type='date' value={formValues.dataRegistrazionePubblicaSicurezza ? new Date(formValues.dataRegistrazionePubblicaSicurezza).toISOString().split('T')[0] : ''} disabled={!formValues.isVeicoloFuoriUso} />
               </div>
             </div>
           )}
@@ -322,7 +335,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               )}
               <div className="col-2">
                 <InputFloating name="dataInizioTrasporto" label='Data Inizio Trasporto (*)' type='date' required
-                  value={formValues.dataOraRegistrazione?.toDateString()} onChange={handleChange} disabled={!formValues.isIntegratoFIR} />
+                  value={formValues.dataInizioTrasporto ? new Date(formValues.dataInizioTrasporto).toISOString().split('T')[0] : ''} onChange={handleChange} disabled={!formValues.isIntegratoFIR} />
               </div>
             </div>
           </AccordionItem>
@@ -335,7 +348,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           </div>
           <div className="row g-2 mt-3">
             <div className="col-4">
-              <InputFloating type='date' label='Data Fine Trasporto (*)' name='dataFineTrasporto' value={formValues.dataFineTrasporto?.toString() ?? undefined} onChange={handleChange} disabled={!formValues.isConferito} required />
+              <InputFloating type='date' label='Data Fine Trasporto (*)' name='dataFineTrasporto' value={formValues.dataFineTrasporto ? new Date(formValues.dataFineTrasporto).toISOString().split('T')[0] : ''} onChange={handleChange} disabled={!formValues.isConferito} required />
             </div>
             <div className="col-4">
               <InputFloating type='text' label='Peso Verificato a Destino (*)' name='pesoADestino' value={formValues.pesoADestino?.toString() ?? undefined} onChange={handleChange} disabled={!formValues.isConferito} required />
@@ -396,7 +409,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           <div className="row g-2 mt-3">
             <div className="col-12">
               <div className="form-floating">
-                <textarea className="form-control textarea-custom" placeholder="Annotazioni" id="annotazioni" name='annotazioni' value={formValues.annotazioni}></textarea>
+                <textarea className="form-control textarea-custom" placeholder="Annotazioni" id="annotazioni" name='annotazioni' value={formValues.annotazioni} onChange={handleChange}></textarea>
                 <label htmlFor="annotazioni">Annotazioni Registrazione</label>
               </div>
             </div>

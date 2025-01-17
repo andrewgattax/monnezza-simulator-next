@@ -5,13 +5,13 @@ const prisma = new PrismaClient();
 export async function getRegistrazioneByIdAndUserId(id: string, userId: string): Promise<Partial<Registrazione>> {
     const registrazione = await prisma.registrazione.findUnique({
         where: { 
-            id,
+            id: id,
             registro: {
                 unitaLocale: {
-                    proprietarioId: userId,
-                    utentiDelegatiId: {
-                        has: userId
-                    }
+                    OR: [
+                        { proprietarioId: userId },
+                        { utentiDelegatiId: { has: userId } }
+                    ]
                 }
             }
          },

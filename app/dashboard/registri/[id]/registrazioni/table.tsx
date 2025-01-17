@@ -36,8 +36,13 @@ const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise }) 
             header: 'Progressivo',
         },
         {
-            accessorKey: 'createdAt',
+            accessorKey: 'dataOraRegistrazione',
             header: 'Data e Ora Registrazione',
+            cell: ({ row }) => {
+                const date = new Date(row.original.dataOraRegistrazione);
+                const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear().toString().slice(-2)} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                return formattedDate;
+            }
         },
         {
             id: 'tipoOperazioneAttivita',
@@ -246,7 +251,7 @@ interface ActionsCellProps {
 const ActionsCell: React.FC<ActionsCellProps> = ({ id }) => {
     const router = useRouter();
     const handleEdit = () => {
-        router.push(`./${id}/`)
+        router.push(`./registrazioni/${id}`)
     };
 
     const handleDelete = () => {

@@ -136,7 +136,7 @@ model Registrazione {
   produttore                           Anagrafica?               @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
   produttoreId                         String?                   @db.ObjectId
   rifiuto                              Rifiuto
-  registro                             Registro?                 @relation(fields: [registroId], references: [id])
+  registro                            Registro?                 @relation(fields: [registroId], references: [id])
   registroId                           String                    @db.ObjectId
 }
 

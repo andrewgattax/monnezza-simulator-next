@@ -67,13 +67,13 @@ export default async function RegistrazioniContainer({
       </section>
     );
   } else {
-    let registrazione = getRegistrazioneByIdAndUserId(paramId, session?.user?.id!)
+    let registrazione = getRegistrazioneByIdAndUserId(paramId, session?.user?.dbId!)
 
     return (
       <section>
-        <BreadcrumbInjector items={breadcrumbModifica} />
+        {/* <BreadcrumbInjector items={breadcrumbModifica} /> */}
         <Suspense fallback={<DbLoading />}>
-          <RegistrazioneCreateUI registroId={registroId} dbResult={registrazione} />
+          <RegistrazioneCreateUI registroId={registroId} dbResult={registrazione} objectId={paramId} />
         </Suspense>
       </section>
 

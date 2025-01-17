@@ -1,6 +1,6 @@
 'use server'
 import { redirect } from 'next/navigation'
-import { PrismaClient, LuogoProduzione, AttivitaENUM, TipoOperazione, CausaleOperazione, TipologiaRespingimento, UnitaMisura, CausaleRespingimento, Rifiuto, ProvenienzaRifiuto, PericoloRifiuto, StatoFisicoRifiuto, CodiceAttivita, CategoriaRAEE, TipoTrasportoFrontaliero, Prisma, TipoAttivita, Registro } from '@prisma/client'
+import { PrismaClient, LuogoProduzione, AttivitaENUM, TipoOperazione, CausaleOperazione, TipologiaRespingimento, UnitaMisura, CausaleRespingimento, Rifiuto, ProvenienzaRifiuto, PericoloRifiuto, StatoFisicoRifiuto, CodiceAttivita, CategoriaRAEE, TipoTrasportoFrontaliero, Prisma, TipoAttivita, Registro, Registrazione } from '@prisma/client'
 import { auth } from '../../../../../../auth'
 
 
@@ -35,7 +35,7 @@ export default async function registrazioneServerAction(prevState: any, formData
     pericoloRifiuto = formData.get("pericoloRifiuto");
     statoFisico = formData.get("statoFisico");
     quantita = formData.get("quantita");
-    unitaDiMisura = formData.get("unitaDiMisura");
+    unitaDiMisura = formData.get("unitaMisura");
     destinazioneRifiuto = formData.get("destinazioneRifiuto");
     categoriaRAEE = formData.get("categoriaRAEE");
     isVeicoloFuoriUso = formData.get("isVeicoloFuoriUso");
@@ -59,6 +59,8 @@ export default async function registrazioneServerAction(prevState: any, formData
     return { message: "Errore durante il recupero dei dati dal form" }
   }
 
+  //TODO: TOGLI LA BUCCIA DI BANANA DAL CASSETTO
+
 
   try {
     const registro = await prisma.registro.findUnique({
@@ -69,6 +71,7 @@ export default async function registrazioneServerAction(prevState: any, formData
   } catch (error) {
     return { message: "Registro non trovato" };
   }
+  console.log(progressivo);
 
   let registrazioniAssociate = [
     riferimentoRegistrazione
@@ -77,12 +80,12 @@ export default async function registrazioneServerAction(prevState: any, formData
   let rifiuto: Rifiuto = {
     codiceEER: codiceEER ? codiceEER.toString() : "",
     provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto as ProvenienzaRifiuto : null,
-    descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : null,
+    descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : "",
     pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto as PericoloRifiuto : null,
     statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
     quantita: Number(quantita),
     unitaDiMisura: unitaDiMisura as UnitaMisura,
-    categoriaRAAE: categoriaRAEE as CategoriaRAEE,
+    categoriaRAAE: categoriaRAEE ? categoriaRAEE as CategoriaRAEE : null,
     destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : null
   }
 
@@ -130,61 +133,70 @@ export default async function registrazioneServerAction(prevState: any, formData
 
     //TODO: Aggiustare questo redirect
     // redirect(`/dashboard/luoghiproduzione?success=1`);
-  }
+  } else if (action === "create") {
+    const nuovaRegistrazione = {
+      isTrasmessa: false, 
+      dataFineTrasporto: null, 
+      trasportatoreId: null, 
+      destinatarioId: null, 
+      intermediarioId: null, 
+      luogoDiProduzioneId: null,
+      produttoreId: null,
+      registroId: registroId!.toString(),
+      progressivo: progressivo,
+      tipoAttivita: tipoAttivita as AttivitaENUM,
+      isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : false,
+      dataOraRegistrazione: dataOraRegistrazione ? new Date(dataOraRegistrazione.toString()) : new Date(),
+      tipoOperazione: tipoOperazione as TipoOperazione,
+      causaleOperazione: causaleOperazione as CausaleOperazione,
+      dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : null,
+      registrazioniFiglie: [],
+      rifiuto: rifiuto,
+      isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : false,
+      numeroRegistrazionePubblicaSicurezza: numeroRegistrazionePubblicaSicurezza ? numeroRegistrazionePubblicaSicurezza.toString() : null,
+      dataRegistrazionePubblicaSicurezza: dataRegistrazionePubblicaSicurezza ? new Date(dataRegistrazionePubblicaSicurezza.toString()) : null,
+      isIntegratoFIR: isIntegratoFIR ? Boolean(isIntegratoFIR) : false,
+      numeroFIR: numeroFIR ? numeroFIR.toString() : null,
+      trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : false,
+      tipoTrasportoFrontaliero: tipoTrasporto as TipoTrasportoFrontaliero,
+      dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : null,
+      isConferito: isConferito ? Boolean(isConferito) : false,
+      pesoADestino: pesoADestino ? Number(pesoADestino) : null,
+      isRespinto: isRespinto ? Boolean(isRespinto) : false,
+      tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento as TipologiaRespingimento : null,
+      quantitaRespingimento: quantitaRespingimento ? Number(quantitaRespingimento) : null,
+      unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento as UnitaMisura : null,
+      causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : null,
+      causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : null,
+      annotazioni: annotazioni ? annotazioni.toString() : "",
+    };
 
-  let nuovaRegistrazione: Prisma.RegistrazioneCreateInput = {
-    progressivo: progressivo,
-    tipoAttivita: tipoAttivita as AttivitaENUM,
-    isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : false,
-    dataOraRegistrazione: Date.now().toString(),
-    tipoOperazione: tipoOperazione as TipoOperazione,
-    causaleOperazione: causaleOperazione as CausaleOperazione,
-    dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : null,
-    registrazioniFiglie: [],
-    rifiuto: rifiuto,
-    isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : false,
-    numeroRegistrazionePubblicaSicurezza: numeroRegistrazionePubblicaSicurezza ? numeroRegistrazionePubblicaSicurezza.toString() : "",
-    dataRegistrazionePubblicaSicurezza: dataRegistrazionePubblicaSicurezza ? new Date(dataRegistrazionePubblicaSicurezza.toString()) : null,
-    isIntegratoFIR: isIntegratoFIR ? Boolean(isIntegratoFIR) : false,
-    numeroFIR: numeroFIR ? numeroFIR.toString() : "",
-    trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : false,
-    tipoTrasportoFrontaliero: tipoTrasporto as TipoTrasportoFrontaliero,
-    dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : "",
-    isConferito: isConferito ? Boolean(isConferito) : false,
-    pesoADestino: pesoADestino ? Number(pesoADestino) : null,
-    isRespinto: isRespinto ? Boolean(isRespinto) : false,
-    tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento as TipologiaRespingimento : null,
-    quantitaRespingimento: quantitaRespingimento ? Number(quantitaRespingimento) : null,
-    unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento as UnitaMisura : null,
-    causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : null,
-    causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : "",
-    annotazioni: annotazioni ? annotazioni.toString() : "",
-    registro: {
-      connect: { id: registroId!.toString() }
+    try {
+      console.log(nuovaRegistrazione);
+      //TODO: Payload is null ma come ma che cazzo dici dioporco bastardo
+      await prisma.registrazione.create({
+        data: nuovaRegistrazione
+      });
+      /* await prisma.registro.update({
+        where: { id: registroId!.toString() },
+        data: { progressivoCounter: { increment: 1 } }
+      }); */
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.log("gay")
+        console.error('Errore conosciuto di Prisma:', error.message);
+      } else {
+        console.log(error)
+      }
+      return { message: "Errore del database nella creazione della registrazione" }
     }
+  
   }
 
-  try {
-    console.log(nuovaRegistrazione);
-    //TODO: Payload is null ma come ma che cazzo dici dioporco bastardo
-    await prisma.registrazione.create({
-      data: nuovaRegistrazione
-    })
-    await prisma.registro.update({
-      where: { id: registroId!.toString() },
-      data: { progressivoCounter: { increment: 1 } }
-    });
-  } catch (error) {
-    console.error(error);
-    return { message: "Errore del database nella creazione della registrazione" }
-  }
-
-  //TODO: Aggiustare questo redirect
-  // redirect(`/dashboard/luoghiproduzione?success=1`);
+  redirect(`/dashboard/registri/${registroId}/registrazioni/?success=1`);
 
 
 
   //TODO: Controllare utente che chiama action.ts
 
-  return { message: 'Please enter a valid email' }
 }
