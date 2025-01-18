@@ -48,6 +48,7 @@ export default async function RegistrazionePage({
   const trasmessa = awaitedSearchParams.Tr || undefined
   const dataInizio = awaitedSearchParams.dI || undefined;
   const dataFine = awaitedSearchParams.dF || undefined;
+  const tipoOperazione = awaitedSearchParams.TO || undefined;
 
   const session = await auth();
   if (!session) {
@@ -56,7 +57,7 @@ export default async function RegistrazionePage({
 
   let registrazioni;
   let imSearching = false;
-  if (cEER || attivita || trasmessa || dataInizio || dataFine) {
+  if (cEER || attivita || trasmessa || dataInizio || dataFine || tipoOperazione) {
     imSearching = true;
     registrazioni = getRegistrazioniByRegistroIdAndUserIdAndQueryParams(
       paramId, 
@@ -65,14 +66,15 @@ export default async function RegistrazionePage({
       attivita, 
       trasmessa, 
       dataInizio, 
-      dataFine
+      dataFine,
+      tipoOperazione
     );
   }else {
     registrazioni = getRegistrazioniByRegistroIdAndUserId(paramId, session?.user?.dbId!);
   }
   
   const tipiAttivita = await getAttivitaByRegistroIdAndUserId(paramId, session?.user?.dbId);
-  const renderKey = paramId + "_" + cEER + "_" + attivita + "_" + trasmessa + "_" + dataInizio + "_" + dataFine;
+  const renderKey = paramId + "_" + cEER + "_" + attivita + "_" + trasmessa + "_" + dataInizio + "_" + dataFine + "_" + tipoOperazione;
 
   return (
     <section>
@@ -87,6 +89,7 @@ export default async function RegistrazionePage({
         trasmessa={trasmessa ? trasmessa : undefined} 
         dataInizio={dataInizio ? dataInizio : undefined}
         dataFine={dataFine ? dataFine : undefined}
+        selectedOperazione={tipoOperazione ? tipoOperazione : undefined}
       />
       <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={renderKey}>
         <RegistrazioneTable dataPromise={registrazioni} usingSearch={imSearching} />

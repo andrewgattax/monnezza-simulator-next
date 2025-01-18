@@ -50,10 +50,10 @@ const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise, us
       id: 'tipoOperazioneAttivita',
       header: 'Operazione e Attività',
       cell: ({ row }) => {
-        const { tipoAttivita, causaleOperazione } = row.original;
+        const { tipoAttivita, causaleOperazione, tipoOperazione } = row.original;
         return (
           <div key={tipoAttivita} className="badge text-bg-secondary mr-1">
-            {tipoAttivita.replaceAll("_", " ")} - {causaleOperazione}
+            {tipoAttivita.replaceAll("_", " ")}{tipoOperazione ? " - " + tipoOperazione : ""}{causaleOperazione ? " - " + causaleOperazione : ""}
           </div>
         )
       }

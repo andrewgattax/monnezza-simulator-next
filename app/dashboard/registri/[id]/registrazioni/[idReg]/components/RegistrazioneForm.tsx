@@ -15,6 +15,8 @@ interface CausaleOperazione {
   descrizione: string
 }
 
+
+
 let causali: CausaleOperazione[] = []
 
 const arrayToString = (arr?: string[]): string => {
@@ -27,11 +29,12 @@ const arrayToString = (arr?: string[]): string => {
 interface RegistrazioneFormProps {
   tipiAttività: TipoAttivita[]
   registrazione?: Partial<Registrazione>;
+  progressivi?: String[]
   integrazioneFIR?: boolean
   onChange: (updatedData: any) => void;
 }
 
-const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, registrazione, integrazioneFIR, onChange }) => {
+const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, registrazione, integrazioneFIR, progressivi, onChange }) => {
   const [formValues, setFormValues] = useState(registrazione || {});
   const [isIntegratoFIR, setIntegratoFIR] = useState<boolean>(integrazioneFIR || false)
 
@@ -170,13 +173,12 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
 
                     <option value="CaricoEScarico" hidden>Carico & Scarico</option>
                     <option value="" disabled>Seleziona</option>
-                    {Object.values(TipoOperazione).map((operation) => (
-                      <option key={operation} value={operation}>{enumToName(operation)}</option>
-                    ))}
+                    <option key="carico" value="CARICO">Carico</option>
+                    <option key="scarico" value="SCARICO">Scarico</option>                 
                   </select>
                   <label htmlFor="tipoOperazione">Tipo Operazione: </label>
                 </div>
-                <input type='hidden' value={formValues.tipoOperazione} name='tipoOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
+                <input type='hidden' value={formValues.tipoOperazione ? formValues.tipoOperazione : undefined} name='tipoOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
               </div>
             )}
             {!formValues.isStoccaggioInstant && (
@@ -194,7 +196,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   </select>
                   <label htmlFor="causaleOperazione">Causale Operazione: </label>
                 </div>
-                <input type='hidden' value={formValues.causaleOperazione} name='causaleOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
+                <input type='hidden' value={formValues.causaleOperazione ? formValues.causaleOperazione : undefined} name='causaleOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
               </div>
             )}
             {formValues.isStoccaggioInstant && (
@@ -207,7 +209,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           {!formValues.isStoccaggioInstant && (
             <div className="row g-2 mt-2">
               <div className="col-12">
-                <InputFloating name="riferimentoRegistrazione" label="Riferimento Registrazione (es '2024/00000001')" type='text' value={arrayToString(formValues.registrazioniFiglie)} onChange={handleChange} disabled={formValues.tipoOperazione === "CARICO"} />
+                <InputFloating name="riferimentoRegistrazione" label="Riferimento Registrazione (es '2024/1-2024/2...')" type='text' defaultValue={progressivi ? progressivi.join("-") : ""} onChange={handleChange} disabled={formValues.tipoOperazione === "CARICO"} />
               </div>
             </div>
           )}

@@ -14,28 +14,14 @@ import CustomObjectId from '../../../../../../../components/CustomObjectId';
 
 interface RegistrazioneFormProps {
   dbResult?: Promise<Partial<Registrazione>>;
-  tipiAttivita?: TipoAttivita[];
+  tipiAttivita: TipoAttivita[];
+  progressivi?: String[]
   objectId?: string,
   registroId: string
 }
 
-const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, tipiAttivita, objectId, registroId }) => {
-  const tipiAttivitaProva: TipoAttivita[] = [
-    {
-      attivita: AttivitaENUM.INTERMEDIAZIONE,
-      codiciRifiuto: []
-    },
-    {
-      attivita: AttivitaENUM.TRASPORTO,
-      codiciRifiuto: []
-    },
-    {
-      attivita: AttivitaENUM.RECUPERO,
-      codiciRifiuto: []
-    }
-  ]
+const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, progressivi, tipiAttivita, objectId, registroId }) => {
     
-  
   const [state, formAction, pending] = useActionState(registrazioneServerAction, {message: ''});
   const initialFormData = dbResult ? use(dbResult) : {};
   const [formData, setFormData] = useState(initialFormData);
@@ -59,7 +45,7 @@ const RegistrazioneCreateUI: React.FC<RegistrazioneFormProps> = ({ dbResult, tip
       <ConditionalHider hidden={!state.message || pending}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
       </ConditionalHider>
-      <RegistrazioneForm tipiAttività={tipiAttivitaProva} registrazione={formData} onChange={handleFormChange}/>
+      <RegistrazioneForm tipiAttività={tipiAttivita} registrazione={formData} onChange={handleFormChange} progressivi={progressivi}/>
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>

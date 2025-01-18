@@ -65,11 +65,23 @@ export default async function registrazioneServerAction(prevState: any, formData
 
 
 
-  let registrazioniAssociate = [
-    riferimentoRegistrazione
-  ].filter((item): item is string => item !== null);
-
-
+  let registrazioniProgressivi = riferimentoRegistrazione ? riferimentoRegistrazione.toString().split('-') : [];
+  let registrazioniId = await Promise.all(
+    registrazioniProgressivi.map(async (p) => {
+      console.log(p)
+      const registrazione = await prisma.registrazione.findFirst({
+        where: {
+          progressivo: p,
+          registroId: registroId?.toString()
+        },
+        select: {
+          id: true
+        }
+      });
+      console.log(registrazione)
+      return registrazione ? registrazione.id : ""
+    })
+  );
 
 
   if (action === "update") {
@@ -99,7 +111,6 @@ export default async function registrazioneServerAction(prevState: any, formData
         tipoOperazione: tipoOperazione ? tipoOperazione as TipoOperazione : undefined,
         causaleOperazione: causaleOperazione ? causaleOperazione as CausaleOperazione : undefined,
         dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : undefined,
-        registrazioniFiglie: [],
         rifiuto: rifiuto,
         isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : undefined,
         numeroRegistrazionePubblicaSicurezza: numeroRegistrazionePubblicaSicurezza ? numeroRegistrazionePubblicaSicurezza.toString() : undefined,
@@ -119,6 +130,7 @@ export default async function registrazioneServerAction(prevState: any, formData
         causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : undefined,
         causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : undefined,
         annotazioni: annotazioni ? annotazioni.toString() : undefined,
+        registrazioniFiglie: registrazioniId ? registrazioniId : []
       }
 
       const cleanedData = Object.fromEntries(
@@ -145,7 +157,7 @@ export default async function registrazioneServerAction(prevState: any, formData
         where: { id: registroId!.toString() },
         select: { progressivoCounter: true }
       });
-      progressivo = (registro!.progressivoCounter) + 1;
+      progressivo = new Date(dataOraRegistrazione!.toString()).getFullYear().toString() + "/" + (registro!.progressivoCounter + 1);
     } catch (error) {
       return { message: "Registro non trovato" };
     }
@@ -174,10 +186,10 @@ export default async function registrazioneServerAction(prevState: any, formData
       tipoAttivita: tipoAttivita as AttivitaENUM,
       isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : false,
       dataOraRegistrazione: dataOraRegistrazione ? new Date(dataOraRegistrazione.toString()) : new Date(),
-      tipoOperazione: tipoOperazione as TipoOperazione,
-      causaleOperazione: causaleOperazione as CausaleOperazione,
+      tipoOperazione: tipoOperazione ? tipoOperazione as TipoOperazione : null,
+      causaleOperazione: causaleOperazione ? causaleOperazione as CausaleOperazione : null,
       dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : null,
-      registrazioniFiglie: [],
+      registrazioniFiglie: registrazioniId ? registrazioniId : [],
       rifiuto: rifiuto,
       isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : false,
       numeroRegistrazionePubblicaSicurezza: numeroRegistrazionePubblicaSicurezza ? numeroRegistrazionePubblicaSicurezza.toString() : null,
@@ -205,10 +217,10 @@ export default async function registrazioneServerAction(prevState: any, formData
       await prisma.registrazione.create({
         data: nuovaRegistrazione
       });
-      /* await prisma.registro.update({
+      await prisma.registro.update({
         where: { id: registroId!.toString() },
         data: { progressivoCounter: { increment: 1 } }
-      }); */
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         console.log("gay")

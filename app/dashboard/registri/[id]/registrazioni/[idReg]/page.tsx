@@ -1,6 +1,6 @@
 import { PrismaClient, LuogoProduzione } from '@prisma/client'
 import React, { Suspense } from 'react'
-import { getRegistrazioneByIdAndUserId } from '../database';
+import { getRegistrazioneByIdAndUserId, getRegistrazioniFiglieProgressiviByRegistrazioneIdAndUserId } from '../database';
 import RegistrazioneCreateUI from './components/RegistrazioneCreateUI';
 import DbLoading from '../../../../../../components/DbLoading';
 export const metadata = {
@@ -12,6 +12,7 @@ import BreadcrumbInjector from '../../../../../../components/BreadcrumbInjector'
 import { auth } from '../../../../../../auth';
 import ErrorMessage from '../../../../../../components/ErrorMessage';
 import { breadcrumb } from '../page';
+import { getAttivitaByRegistroIdAndUserId } from '@/dashboard/registri/database';
 
 // PAGINA
 export default async function RegistrazioniContainer({
@@ -20,6 +21,8 @@ export default async function RegistrazioniContainer({
   params: Promise<{ idReg: string, id: string }>;
 }) {
   const awaitedParams = await params;
+  const paramId = awaitedParams.idReg
+  const registroId = awaitedParams.id
 
   const breadcrumb: BreadcrumbItem[] = [
     ...oldBreadcrumb,
@@ -29,7 +32,7 @@ export default async function RegistrazioniContainer({
       icon: "clipboard2-data",
     },
   ];
-  
+
   const breadcrumbAggiungi: BreadcrumbItem[] = [
     ...breadcrumb,
     {
@@ -38,7 +41,7 @@ export default async function RegistrazioniContainer({
       icon: "plus-circle",
     },
   ];
-  
+
   const breadcrumbModifica: BreadcrumbItem[] = [
     ...breadcrumb,
     {
@@ -52,8 +55,15 @@ export default async function RegistrazioniContainer({
   if (!session) {
     return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
   }
-  const paramId = awaitedParams.idReg
-  const registroId = awaitedParams.id
+
+  const tipiAttivita = await getAttivitaByRegistroIdAndUserId(registroId, session?.user?.dbId);
+
+  let progressivi;
+
+  if (paramId != "new") {
+    progressivi = await getRegistrazioniFiglieProgressiviByRegistrazioneIdAndUserId(paramId, session?.user?.dbId);
+  }
+
   const prisma = new PrismaClient()
 
   //TODO: get tipi attivita da registro in utilizzo
@@ -62,7 +72,7 @@ export default async function RegistrazioniContainer({
     return (
       <section>
         <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <RegistrazioneCreateUI registroId={registroId}/>
+        <RegistrazioneCreateUI tipiAttivita={tipiAttivita} registroId={registroId} />
       </section>
     );
   } else {
@@ -72,7 +82,7 @@ export default async function RegistrazioniContainer({
       <section>
         <BreadcrumbInjector items={breadcrumbModifica} />
         <Suspense fallback={<DbLoading />}>
-          <RegistrazioneCreateUI registroId={registroId} dbResult={registrazione} objectId={paramId} />
+          <RegistrazioneCreateUI tipiAttivita={tipiAttivita} registroId={registroId} dbResult={registrazione} objectId={paramId} progressivi={progressivi} />
         </Suspense>
       </section>
 

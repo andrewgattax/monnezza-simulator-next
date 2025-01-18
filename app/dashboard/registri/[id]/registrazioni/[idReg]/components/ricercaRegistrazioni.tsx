@@ -5,19 +5,20 @@ import EERSelectorFormComponent from '../../../../../../../components/EERSelecto
 import { CodiceEER } from '../../../../../../../components/EERSelectorModal';
 import { useRouter } from 'next/navigation';
 import InputFloating from '../../../../../../../components/InputFloating';
-import { AttivitaENUM } from '@prisma/client';
+import { AttivitaENUM, TipoAttivita } from '@prisma/client';
 import { enumToName } from '../../../../../../../utils';
 
 interface RicercaRegistrazioniProps {
     dataEER?: string;
-    tipiAttivita?: AttivitaENUM[];
+    tipiAttivita?: TipoAttivita[];
     selectedAttivita?: AttivitaENUM;
     trasmessa?: string;
     dataInizio?: string;
     dataFine?: string;
+    selectedOperazione?: string
 }
 
-const RicercaRegistrazioni: React.FC<RicercaRegistrazioniProps> = ({ dataEER, tipiAttivita, selectedAttivita, trasmessa, dataInizio, dataFine }) => {
+const RicercaRegistrazioni: React.FC<RicercaRegistrazioniProps> = ({ dataEER, tipiAttivita, selectedAttivita, trasmessa, dataInizio, dataFine, selectedOperazione }) => {
     const router = useRouter();
 
     const updateQueryParams = (key: string, value: string) => {
@@ -34,6 +35,10 @@ const RicercaRegistrazioni: React.FC<RicercaRegistrazioniProps> = ({ dataEER, ti
         updateQueryParams('TA', e.target.value);
     };
 
+    const handleTipoOperazioneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        updateQueryParams('TO', e.target.value);
+    };
+
     const handleTrasmissioneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         updateQueryParams('Tr', e.target.value);
     };
@@ -48,19 +53,29 @@ const RicercaRegistrazioni: React.FC<RicercaRegistrazioniProps> = ({ dataEER, ti
                 <div className="col">
                     <EERSelectorFormComponent onChange={handleEERChange} data={dataEER} key={dataEER} />
                 </div>
-                <div className="col">
+                <div className="col-3">
                     <div className="form-floating">
                         <select className="form-select" id="tipoAttivita" value={selectedAttivita ? selectedAttivita : ""} onChange={handleTipoAttivitaChange}>
                             <option value="">
                                 Tutte
                             </option>
                             {tipiAttivita?.map((attivita) => (
-                                <option key={attivita} value={attivita}>
-                                    {enumToName(attivita)}
+                                <option key={attivita.attivita} value={attivita.attivita}>
+                                    {enumToName(attivita.attivita)}
                                 </option>
                             ))}
                         </select>
                         <label htmlFor="tipoAttivita">Tipo Attività</label>
+                    </div>
+                </div>
+                <div className="col-3">
+                <div className="form-floating">
+                        <select className="form-select" id="tipoOperazione" value={selectedOperazione ? selectedOperazione : ""} onChange={handleTipoOperazioneChange}>
+                            <option value="">Tutte</option>
+                            <option value="CARICO">Carico</option>
+                            <option value="SCARICO">Scarico</option>
+                        </select>
+                        <label htmlFor="tipoOperazione">Tipo Operazione</label>
                     </div>
                 </div>
             </div>

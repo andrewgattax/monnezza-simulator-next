@@ -72,7 +72,8 @@ export async function getAttivitaByRegistroIdAndUserId(registroId: string, userI
         select: {
             tipiAttivita: {
                 select: {
-                    attivita: true
+                    attivita: true,
+                    codiciRifiuto: true
                 }
             }
         }
@@ -82,9 +83,7 @@ export async function getAttivitaByRegistroIdAndUserId(registroId: string, userI
         throw new Error('Attività non trovata');
     }
 
-    const attivitaList = attivita.tipiAttivita.map(t => t.attivita);
-
-    return attivitaList;
+    return attivita.tipiAttivita;
 }
 
 

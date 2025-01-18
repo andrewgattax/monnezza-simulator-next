@@ -1,12 +1,16 @@
 import React, { use } from 'react';
-import { Registrazione } from '@prisma/client';
+import { Prisma, Registrazione } from '@prisma/client';
 import { enumToName, toNiceDate } from '../../../../../../../utils';
+import { PrismaClient } from '@prisma/client/extension';
 
 interface DetailProps {
     registrazione: Promise<Registrazione>;
+    progressivi?: String[]
 }
 
-const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
+
+
+const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi }) => {
     const detail = use(registrazione);
 
     return (
@@ -20,7 +24,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
                                 <b>Progressivo</b>
                             </div>
                             <div className="col">
-                                {new Date(detail.createdAt).getFullYear().toString()}/{detail.progressivo}
+                                {detail.progressivo}
                             </div>
                         </div>
                     </div>
@@ -37,12 +41,10 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
                     <div className="col-4 my-detail">
                         <div className="row">
                             <div className="col">
-                                <b>Trasmissione</b>
+                                <b>Data e ora Registrazione</b>
                             </div>
                             <div className="col">
-                                <span className={detail.isTrasmessa ? "badge text-bg-success" : "badge text-bg-danger"}>
-                                    {detail.isTrasmessa ? "TRASMESSA" : "NON TRASMESSA"}
-                                </span>
+                                {toNiceDate(detail.dataOraRegistrazione)}
                             </div>
                         </div>
                     </div>
@@ -51,10 +53,10 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
                     <div className="col-4 my-detail">
                         <div className="row">
                             <div className="col">
-                                <b>Data e ora Registrazione</b>
+                                <b>Tipo Attività</b>
                             </div>
                             <div className="col">
-                                {toNiceDate(detail.dataOraRegistrazione)}
+                                {detail.tipoAttivita}
                             </div>
                         </div>
                     </div>
@@ -64,7 +66,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
                                 <b>Tipo Operazione</b>
                             </div>
                             <div className="col">
-                                {detail.tipoOperazione}
+                                {detail.tipoOperazione ? detail.tipoOperazione : " - "}
                             </div>
                         </div>
                     </div>
@@ -74,9 +76,45 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
                                 <b>Causale Operazione</b>
                             </div>
                             <div className="col">
-                                {detail.causaleOperazione}
+                                {detail.causaleOperazione ? detail.causaleOperazione : " - "}
                             </div>
                         </div>
+                    </div>
+                </div>
+                <div className='row mt-2'>
+                    <div className="col-4 my-detail">
+                        <div className="row">
+                            <div className="col">
+                                <b>Trasmissione</b>
+                            </div>
+                            <div className="col">
+                                <span className={detail.isTrasmessa ? "badge text-bg-success" : "badge text-bg-danger"}>
+                                    {detail.isTrasmessa ? "TRASMESSA" : "NON TRASMESSA"}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-4 my-detail">
+                        <div className="row">
+                            <div className="col">
+                                <b>Riferimenti a</b>
+                            </div>
+                            <div className="col">
+                                {
+                                    //TODO: PORCATA ASSOLUTA MA FUNZIONA (machecazz?)
+                                }
+                                {progressivi && progressivi.length > 0 ? (
+                                    progressivi.map((p) => {
+                                        return (
+                                            <span key={`${p}`} className="badge text-bg-secondary mr-1">{p}</span>
+                                        )
+                                    })
+                                ) : " - "}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-4 my-detail">
+
                     </div>
                 </div>
             </section>
@@ -321,7 +359,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione }) => {
                         </div>
                     </div>
                     <div className="col-4 my-detail">
-                    <div className="row">
+                        <div className="row">
                             <div className="col">
                                 <b>Causale respingimento</b>
                             </div>

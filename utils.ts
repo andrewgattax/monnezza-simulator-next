@@ -19,3 +19,7 @@ export function toNiceDate(data: Date): string {
     return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
+export function concatProgressivi(progressivi: String[]) {
+    return progressivi.join('-');
+}
+

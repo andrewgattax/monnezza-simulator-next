@@ -1,4 +1,4 @@
-import { AttivitaENUM, PrismaClient, Registrazione, TipoAttivita } from '@prisma/client';
+import { AttivitaENUM, PrismaClient, Registrazione, TipoAttivita, TipoOperazione } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -49,6 +49,7 @@ export async function getRegistrazioniByRegistroIdAndUserIdAndQueryParams(
   trasmessa: string | undefined,
   dataInizio: string | undefined,
   dataFine: string | undefined,
+  tipoOperazione: string | undefined
 ) {
   const registrazioni = await prisma.registrazione.findMany({
     where: {
@@ -61,6 +62,7 @@ export async function getRegistrazioniByRegistroIdAndUserIdAndQueryParams(
           ]
         }
       },
+      tipoOperazione: tipoOperazione as TipoOperazione,
       tipoAttivita: tipoAttivita as AttivitaENUM,
       isTrasmessa: trasmessa === "" ? undefined : trasmessa === "trasmessa",
       dataOraRegistrazione: (dataInizio != undefined) && (dataFine != undefined) ? {
@@ -75,5 +77,25 @@ export async function getRegistrazioniByRegistroIdAndUserIdAndQueryParams(
     },
   });
   return registrazioni;
+}
+
+export async function getRegistrazioniFiglieProgressiviByRegistrazioneIdAndUserId(regId: string, userId: string) {
+  const registrazione = await getRegistrazioneByIdAndUserId(regId, userId);
+  const registrazioneFiglieIds = registrazione.registrazioniFiglie;
+
+  const progressivi: string[] = [];
+
+  for (const id of registrazioneFiglieIds) {
+    const figlia = await prisma.registrazione.findUnique({
+      where: { id: id },
+      select: { progressivo: true }
+    });
+
+    if (figlia && figlia.progressivo) {
+      progressivi.push(figlia.progressivo);
+    }
+  }
+
+  return progressivi;
 }
 

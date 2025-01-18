@@ -99,12 +99,12 @@ model Registro {
 model Registrazione {
   id                                   String                    @id @default(auto()) @map("_id") @db.ObjectId
   createdAt                            DateTime                  @default(now())
-  progressivo                          Int
+  progressivo                          String
   dataOraRegistrazione                 DateTime
   isTrasmessa                          Boolean                   @default(false)
-  tipoOperazione                       TipoOperazione
+  tipoOperazione                       TipoOperazione?
   tipoAttivita                         AttivitaENUM
-  causaleOperazione                    CausaleOperazione
+  causaleOperazione                    CausaleOperazione?
   numeroRegistrazionePubblicaSicurezza String?
   dataRegistrazionePubblicaSicurezza   DateTime?
   isIntegratoFIR                       Boolean                   @default(false)
