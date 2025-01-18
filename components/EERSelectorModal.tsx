@@ -18,6 +18,7 @@ interface ModalProps {
   onSave: (values: CodiceEER | undefined) => void;
 }
 
+
 const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
   const [value, setValue] = useState<CodiceEER | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,8 +27,11 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredEERCodes = eerDB.filter((eer: CodiceEER) =>
-    eer.codice.includes(searchTerm) || eer.descrizione.toLowerCase().includes(searchTerm.toLowerCase())
+
+  const filteredEERCodes = eerDB.filter((eer: CodiceEER) => {
+    return eer.codice.includes(searchTerm) || eer.descrizione.toLowerCase().includes(searchTerm.toLowerCase())
+  }
+    
   );
 
   const options = filteredEERCodes.map((eer: CodiceEER) => ({
@@ -76,11 +80,15 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
               value={searchTerm}
               onChange={handleSearchChange}
             />
+            {
+              //TODO: CAMPIONE DELLA PORCAGGINE ASSOLUTA
+            }
             <Select
               options={options}
               placeholder="Seleziona dai risultati della ricerca"
               onChange={handleChange}
               value={value ? { value, label: `${value.codice} - ${value.descrizione}` } : null}
+              isOptionDisabled={(option) => option.value.codice.includes("00_00")}
             />
           </div>
           <div className="modal-footer">

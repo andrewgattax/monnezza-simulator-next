@@ -14,13 +14,15 @@ import {
 } from '@tanstack/react-table';
 import { toNiceDate, toNiceString } from '../../../../../utils';
 import IconB from '../../../../../components/IconB';
+import ConditionalHider from '../../../../../components/ConditionalHider';
 
 
 interface RegistrazioneTableProps {
   dataPromise: Promise<Registrazione[]>;
+  usingSearch: boolean;
 }
 
-const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise }) => {
+const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise, usingSearch }) => {
   const tableData = use(dataPromise);
   const [data, setData] = useState<Registrazione[]>(tableData);
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -131,8 +133,80 @@ const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise }) 
     router.push(`registrazioni/new`);
   }
 
+  const handleResetQueryParams = () => {
+    router.push('./registrazioni');
+  }
+
   return (
     <div className="mt-3">
+
+      {/* Pagination Controls */}
+      <div className="row mb-3 mt-2 p-2 g-2 border row-margin-fix no-print">
+        <div className="col mt-1 mb-1">
+          <div className="btn-group" role="group" aria-label="Paginazione">
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="btn btn-sm btn-outline-secondary"
+            >
+              <IconB iconName="caret-left" />
+              Indietro
+            </button>
+
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="btn btn-sm btn-outline-secondary"
+            >
+              Avanti
+              <IconB iconName="caret-right" flipMargin />
+            </button>
+          </div>
+
+          <span style={{ marginLeft: '12px', marginTop: '3px', display: 'inline-block' }}>
+            Pagina{' '}
+            <strong>
+              {table.getState().pagination.pageIndex + 1} di{' '}
+              {table.getPageCount()}
+            </strong>
+          </span>
+        </div>
+
+        <div className="col col-auto mt-1 mb-1">
+          <div className="row g-2">
+            <ConditionalHider hidden={!usingSearch}>
+              <div className="col-auto">
+                <button onClick={handleResetQueryParams} className="btn btn-sm btn-outline-secondary d-flex flex-row">
+                  <IconB iconName="x-octagon" />
+                  Resetta filtri di ricerca
+                </button>
+              </div>
+            </ConditionalHider>
+            <div className="col-auto">
+              <button onClick={handleNew} className="btn btn-sm btn-outline-secondary d-flex flex-row">
+                <IconB iconName="plus-square" />
+                Aggiungi nuova
+              </button>
+            </div>
+            <div className="col-auto">
+              <select
+                value={table.getState().pagination.pageSize}
+                onChange={(e) => {
+                  table.setPageSize(Number(e.target.value));
+                }}
+                className="form-select form-select-sm"
+              >
+                {[5, 10, 20].map((pageSize) => (
+                  <option key={pageSize} value={pageSize}>
+                    Mostra {pageSize} elementi
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <table className="table table-striped table-bordered table-hover">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -184,66 +258,6 @@ const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise }) 
           )}
         </tbody>
       </table>
-
-      {/* Pagination Controls */}
-      <div className="row mt-3 p-2 g-2 border row-margin-fix no-print">
-        <div className="col mt-1 mb-1">
-          <div className="btn-group" role="group" aria-label="Paginazione">
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="btn btn-sm btn-outline-secondary"
-            >
-              <IconB iconName="caret-left" />
-              Indietro
-            </button>
-
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="btn btn-sm btn-outline-secondary"
-            >
-              Avanti
-              <IconB iconName="caret-right" flipMargin />
-            </button>
-          </div>
-
-          <span style={{ marginLeft: '12px', marginTop: '3px', display: 'inline-block' }}>
-            Pagina{' '}
-            <strong>
-              {table.getState().pagination.pageIndex + 1} di{' '}
-              {table.getPageCount()}
-            </strong>
-          </span>
-        </div>
-
-        <div className="col col-auto mt-1 mb-1">
-          <div className="row g-2">
-            <div className="col-auto">
-              <button onClick={handleNew} className="btn btn-sm btn-outline-secondary d-flex flex-row">
-                <IconB iconName="plus-square" />
-                Aggiungi nuova
-              </button>
-            </div>
-            <div className="col-auto">
-              <select
-                value={table.getState().pagination.pageSize}
-                onChange={(e) => {
-                  table.setPageSize(Number(e.target.value));
-                }}
-                className="form-select form-select-sm"
-              >
-                {[5, 10, 20].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    Mostra {pageSize} elementi
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 };

@@ -1,11 +1,14 @@
-
-
 import Link from "next/link";
 import { breadcrumb as oldBreadcrumb } from "../page";
 import { BreadcrumbItem } from "../../../components/BreadcrumbContext";
 import { PrismaClient, UnitaLocale } from "@prisma/client";
 import { auth } from "../../../auth";
-import { getRegistriByUnitaLocaleId } from "./database";
+import { 
+  getRegistriByUnitaLocaleId, 
+  searchRegistriByQueryAndUserId,
+  countNonTrasmesseRegistrazioniByUserIdAndQuery,
+  countNonTrasmesseRegistrazioniByUserIdAndUnitaLocaleId
+} from "./database";
 import BreadcrumbInjector from "../../../components/BreadcrumbInjector";
 import ConditionalHider from "../../../components/ConditionalHider";
 import SuccessfulOperationToast from "../../../components/SuccessfulOperationToast";
@@ -18,6 +21,10 @@ import SelettoreUnitaPerRegistro from "./SelettoreUnitaPerRegistro";
 import ErrorMessage from "../../../components/ErrorMessage";
 import NoResult from "../../../components/NoResult";
 import { revalidatePath } from "next/cache";
+import InputFloating from "../../../components/InputFloating";
+import IconB from "../../../components/IconB";
+import RicercaRegistri from "./RicercaRegistri";
+import RegNonTrasmesseCounter from "./RegNonTrasmesseCounter";
 
 export const breadcrumb: BreadcrumbItem[] = [
   ...oldBreadcrumb,
@@ -36,6 +43,7 @@ const prisma = new PrismaClient();
 
 export default async function RegistriPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   const session = await auth();
+  const sp = (await searchParams);
   if(!session){
     return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
   }
@@ -48,16 +56,29 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
       </section>
     )
   }
+
   let registri: Promise<Registro[]>;
-  const selectedUnitaLocale = (await searchParams).idUL || unitaLocali[0].id;
-  try {
-    registri = getRegistriByUnitaLocaleId(selectedUnitaLocale);
-    if (!registri) {
+  let selectedUnitaLocale = sp.idUL || unitaLocali[0].id;
+  let renderKey = selectedUnitaLocale + "_" + sp.regQuery;
+  let nonTrasmesse;
+
+  if(sp.regQuery) {
+    registri = searchRegistriByQueryAndUserId(sp.regQuery, session.user.dbId!);
+    nonTrasmesse = countNonTrasmesseRegistrazioniByUserIdAndQuery(session.user.dbId!, sp.regQuery);
+    selectedUnitaLocale = "!!search!!";
+  } else {
+    sp.regQuery = "";
+    try {
+      nonTrasmesse = countNonTrasmesseRegistrazioniByUserIdAndUnitaLocaleId(session.user.dbId!, selectedUnitaLocale);
+      registri = getRegistriByUnitaLocaleId(selectedUnitaLocale);
+      if (!registri) {
+        registri = getRegistriByUnitaLocaleId(unitaLocali[0].id);
+      }
+    } catch (error) {
       registri = getRegistriByUnitaLocaleId(unitaLocali[0].id);
     }
-  } catch (error) {
-    registri = getRegistriByUnitaLocaleId(unitaLocali[0].id);
   }
+
 
   return (
     <section>
@@ -65,9 +86,19 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
       <ConditionalHider hidden={(await searchParams).success != "1"}>
         <SuccessfulOperationToast />
       </ConditionalHider>
-      <SelettoreUnitaPerRegistro unitaLocali={unitaLocali} selectedId={selectedUnitaLocale} />
-      <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={selectedUnitaLocale}>
-        <RegistroTable dataPromise={registri}/>
+      <div className="row g-2">
+        <div className="col-4">
+          <SelettoreUnitaPerRegistro key={renderKey} unitaLocali={unitaLocali} selectedId={selectedUnitaLocale} />
+        </div>
+        <div className="col-8">
+          <RicercaRegistri key={renderKey} searchQuery={sp.regQuery} />
+        </div>
+      </div>
+      <Suspense key={renderKey + "_nontrasmesse"}>
+        <RegNonTrasmesseCounter count={nonTrasmesse!} unitaLocali={unitaLocali} selectedId={selectedUnitaLocale} />
+      </Suspense>
+      <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={renderKey}>
+        <RegistroTable dataPromise={registri} usingSearchQuery={sp.regQuery !== ""}/>
       </Suspense>
     </section>
   );

@@ -79,60 +79,8 @@ const LuogoProduzioneTable: React.FC<LuogoProduzioneTableProps> = ({ dataPromise
 
   return (
     <div className="mt-3">
-      <table className="table table-striped table-bordered table-hover">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
-                  style={{
-                    cursor: header.column.getCanSort() ? 'pointer' : 'default',
-                    width: header.column.id === 'actions' ? '1px' : 'auto'
-                  }}
-                  className={header.column.id === 'actions' ? 'no-print' : ''}  // implementare qualcosa?
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                  {
-                    header.column.getIsSorted() ?
-                      (header.column.getIsSorted() === 'asc' ?
-                        <IconB iconName="caret-up-fill" flipMargin /> :
-                        <IconB iconName="caret-down-fill" flipMargin />
-                      ) :
-                      (header.column.getCanSort() ? <IconB iconName="caret-right-fill" flipMargin /> : '')
-                  }
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="table-group-divider">
-          {table.getRowModel().rows.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="text-center">
-                Nessun dato disponibile
-              </td>
-            </tr>
-          ) : (
-            table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-
       {/* Pagination Controls */}
-      <div className="row mt-3 p-2 g-2 border row-margin-fix no-print">
+      <div className="row mt-3 mb-3 p-2 g-2 border row-margin-fix no-print">
         <div className="col mt-1 mb-1">
 
           <div className="btn-group" role="group" aria-label="Paginazione">
@@ -190,7 +138,57 @@ const LuogoProduzioneTable: React.FC<LuogoProduzioneTableProps> = ({ dataPromise
           </div>
         </div>
       </div>
-
+      <table className="table table-striped table-bordered table-hover">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  style={{
+                    cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                    width: header.column.id === 'actions' ? '1px' : 'auto'
+                  }}
+                  className={header.column.id === 'actions' ? 'no-print' : ''}  // implementare qualcosa?
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                  {
+                    header.column.getIsSorted() ?
+                      (header.column.getIsSorted() === 'asc' ?
+                        <IconB iconName="caret-up-fill" flipMargin /> :
+                        <IconB iconName="caret-down-fill" flipMargin />
+                      ) :
+                      (header.column.getCanSort() ? <IconB iconName="caret-right-fill" flipMargin /> : '')
+                  }
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody className="table-group-divider">
+          {table.getRowModel().rows.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className="text-center">
+                Nessun dato disponibile
+              </td>
+            </tr>
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

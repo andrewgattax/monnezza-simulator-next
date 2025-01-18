@@ -2,8 +2,11 @@ import Link from "next/link";
 import { breadcrumb as oldBreadcrumb } from "../../page";
 import { BreadcrumbItem } from "../../../../../components/BreadcrumbContext";
 import BreadcrumbInjector from "../../../../../components/BreadcrumbInjector";
-import { Registrazione } from "@prisma/client";
-import { getRegistrazioniByRegistroIdAndUserId } from "./database";
+import { AttivitaENUM, Registrazione } from "@prisma/client";
+import { 
+  getRegistrazioniByRegistroIdAndUserId, 
+  getRegistrazioniByRegistroIdAndUserIdAndQueryParams 
+} from "./database";
 import { auth } from "../../../../../auth";
 import ConditionalHider from "../../../../../components/ConditionalHider";
 import SuccessfulOperationToast from "../../../../../components/SuccessfulOperationToast";
@@ -12,6 +15,8 @@ import { Suspense } from "react";
 import DbLoading from "../../../../../components/DbLoading";
 import NoResult from "../../../../../components/NoResult";
 import ErrorMessage from "../../../../../components/ErrorMessage";
+import RicercaRegistrazioni from "./[idReg]/components/ricercaRegistrazioni";
+import { getAttivitaByRegistroIdAndUserId } from "../../database";
 
 export const breadcrumb: BreadcrumbItem[] = [
   ...oldBreadcrumb,
@@ -34,13 +39,40 @@ export default async function RegistrazionePage({
   searchParams: { [key: string]: string }
 }) {
 
-  const paramId = (await params).id
+  const awaitedParams = await params;
+  const awaitedSearchParams = await searchParams;
+  const paramId = awaitedParams.id;
+
+  const cEER = awaitedSearchParams.cEER || undefined;
+  const attivita = awaitedSearchParams.TA || undefined
+  const trasmessa = awaitedSearchParams.Tr || undefined
+  const dataInizio = awaitedSearchParams.dI || undefined;
+  const dataFine = awaitedSearchParams.dF || undefined;
+
   const session = await auth();
   if (!session) {
     return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
   }
+
+  let registrazioni;
+  let imSearching = false;
+  if (cEER || attivita || trasmessa || dataInizio || dataFine) {
+    imSearching = true;
+    registrazioni = getRegistrazioniByRegistroIdAndUserIdAndQueryParams(
+      paramId, 
+      session?.user?.dbId!, 
+      cEER, 
+      attivita, 
+      trasmessa, 
+      dataInizio, 
+      dataFine
+    );
+  }else {
+    registrazioni = getRegistrazioniByRegistroIdAndUserId(paramId, session?.user?.dbId!);
+  }
   
-  const registrazioni = getRegistrazioniByRegistroIdAndUserId(paramId, session?.user?.dbId!);
+  const tipiAttivita = await getAttivitaByRegistroIdAndUserId(paramId, session?.user?.dbId);
+  const renderKey = paramId + "_" + cEER + "_" + attivita + "_" + trasmessa + "_" + dataInizio + "_" + dataFine;
 
   return (
     <section>
@@ -48,8 +80,16 @@ export default async function RegistrazionePage({
       <ConditionalHider hidden={(await searchParams).success != "1"}>
         <SuccessfulOperationToast />
       </ConditionalHider>
-      <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={paramId}>
-        <RegistrazioneTable dataPromise={registrazioni} />
+      <RicercaRegistrazioni 
+        dataEER={cEER ? cEER : undefined} 
+        tipiAttivita={tipiAttivita} 
+        selectedAttivita={attivita ? attivita as AttivitaENUM : undefined} 
+        trasmessa={trasmessa ? trasmessa : undefined} 
+        dataInizio={dataInizio ? dataInizio : undefined}
+        dataFine={dataFine ? dataFine : undefined}
+      />
+      <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={renderKey}>
+        <RegistrazioneTable dataPromise={registrazioni} usingSearch={imSearching} />
       </Suspense>
     </section>
   );

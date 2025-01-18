@@ -18,10 +18,10 @@ import { toNiceDate, toNiceString } from '../../../utils';
 
 interface RegistroTableProps {
   dataPromise: Promise<Registro[]>;
+  usingSearchQuery?: boolean;
 }
 
-
-const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
+const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise, usingSearchQuery}) => {
   const tableData = use(dataPromise);
   const router = useRouter();
   const [data, setData] = useState<Registro[]>(tableData);
@@ -34,6 +34,21 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
   const handleNew = () => {
     router.push('/dashboard/registri/new');
   };
+
+  // inietto la colonna delle unitaLocali solo se sto usando la query di ricerca
+  // altrimenti scoppia tutto
+  const extra: ColumnDef<Registro>[] = [];
+  if(usingSearchQuery) {
+    extra.push({
+      id: 'unitaLocale',
+      header: 'Unita Locale',
+      cell: ({ row }) => {
+        //TODO: PORCATA IMMENSA????
+        // @ts-ignore
+        return row.original.unitaLocale.nome;
+      },
+    });
+  }
 
   // Define columns with strict typing
   const columns: ColumnDef<Registro>[] = [
@@ -53,6 +68,7 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
         return toNiceDate(createdAt);
       },
     },
+    ...extra,
     {
       id: 'tipiAttivita',
       header: 'Tipi Attivita',
@@ -101,63 +117,10 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
   });
 
   return (
-    <div className="mt-3">
-      <table className="table table-striped table-bordered table-hover">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  onClick={header.column.getToggleSortingHandler()}
-                  style={{
-                    cursor: header.column.getCanSort() ? 'pointer' : 'default',
-                    width: header.column.id === 'actions' ? '1px' : 'auto'
-                  }}
-                  className={header.column.id === 'actions' ? 'no-print' : ''}  // implementare qualcosa?
-                >
-                  {flexRender(
-                    header.column.columnDef.header,
-                    header.getContext()
-                  )}
-                  {
-                    header.column.getIsSorted() ?
-                      (header.column.getIsSorted() === 'asc' ?
-                        <IconB iconName="caret-up-fill" flipMargin /> :
-                        <IconB iconName="caret-down-fill" flipMargin />
-                      ) :
-                      (header.column.getCanSort() ? <IconB iconName="caret-right-fill" flipMargin /> : '')
-                  }
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="table-group-divider">
-          {table.getRowModel().rows.length === 0 ? (
-            <tr>
-              <td colSpan={columns.length} className="text-center">
-                Nessun dato disponibile
-              </td>
-            </tr>
-          ) : (
-            table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-
+    <div className="mt-4">
       {/* Pagination Controls */}
-      <div className="row mt-3 p-2 g-2 border row-margin-fix no-print">
+      <div className="row mb-3 p-2 g-2 border row-margin-fix no-print">
         <div className="col mt-1 mb-1">
-
           <div className="btn-group" role="group" aria-label="Paginazione">
             <button
               onClick={() => table.previousPage()}
@@ -214,6 +177,57 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise }) => {
         </div>
       </div>
 
+      <table className="table table-striped table-bordered table-hover">
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  style={{
+                    cursor: header.column.getCanSort() ? 'pointer' : 'default',
+                    width: header.column.id === 'actions' ? '1px' : 'auto'
+                  }}
+                  className={header.column.id === 'actions' ? 'no-print' : ''}  // implementare qualcosa?
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                  {
+                    header.column.getIsSorted() ?
+                      (header.column.getIsSorted() === 'asc' ?
+                        <IconB iconName="caret-up-fill" flipMargin /> :
+                        <IconB iconName="caret-down-fill" flipMargin />
+                      ) :
+                      (header.column.getCanSort() ? <IconB iconName="caret-right-fill" flipMargin /> : '')
+                  }
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody className="table-group-divider">
+          {table.getRowModel().rows.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length} className="text-center">
+                Nessun dato disponibile
+              </td>
+            </tr>
+          ) : (
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

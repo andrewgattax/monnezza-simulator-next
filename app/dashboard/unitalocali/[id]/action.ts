@@ -86,6 +86,18 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
     redirect(`/dashboard/unitalocali`);
 
   } else if (action === "create") {
+
+    try {
+      if (tipiAttivita && tipiAttivita.length > 0) {
+        tipiAttivita = tipiAttivita.map((attivita: any) => ({
+        ...attivita,
+        codiciRifiuto: []
+        }))
+      }
+    } catch (error) {
+      // non me ne frega un cazzo perche probabilmente sono in delete
+    }
+
     let ul: Prisma.UnitaLocaleCreateInput = {
       nome: nome ? nome.toString() : "",
       indirizzo: indirizzo ? indirizzo.toString() : "",
@@ -98,6 +110,8 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
       proprietario: { connect: { id: session.user.dbId } },
       tipiAttivita: tipiAttivita ? tipiAttivita : []
     }
+
+    console.log(ul);
 
     try {
       await prisma.unitaLocale.create({

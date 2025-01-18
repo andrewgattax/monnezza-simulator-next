@@ -59,8 +59,9 @@ const EERSelectorFormComponent: React.FC<EERSelectorFormComponentProps> = ({ dat
           />
         </div>
         <div className='col col-auto'>
-          <button type="button" className='btn btn-secondary px-4 w-100 h-100' onClick={() => setModalOpen(true)}>
-            <IconB iconName="search" hasPadding={false}/>
+          <button type="button" className='btn btn-outline-secondary px-4 w-100 h-100' onClick={() => setModalOpen(true)}>
+            <IconB iconName="bar-chart-steps" />
+            Cerca codice
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import { UnitaLocale } from '@prisma/client';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import ConditionalHider from '../../../components/ConditionalHider';
 
 interface SelettoreUnitaPerRegistroProps {
   unitaLocali: UnitaLocale[];
@@ -14,7 +15,7 @@ const SelettoreUnitaPerRegistro: React.FC<SelettoreUnitaPerRegistroProps> = ({ u
   const handleUnitaLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     router.push(`/dashboard/registri?idUL=${e.target.value}`);
   }
-
+  
   return (
     <div className="row">
       <div className="col-12">
@@ -25,6 +26,11 @@ const SelettoreUnitaPerRegistro: React.FC<SelettoreUnitaPerRegistroProps> = ({ u
                 {unitaLocale.nome}
               </option>
             ))}
+            <ConditionalHider hidden={selectedId !== "!!search!!"}>
+              <option key={selectedId} value={selectedId}>
+                Stai utilizzando la ricerca...
+              </option>
+            </ConditionalHider>
           </select>
           <label htmlFor="unitaLocaleSelect">Seleziona Unità Locale</label>
         </div>

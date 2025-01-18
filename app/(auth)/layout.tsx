@@ -10,8 +10,8 @@ export default function LoginLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="container">
-      <div className="row justify-content-center">
+    <div className="container d-flex flex-column h-100">
+      <div className="row justify-content-center h-100 flex-grow-1">
         <div className={styles.authContainer}>
           <center>
             <Image src={LogoSoftware} height={60} alt="Logo software" />

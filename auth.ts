@@ -79,10 +79,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.dbId = token.dbId as string;
       session.user.role = token.role as string;
       return session;
+      //TODO: qua potrebbero arrivare i dati da un IDP esterno
+      //poi successivamente mappati con una logica custom
     },
     async jwt({ token, user }) {
       if (user) {
-        // Add custom fields to the token during login
         token.dbId = user.dbId;
         token.role = user.role; // Assuming 'role' is available in your user data
         //TODO: siamo sicuri non esploda?
