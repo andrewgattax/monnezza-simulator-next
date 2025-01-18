@@ -24,10 +24,10 @@ const SelettoreAttivitaGay: React.FC<SelettoreAttivitaGayProps> = ({ formValues,
 
     return (
         <div>
-            <p className='mt-3'>Seleziona tipi attività</p>
-            <div className='row g-2 mt-1'>
+            <div className='bordoTitolo mb-2'>Seleziona tipi attività</div>
+            <div className='row g-2 bordofigo'>
                 {Object.values(AttivitaENUM).map((attivita) => (
-                    <div className="col" key={attivita}>
+                    <div className="col mb-2" key={attivita}>
                         <div>
                             <InputCheckbox
                                 label={enumToName(attivita)}
