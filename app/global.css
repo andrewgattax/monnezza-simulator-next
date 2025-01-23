@@ -110,6 +110,12 @@ body {
     margin-right: 0px !important;
 }
 
+.multi-select-button {
+    background-color: transparent !important;
+    color: rgb(47, 47, 48) !important;
+    border-color: rgb(222, 226, 230) !important;
+}
+
 .bordoTitolo {
     border: 1px solid var(--bs-border-color);
     border-bottom: none !important;

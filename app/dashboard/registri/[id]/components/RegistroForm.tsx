@@ -69,7 +69,7 @@ const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLo
               <InputFloating name='descrizione' label='Descrizione Registro' type='text' required value={formValues.descrizione} onChange={handleChange} />
             </div>
             <div className='col-4 mt-0'>
-              <InputFloating name='progressivoCounter' label='Progressivo di Inizio' type='number' value={formValues.progressivoCounter?.toString()} onChange={handleChange} />
+              <InputFloating info="Progressivo di inizio" name='progressivoCounter' label='Progressivo di Inizio' type='number' value={formValues.progressivoCounter?.toString()} onChange={handleChange} disabled={isUpdating}/>
             </div>
           </div>
           <SelettoreAttivitaMenoGay formValues={formValues} listaAttivita={selectedUnitaLocale.tipiAttivita} setFormValues={setFormValues} />

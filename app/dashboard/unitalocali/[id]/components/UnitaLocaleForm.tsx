@@ -51,7 +51,7 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
         <AccordionItem parentId='unitaLocale' title='Unita Locale' isShown>
           <div className="row g-2 mt-3 mb-2">
             <div className='col-6 mt-0'>
-              <InputFloating name='nome' label='Nome Luogo' type='text' required value={formValues.nome || ""} onChange={handleChange}/>
+              <InputFloating name='nome' label='Ragione Sociale' type='text' required value={formValues.nome || ""} onChange={handleChange}/>
             </div>
             <div className='col-4 my-0'>
               <InputFloating name='indirizzo' label='Indirizzo' type='text' required value={formValues.indirizzo || ""} onChange={handleChange}/>

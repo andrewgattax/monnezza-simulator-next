@@ -12,7 +12,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { toNiceDate, toNiceString } from '../../../../../utils';
+import { toNiceDateNoTime, toNiceString } from '../../../../../utils';
 import IconB from '../../../../../components/IconB';
 import ConditionalHider from '../../../../../components/ConditionalHider';
 
@@ -39,11 +39,10 @@ const RegistrazioneTable: React.FC<RegistrazioneTableProps> = ({ dataPromise, us
     },
     {
       accessorKey: 'dataOraRegistrazione',
-      header: 'Data e Ora Registrazione',
+      header: 'Data Registrazione',
       cell: ({ row }) => {
         const date = new Date(row.original.dataOraRegistrazione);
-        const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear().toString().slice(-2)} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-        return formattedDate;
+        return toNiceDateNoTime(date);
       }
     },
     {

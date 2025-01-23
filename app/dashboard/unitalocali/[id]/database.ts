@@ -29,3 +29,34 @@ export async function getUnitaLocaliByUserId(userId: string): Promise<UnitaLocal
     });
     return unitaLocali;
 }
+
+export async function getNRegistrazioniByUnitaLocaleIdAndUserId (unitaLocaleId: string, userId: string) {
+    const unitaLocale = await prisma.unitaLocale.findUnique({
+        where: {
+            id: unitaLocaleId,
+            OR: [
+                { proprietarioId: userId },
+                { utentiDelegatiId: { has: userId } }
+            ]
+        }
+    });
+
+    if (!unitaLocale) {
+        throw new Error('Unita Locale non trovata');
+    }
+
+    const registri = await prisma.registro.findMany({
+        where: {
+            unitaLocaleId: unitaLocaleId
+        }
+    });
+
+    const count = await prisma.registrazione.count({
+        where: {
+            registroId: {
+                in: registri.map(registro => registro.id)
+            }
+        }
+    });
+    return count;
+}

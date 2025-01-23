@@ -1,0 +1,30 @@
+[
+    {
+        "codice": "CAT1",
+        "descrizione": "Apparecchiature per lo scambio di temperatura."
+    },
+    {
+        "codice": "CAT2",
+        "descrizione": "Schermi, monitor ed apparecchiature dotate di schermi con una superficie superiore a 100 cm2."
+    },
+    {
+        "codice": "CAT3",
+        "descrizione": "Lampade."
+    },
+    {
+        "codice": "CAT4",
+        "descrizione": "Apparecchiature di grandi dimensioni (con almeno una dimensione esterna superiore a 50 cm). Questa categoria non include le apparecchiature appartenenti alle categorie 1, 2 e 3."
+    },
+    {
+        "codice": "CAT5",
+        "descrizione": "Apparecchiature di piccole dimensioni (con nessuna dimensione esterna superiore a 50 cm). Questa categoria non include le apparecchiature appartenenti alle categorie 1, 2, 3 e 6."
+    },
+    {
+        "codice": "CAT6",
+        "descrizione": "Piccole apparecchiature informatiche e per telecomunicazioni (con nessuna dimensione esterna superiore a 50 cm)."
+    },
+    {
+        "codice": "PF",
+        "descrizione": "Pannelli fotovoltaici"
+    }
+]

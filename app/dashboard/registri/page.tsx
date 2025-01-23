@@ -3,8 +3,8 @@ import { breadcrumb as oldBreadcrumb } from "../page";
 import { BreadcrumbItem } from "../../../components/BreadcrumbContext";
 import { PrismaClient, UnitaLocale } from "@prisma/client";
 import { auth } from "../../../auth";
-import { 
-  getRegistriByUnitaLocaleId, 
+import {
+  getRegistriByUnitaLocaleId,
   searchRegistriByQueryAndUserId,
   countNonTrasmesseRegistrazioniByUserIdAndQuery,
   countNonTrasmesseRegistrazioniByUserIdAndUnitaLocaleId
@@ -16,7 +16,7 @@ import { Suspense } from "react";
 import DbLoading from "../../../components/DbLoading";
 import { Registro } from "@prisma/client";
 import RegistroTable from "./table";
-import { getUnitaLocaliByUserId } from "../unitalocali/[id]/database";
+import { getNRegistrazioniByUnitaLocaleIdAndUserId, getUnitaLocaliByUserId } from "../unitalocali/[id]/database";
 import SelettoreUnitaPerRegistro from "./SelettoreUnitaPerRegistro";
 import ErrorMessage from "../../../components/ErrorMessage";
 import NoResult from "../../../components/NoResult";
@@ -44,11 +44,11 @@ const prisma = new PrismaClient();
 export default async function RegistriPage({ searchParams }: { searchParams: { [key: string]: string } }) {
   const session = await auth();
   const sp = (await searchParams);
-  if(!session){
+  if (!session) {
     return <ErrorMessage title='Sessione non valida' message='Per favore, riautenticarsi' />;
   }
-  const unitaLocali = await getUnitaLocaliByUserId(session?.user?.dbId!) 
-  if(unitaLocali.length == 0) {
+  const unitaLocali = await getUnitaLocaliByUserId(session?.user?.dbId!)
+  if (unitaLocali.length == 0) {
     return (
       <section>
         <BreadcrumbInjector items={breadcrumb} />
@@ -61,8 +61,11 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
   let selectedUnitaLocale = sp.idUL || unitaLocali[0].id;
   let renderKey = selectedUnitaLocale + "_" + sp.regQuery;
   let nonTrasmesse;
+  let nRegistrazioni;
 
-  if(sp.regQuery) {
+  nRegistrazioni = await getNRegistrazioniByUnitaLocaleIdAndUserId(selectedUnitaLocale, session?.user?.dbId)
+
+  if (sp.regQuery) {
     registri = searchRegistriByQueryAndUserId(sp.regQuery, session.user.dbId!);
     nonTrasmesse = countNonTrasmesseRegistrazioniByUserIdAndQuery(session.user.dbId!, sp.regQuery);
     selectedUnitaLocale = "!!search!!";
@@ -94,11 +97,13 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
           <RicercaRegistri key={renderKey} searchQuery={sp.regQuery} />
         </div>
       </div>
-      <Suspense key={renderKey + "_nontrasmesse"}>
-        <RegNonTrasmesseCounter count={nonTrasmesse!} unitaLocali={unitaLocali} selectedId={selectedUnitaLocale} />
-      </Suspense>
+      {nRegistrazioni != 0 && (
+        <Suspense key={renderKey + "_nontrasmesse"}>
+          <RegNonTrasmesseCounter count={nonTrasmesse!} unitaLocali={unitaLocali} selectedId={selectedUnitaLocale} />
+        </Suspense>
+      )}
       <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={renderKey}>
-        <RegistroTable dataPromise={registri} usingSearchQuery={sp.regQuery !== ""}/>
+        <RegistroTable dataPromise={registri} usingSearchQuery={sp.regQuery !== ""} />
       </Suspense>
     </section>
   );

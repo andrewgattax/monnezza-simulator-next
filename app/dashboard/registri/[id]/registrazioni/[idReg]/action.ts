@@ -37,7 +37,7 @@ export default async function registrazioneServerAction(prevState: any, formData
     quantita = formData.get("quantita");
     unitaDiMisura = formData.get("unitaMisura");
     destinazioneRifiuto = formData.get("destinazioneRifiuto");
-    categoriaRAEE = formData.get("categoriaRAEE");
+    categoriaRAEE = JSON.parse(formData.get("categorieAEEJSON") as string)
     isVeicoloFuoriUso = formData.get("isVeicoloFuoriUso");
     numeroRegistrazionePubblicaSicurezza = formData.get("numeroRegistrazionePubblicaSicurezza");
     dataRegistrazionePubblicaSicurezza = formData.get("dataRegistrazionePubblicaSicurezza");
@@ -60,28 +60,125 @@ export default async function registrazioneServerAction(prevState: any, formData
     return { message: "Errore durante il recupero dei dati dal form" }
   }
 
+  console.log(categoriaRAEE);
+
+  let categoriaRAEEconvertita: CategoriaRAEE[] = [];
+
+  if (categoriaRAEE) {
+    categoriaRAEEconvertita = categoriaRAEE.map((c: string) => {
+      return c as CategoriaRAEE;
+    })
+  }
+
   //TODO: TOGLI LA BUCCIA DI BANANA DAL CASSETTO
 
 
 
 
-  let registrazioniProgressivi = riferimentoRegistrazione ? riferimentoRegistrazione.toString().split('-') : [];
-  let registrazioniId = await Promise.all(
-    registrazioniProgressivi.map(async (p) => {
-      console.log(p)
-      const registrazione = await prisma.registrazione.findFirst({
-        where: {
-          progressivo: p,
-          registroId: registroId?.toString()
-        },
-        select: {
-          id: true
-        }
-      });
-      console.log(registrazione)
-      return registrazione ? registrazione.id : ""
-    })
-  );
+  let registrazioniProgressivi = [];
+  let registrazioniId: string[] = [];
+
+  //VALIDAZIONE
+  if (action !== "remove") {
+    if (!tipoAttivita) {
+      return { message: "Riferimenti Operazione: Selezionare un tipo attività" };
+    }
+    if (!dataOraRegistrazione) {
+      return { message: "Riferimenti Operazione: Data di registrazione è obbligatoria" };
+    }
+
+    const now = new Date();
+    const dataOraRegistrazioneDate = new Date(dataOraRegistrazione.toString());
+    if (Boolean(isStoccaggioInstant) && !dataCalcoloStoccaggio) {
+      return { message: "Riferimenti Operazione: Data di calcolo stoccaggio è obbligatoria se stoccaggio istantaneo è selezionato" };
+    }
+    if (dataOraRegistrazioneDate > now) {
+      return { message: "Riferimenti Operazione: La data di registrazione non può essere nel futuro" };
+    }
+    if (!tipoOperazione) {
+      return { message: "Riferimenti Operazione: Selezionare un tipo operazione" };
+    }
+    if (!causaleOperazione) {
+      return { message: "Riferimenti Operazione: Selezionare una causale operazione" };
+    }
+    if (riferimentoRegistrazione) {
+      registrazioniProgressivi = riferimentoRegistrazione.toString().split('-')
+      if (registrazioniProgressivi.length != registrazioniProgressivi.filter(p => /^\d{4}\/\d+$/.test(p)).length) {
+        return { message: "Riferimenti Operazione: Registrazioni di riferimento invalide, nel caso ci siano più registrazioni occorre separarle con un trattino senza alcuno spazio (es. 2024/1-2024/2)" }
+      }
+      registrazioniId = await Promise.all(
+        registrazioniProgressivi.map(async (p) => {
+          console.log(p)
+          const registrazione = await prisma.registrazione.findFirst({
+            where: {
+              progressivo: p,
+              registroId: registroId?.toString()
+            },
+            select: {
+              id: true
+            }
+          });
+          console.log(registrazione)
+          return registrazione ? registrazione.id : ""
+        })
+      );
+    }
+    if (!codiceEER) {
+      return { message: "Identificazione Rifiuto: Seleziona un Codice EER" };
+    }
+    if (tipoAttivita !== "INTERMEDIAZIONE" && !provenienzaRifiuto) {
+      return { message: "Identificazione Rifiuto: Selezionare una provenienza rifiuto" };
+    }
+    if (codiceEER.toString().endsWith('_99') && !descrizioneRifiuto) {
+      return { message: "Identificazione Rifiuto: Indicare una descrizione del rifiuto" };
+    }
+    //TODO: PERICOLO RIFIUTO
+    if (!statoFisico) {
+      return { message: "Identificazione Rifiuto: Selezionare uno stato fisico del rifiuto" };
+    }
+    if (!quantita) {
+      return { message: "Identificazione Rifiuto: Indicare una quantità" };
+    }
+    if (!destinazioneRifiuto && (tipoOperazione !== "CARICO" || tipoAttivita === "SMALTIMENTO" || tipoAttivita === "RECUPERO")) {
+      return { message: "Identificazione Rifiuto: Selezionare una destinazione rifiuto" };
+    }
+    if (Boolean(isIntegratoFIR)) {
+      if (!numeroFIR) {
+        return { message: "Esito Conferimento: Indicare il numero FIR" };
+      }
+      if (!dataInizioTrasporto) {
+        return { message: "Esito Conferimento: Indicare la data di inizio trasporto" };
+      }
+      if (new Date(dataInizioTrasporto.toString()) > now) {
+        return { message: "Esito Conferimento: La data di inizio trasporto non può essere nel futuro" };
+      }
+    }
+    if (Boolean(isConferito)) {
+      if (!dataFineTrasporto) {
+        return { message: "Esito Conferimento: Indicare data di fine trasporto" };
+      }
+      if (new Date(dataFineTrasporto.toString()) > now) {
+        return { message: "Esito Conferimento: La data di fine trasporto non può essere nel futuro" };
+      }
+      if (!pesoADestino) {
+        return { message: "Esito Conferimento: Indicare il peso verificato a destinazione" };
+      }
+    }
+    if (Boolean(isRespinto)) {
+      if (!quantitaRespingimento) {
+        return { message: "Esito Conferimento: Indicare la quantità respinta" };
+      }
+      if (!causaleRespingimento) {
+        return { message: "Esito Conferimento: Indicare una causale di respingimento" };
+      }
+      if (causaleRespingimento === "ALTRO" && !causaleRespingimentoDesc) {
+        return { message: "Esito Conferimento: Indicare una descrizione per la causale di respingimento 'ALTRO'" };
+      }
+    }
+
+
+
+  }
 
 
   if (action === "update") {
@@ -100,7 +197,7 @@ export default async function registrazioneServerAction(prevState: any, formData
         statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
         quantita: Number(quantita),
         unitaDiMisura: unitaDiMisura as UnitaMisura,
-        categoriaRAAE: categoriaRAEE ? categoriaRAEE as CategoriaRAEE : undefined,
+        categoriaRAAE: categoriaRAEEconvertita,
         destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : undefined
       }
 
@@ -170,7 +267,7 @@ export default async function registrazioneServerAction(prevState: any, formData
       statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
       quantita: Number(quantita),
       unitaDiMisura: unitaDiMisura as UnitaMisura,
-      categoriaRAAE: categoriaRAEE ? categoriaRAEE as CategoriaRAEE : null,
+      categoriaRAAE: categoriaRAEEconvertita,
       destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : null
     }
 

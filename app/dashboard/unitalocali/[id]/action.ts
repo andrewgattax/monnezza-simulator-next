@@ -1,6 +1,6 @@
 'use server'
 import { redirect } from 'next/navigation'
-import { Prisma, PrismaClient, UnitaLocale } from '@prisma/client'
+import { Prisma, PrismaClient, TipoAttivita, UnitaLocale } from '@prisma/client'
 import { auth } from '../../../../auth'
 
 const prisma = new PrismaClient()
@@ -29,23 +29,56 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
     return { message: 'Errore durante il recupero dei dati dal form' }
   }
 
+  let tipiAttivitaConvertiti: TipoAttivita[] = [];
+
+  //TODO: PORCATA IMMENSA!!
+  try {
+    if (tipiAttivita && tipiAttivita.length > 0) {
+      tipiAttivitaConvertiti = tipiAttivita.map((attivita: any) => ({
+        ...attivita,
+        codiciRifiuto: []
+      }))
+    }
+  } catch (error) {
+    // non me ne frega un cazzo perche probabilmente sono in delete
+  }
+
+  if(action!=="remove") {
+    if (!nome) {
+      return { message: 'Nome è un campo obbligatorio' }
+    }
+    if (!indirizzo) {
+      return { message: 'Indirizzo è un campo obbligatorio' }
+    }
+    if (!n_civico) {
+      return { message: 'Numero civico è un campo obbligatorio' }
+    } else if (parseInt(n_civico.toString(), 10) <= 0) {
+      return { message: 'Numero civico non valido' }
+    }
+    if (!nazione) {
+      return { message: 'Nazione è un campo obbligatorio' }
+    }
+    if (!regione) {
+      return { message: 'Regione è un campo obbligatorio' }
+    }
+    if (!provincia) {
+      return { message: 'Provincia è un campo obbligatorio' }
+    }
+    if (!comune) {
+      return { message: 'Comune è un campo obbligatorio' }
+    }
+    if (!cap) {
+      return { message: 'CAP è un campo obbligatorio' }
+    }
+    if (tipiAttivitaConvertiti.length == 0) {
+      return { message: 'Seleziona almeno un tipo attività' }
+    }
+  }
 
   if (action === "update") {
     objectId = formData.get('objectId')
     if (!objectId) {
       return { message: 'ID non fornito per l\'aggiornamento' }
-    }
-
-    //TODO: PORCATA IMMENSA!!
-    try {
-      if (tipiAttivita && tipiAttivita.length > 0) {
-        tipiAttivita = tipiAttivita.map((attivita: any) => ({
-        ...attivita,
-        codiciRifiuto: []
-        }))
-      }
-    } catch (error) {
-      // non me ne frega un cazzo perche probabilmente sono in delete
     }
 
     try {
@@ -60,7 +93,7 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
           comune: comune ? comune.toString() : "",
           provincia: provincia ? provincia.toString() : "",
           regione: regione ? regione.toString() : "",
-          tipiAttivita: tipiAttivita ? tipiAttivita : []
+          tipiAttivita: tipiAttivitaConvertiti
         }
       })
     } catch (error) {
@@ -79,24 +112,15 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
         where: { id: objectId.toString() }
       })
     } catch (error) {
-      return { message: 'Errore del database durante la rimozione dell\'unita locale, ' +
-        'verifica che l\'unita locale che stai cercando di rimuovere non abbia registri al suo interno.' }
+      return {
+        message: 'Errore del database durante la rimozione dell\'unita locale, ' +
+          'verifica che l\'unita locale che stai cercando di rimuovere non abbia registri al suo interno.'
+      }
     }
 
     redirect(`/dashboard/unitalocali`);
 
   } else if (action === "create") {
-
-    try {
-      if (tipiAttivita && tipiAttivita.length > 0) {
-        tipiAttivita = tipiAttivita.map((attivita: any) => ({
-        ...attivita,
-        codiciRifiuto: []
-        }))
-      }
-    } catch (error) {
-      // non me ne frega un cazzo perche probabilmente sono in delete
-    }
 
     let ul: Prisma.UnitaLocaleCreateInput = {
       nome: nome ? nome.toString() : "",
@@ -108,7 +132,7 @@ export default async function unitaLocaleServerAction(prevState: any, formData: 
       provincia: provincia ? provincia.toString() : "",
       regione: regione ? regione.toString() : "",
       proprietario: { connect: { id: session.user.dbId } },
-      tipiAttivita: tipiAttivita ? tipiAttivita : []
+      tipiAttivita: tipiAttivitaConvertiti
     }
 
     console.log(ul);

@@ -1,6 +1,6 @@
 'use server'
 import { redirect } from 'next/navigation'
-import { PrismaClient, Registro, Prisma } from '@prisma/client'
+import { PrismaClient, Registro, Prisma, TipoAttivita } from '@prisma/client'
 import { auth } from "../../../../auth"
 
 const prisma = new PrismaClient()
@@ -33,9 +33,11 @@ export default async function registroServerAction(prevState: any, formData: For
     return { message: 'Errore durante il recupero dei dati dal form' }
   }
 
+  let tipiAttivitaConvertiti: TipoAttivita[] = [];
+
   //TODO: COSA MOLTO PORCA, TOGLILA QUANDO PUOI
   try {
-    tipiAttivita = tipiAttivita.map((tipo: any) => ({
+    tipiAttivitaConvertiti = tipiAttivita.map((tipo: any) => ({
       ...tipo,
       codiciRifiuto: []
     }));
@@ -44,6 +46,19 @@ export default async function registroServerAction(prevState: any, formData: For
   }
 
   // TODO: VALIDA QUA I CAMPI!!!
+  if (action !== "remove") {
+    if (!descrizione) {
+      return { message: 'Descrizione è un campo obbligatorio' }
+    }
+    if (progressivoCounter && parseInt(progressivoCounter.toString(), 10) < 0) {
+      return { message: 'Il progressivo counter deve essere maggiore o uguale a 0' }
+    }
+    if (tipiAttivitaConvertiti.length == 0) {
+      return { message: 'Seleziona almeno un tipo attività' }
+    }
+  }
+
+
   // TODO: verifica che l'utente sia effettivamente proprietario di quel luogo
   // TODO: METTI IL CREATED AT E UPDATEDAT A TUTTI
 
@@ -59,7 +74,7 @@ export default async function registroServerAction(prevState: any, formData: For
         data: {
           descrizione: descrizione ? descrizione.toString() : "",
           progressivoCounter: progressivoCounter ? parseInt(progressivoCounter.toString(), 10) : 0,
-          tipiAttivita: tipiAttivita ? tipiAttivita : []
+          tipiAttivita: tipiAttivitaConvertiti
         },
       });
     } catch (error) {
@@ -89,7 +104,7 @@ export default async function registroServerAction(prevState: any, formData: For
   let r: Prisma.RegistroCreateInput = {
     descrizione: descrizione ? descrizione.toString() : "",
     progressivoCounter: progressivoCounter ? parseInt(progressivoCounter.toString(), 10) : 0,
-    tipiAttivita: tipiAttivita ? tipiAttivita : [],
+    tipiAttivita: tipiAttivitaConvertiti,
     isAttivo: true,
     unitaLocale: {
       connect: {

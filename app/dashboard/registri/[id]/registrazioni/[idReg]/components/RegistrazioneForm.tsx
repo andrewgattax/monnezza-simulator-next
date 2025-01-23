@@ -7,6 +7,8 @@ import InputFloating from '../../../../../../../components/InputFloating';
 import { enumToName } from '../../../../../../../utils';
 import EERSelectorFormComponent from '../../../../../../../components/EERSelectorFormComponent';
 import { CodiceEER } from '../../../../../../../components/EERSelectorModal';
+import categorieAEE from  "../../../../../../../categorieAEE.json"
+import MultiSelectDropdown from '../../../../../../../components/MultiSelectDropdown';
 
 
 
@@ -14,6 +16,13 @@ interface CausaleOperazione {
   codice: string,
   descrizione: string
 }
+
+const opzioniAEE = categorieAEE.map((c) => {
+  return {
+    value: c.codice,
+    label: c.codice + " - " + c.descrizione
+  }
+})
 
 
 
@@ -79,6 +88,25 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     onChange(updatedData);
   }
 
+  const handleCategoriaAEEChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    let updatedCategoriaRAEE = formValues.rifiuto?.categoriaRAAE ? [...formValues.rifiuto.categoriaRAAE] : [];
+
+    if (checked) {
+      updatedCategoriaRAEE.push(value as CategoriaRAEE);
+    } else {
+      updatedCategoriaRAEE = updatedCategoriaRAEE.filter((categoria) => categoria !== value);
+    }
+
+    const updatedRifiuto = { ...formValues.rifiuto, categoriaRAAE: updatedCategoriaRAEE };
+    const updatedData = { ...formValues, rifiuto: updatedRifiuto };
+
+    // @ts-ignore
+    setFormValues(updatedData);
+    onChange(updatedData);
+    console.log(formValues)
+  }
+
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
@@ -135,6 +163,10 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     ];
   }
 
+  if(tipiAttività.length == 1){
+    formValues.tipoAttivita = tipiAttività[0].attivita;
+  }
+
   return (
     <div>
       <Accordion accordionId='registrazione'>
@@ -142,13 +174,14 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
           <div className="row g-2 mt-3">
             <div className="col-12">
               <div className="form-floating">
-                <select className="form-select" id="tipoAttivita" name='tipoAttivita' onChange={handleTipoAttivitaChange} value={formValues.tipoAttivita ?? ""} required>
+                <select className="form-select" id="tipoAttivita" name='tipoAttivita' onChange={handleTipoAttivitaChange} value={formValues.tipoAttivita ?? ""} required disabled={tipiAttività.length == 1}>
                   <option value="" disabled>Seleziona</option>
                   {tipiAttività.map((tipo) => (
                     <option key={tipo.attivita} value={tipo.attivita}>{enumToName(tipo.attivita)}</option>
                   ))}
                 </select>
                 <label htmlFor="tipoAttivita">Tipo Attività (*)</label>
+                <input type='hidden' name='tipoAttivita' value={formValues.tipoAttivita} disabled={tipiAttività.length > 1} />
               </div>
             </div>
           </div>
@@ -287,19 +320,15 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             </div>
           </div>
           {(formValues.causaleOperazione === "aT" || formValues.causaleOperazione === "T") && (
-            <div className="row g-2 mt-3">
+            <div className="row g-2 mt-2">
               <div className="col-4">
                 <div className="form-floating">
-                  <select className="form-select" id="categoriaRAEE" name='categoriaRAEE' onChange={handleRifiutoChange} value={formValues.rifiuto?.categoriaRAAE ?? undefined}>
-                    <option value="" disabled>Seleziona</option>
-                    {Object.values(CategoriaRAEE).map((categoriaRAAE) => (
-                      <option key={categoriaRAAE} value={categoriaRAAE}>{categoriaRAAE}</option>
-                    ))}
-                  </select>
-                  <label htmlFor="categoriaRAEE">Categoria AEE</label>
+                  <MultiSelectDropdown label='Categoria AEE' name='categoriaRAEE' options={opzioniAEE} value={formValues.rifiuto?.categoriaRAAE ? formValues.rifiuto.categoriaRAAE : []} onChange={handleCategoriaAEEChange} />
                 </div>
               </div>
+              <input type="hidden" name="categorieAEEJSON" defaultValue={JSON.stringify(formValues.rifiuto?.categoriaRAAE || [])} />
             </div>
+            
           )}
 
           {(formValues.tipoOperazione == "CARICO" && formValues.causaleOperazione === "T") && (

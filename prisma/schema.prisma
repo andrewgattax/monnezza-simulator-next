@@ -142,6 +142,7 @@ model Registrazione {
 }
 
 enum CategoriaRAEE {
+  NESSUNA
   CAT1
   CAT2
   CAT3
@@ -224,7 +225,7 @@ type Rifiuto {
   pericoloRifiuto     PericoloRifiuto?
   quantita            Float
   unitaDiMisura       UnitaMisura
-  categoriaRAAE       CategoriaRAEE?
+  categoriaRAAE       CategoriaRAEE[]
   destinazioneRifiuto CodiceAttivita?
 }
 

@@ -19,6 +19,7 @@ const RegNonTrasmesseCounter: React.FC<RegNonTrasmesseCounterProps> = ({ count, 
     parteDopo = "le unità locali cercate";
   }
 
+
   if (c == 1)
     return (
       <div className="alert alert-warning d-flex align-items-center mt-3" role="alert">

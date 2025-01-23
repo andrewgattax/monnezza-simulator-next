@@ -48,7 +48,7 @@ export default async function Home() {
               <div className="mb-2"></div>
               <b>Sviluppato da:</b> <br />
               <ul>
-              <li>Andrea Gatta (<a href="mailto:andy@gat.tax">andy@gat.tax</a>)</li>
+              <li>Andrea Gatta (<a href="mailto:andrew@gat.tax">andrew@gat.tax</a>)</li>
               <li>Vittorio Lo Mele (<a href="mailto:hi@vitto.dev">hi@vitto.dev</a>)</li>
               </ul>
               per conto di <a className="alert-link" href="http://www.apulialab.com/">Apulia Lab S.r.l</a> (&copy; {new Date().getFullYear()})

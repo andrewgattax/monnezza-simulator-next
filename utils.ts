@@ -1,13 +1,17 @@
 
 export function enumToName(activity: string): string {
-    return activity
-        .split('_')
-        .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-        .join(' ');
+    return activity.split('_').map(word => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
 }
 
 export function toNiceString(data: string): string {
     return data.charAt(0).toUpperCase() + data.slice(1).toLowerCase();
+}
+
+export function toNiceDateNoTime(data: Date): string {
+    const day = String(data.getDate()).padStart(2, '0');
+    const month = String(data.getMonth() + 1).padStart(2, '0');
+    const year = String(data.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
 }
 
 export function toNiceDate(data: Date): string {

@@ -19,6 +19,7 @@ interface ModalProps {
 }
 
 
+
 const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
   const [value, setValue] = useState<CodiceEER | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,7 +77,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
               type="text"
               name='ricerca'
               iconName='search'
-              placeholder="Cerca codice EER"
+              placeholder="Cerca codice EER (es. 01_01_01)"
               value={searchTerm}
               onChange={handleSearchChange}
             />

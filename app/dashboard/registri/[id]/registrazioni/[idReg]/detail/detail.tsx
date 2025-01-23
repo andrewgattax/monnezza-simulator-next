@@ -1,6 +1,6 @@
 import React, { use } from 'react';
 import { Prisma, Registrazione } from '@prisma/client';
-import { enumToName, toNiceDate } from '../../../../../../../utils';
+import { enumToName, toNiceDate, toNiceDateNoTime } from '../../../../../../../utils';
 import { PrismaClient } from '@prisma/client/extension';
 
 interface DetailProps {
@@ -41,10 +41,10 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                     <div className="col-4 my-detail">
                         <div className="row">
                             <div className="col">
-                                <b>Data e ora Registrazione</b>
+                                <b>Data Registrazione</b>
                             </div>
                             <div className="col">
-                                {toNiceDate(detail.dataOraRegistrazione)}
+                                {toNiceDateNoTime(detail.dataOraRegistrazione)}
                             </div>
                         </div>
                     </div>
@@ -207,7 +207,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                                 <b>Categoria RAEE</b>
                             </div>
                             <div className="col">
-                                {detail.rifiuto.categoriaRAAE ? enumToName(detail.rifiuto.categoriaRAAE!) : " - "}
+                                {detail.rifiuto.categoriaRAAE ? detail.rifiuto.categoriaRAAE.map((c) => c + " ") : " - "}
                             </div>
                         </div>
                     </div>
@@ -242,7 +242,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                                 <b>Del</b>
                             </div>
                             <div className="col">
-                                {detail.dataRegistrazionePubblicaSicurezza ? toNiceDate(detail.dataRegistrazionePubblicaSicurezza!) : " - "}
+                                {detail.dataRegistrazionePubblicaSicurezza ? toNiceDateNoTime(detail.dataRegistrazionePubblicaSicurezza!) : " - "}
                             </div>
                         </div>
                     </div>
@@ -268,7 +268,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                                 <b>Data inizio trasporto</b>
                             </div>
                             <div className="col">
-                                {detail.dataInizioTrasporto ? toNiceDate(detail.dataInizioTrasporto!) : " - "}
+                                {detail.dataInizioTrasporto ? toNiceDateNoTime(detail.dataInizioTrasporto!) : " - "}
                             </div>
                         </div>
                     </div>
@@ -312,7 +312,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                                 <b>Data Fine Trasporto</b>
                             </div>
                             <div className="col">
-                                {detail.dataFineTrasporto ? toNiceDate(detail.dataFineTrasporto!) : " - "}
+                                {detail.dataFineTrasporto ? toNiceDateNoTime(detail.dataFineTrasporto!) : " - "}
                             </div>
                         </div>
                     </div>
