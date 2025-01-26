@@ -6,7 +6,7 @@ import AccordionItem from '../../../../../components/AccordionItem';
 import SelettoreComuni from '../../../../../components/SelettoreComuni';
 import InputFloating from '../../../../../components/InputFloating';
 import { Anagrafica } from '@prisma/client';
-import SelettoreAttivita from '../../../../../components/SelettoreAttivita';
+import SelettoreAttivita from '../../../../../components/selettoreAttivita/SelettoreAttivita';
 import countryData from "../../../../../countryDb.json";
 
 interface AnagraficheFormProps {

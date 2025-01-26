@@ -1,6 +1,6 @@
 'use server'
 import { redirect } from 'next/navigation'
-import { PrismaClient, LuogoProduzione, AttivitaENUM, TipoOperazione, CausaleOperazione, TipologiaRespingimento, UnitaMisura, CausaleRespingimento, Rifiuto, ProvenienzaRifiuto, PericoloRifiuto, StatoFisicoRifiuto, CodiceAttivita, CategoriaRAEE, TipoTrasportoFrontaliero, Prisma, TipoAttivita, Registro, Registrazione } from '@prisma/client'
+import { PrismaClient, LuogoProduzione, Rifiuto, Prisma, TipoAttivita, Registro, Registrazione } from '@prisma/client'
 import { auth } from '../../../../../../auth'
 
 
@@ -60,15 +60,6 @@ export default async function registrazioneServerAction(prevState: any, formData
     return { message: "Errore durante il recupero dei dati dal form" }
   }
 
-  console.log(categoriaRAEE);
-
-  let categoriaRAEEconvertita: CategoriaRAEE[] = [];
-
-  if (categoriaRAEE) {
-    categoriaRAEEconvertita = categoriaRAEE.map((c: string) => {
-      return c as CategoriaRAEE;
-    })
-  }
 
   //TODO: TOGLI LA BUCCIA DI BANANA DAL CASSETTO
 
@@ -175,9 +166,6 @@ export default async function registrazioneServerAction(prevState: any, formData
         return { message: "Esito Conferimento: Indicare una descrizione per la causale di respingimento 'ALTRO'" };
       }
     }
-
-
-
   }
 
 
@@ -191,22 +179,22 @@ export default async function registrazioneServerAction(prevState: any, formData
 
       let rifiuto = {
         codiceEER: codiceEER ? codiceEER.toString() : "",
-        provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto as ProvenienzaRifiuto : undefined,
+        provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto.toString() : undefined,
         descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : "",
-        pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto as PericoloRifiuto : undefined,
-        statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
+        pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto.toString() : undefined,
+        statoFisicoRifiuto: statoFisico?.toString(),
         quantita: Number(quantita),
-        unitaDiMisura: unitaDiMisura as UnitaMisura,
-        categoriaRAAE: categoriaRAEEconvertita,
-        destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : undefined
+        unitaDiMisura: unitaDiMisura?.toString(),
+        categoriaRAAE: categoriaRAEE,
+        destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto.toString() : undefined
       }
 
       let updatedRegistrazione = {
-        tipoAttivita: tipoAttivita ? tipoAttivita as AttivitaENUM : undefined,
+        tipoAttivita: tipoAttivita ? tipoAttivita.toString() : undefined,
         isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : undefined,
         dataOraRegistrazione: dataOraRegistrazione ? new Date(dataOraRegistrazione.toString()) : undefined,
-        tipoOperazione: tipoOperazione ? tipoOperazione as TipoOperazione : undefined,
-        causaleOperazione: causaleOperazione ? causaleOperazione as CausaleOperazione : undefined,
+        tipoOperazione: tipoOperazione ? tipoOperazione.toString() : undefined,
+        causaleOperazione: causaleOperazione ? causaleOperazione.toString() : undefined,
         dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : undefined,
         rifiuto: rifiuto,
         isVeicoloFuoriUso: isVeicoloFuoriUso ? Boolean(isVeicoloFuoriUso) : undefined,
@@ -215,16 +203,16 @@ export default async function registrazioneServerAction(prevState: any, formData
         isIntegratoFIR: isIntegratoFIR ? Boolean(isIntegratoFIR) : undefined,
         numeroFIR: numeroFIR ? numeroFIR.toString() : undefined,
         trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : undefined,
-        tipoTrasportoFrontaliero: tipoTrasporto ? tipoTrasporto as TipoTrasportoFrontaliero : undefined,
+        tipoTrasportoFrontaliero: tipoTrasporto ? tipoTrasporto.toString() : undefined,
         dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : undefined,
         dataFineTrasporto: dataFineTrasporto ? new Date(dataFineTrasporto.toString()) : undefined,
         isConferito: isConferito ? Boolean(isConferito) : undefined,
         pesoADestino: pesoADestino ? Number(pesoADestino) : undefined,
         isRespinto: isRespinto ? Boolean(isRespinto) : undefined,
-        tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento as TipologiaRespingimento : undefined,
+        tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento.toString() : undefined,
         quantitaRespingimento: quantitaRespingimento ? Number(quantitaRespingimento) : undefined,
-        unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento as UnitaMisura : undefined,
-        causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : undefined,
+        unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento.toString() : undefined,
+        causaleRespingimento: causaleRespingimento ? causaleRespingimento.toString() : undefined,
         causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : undefined,
         annotazioni: annotazioni ? annotazioni.toString() : undefined,
         registrazioniFiglie: registrazioniId ? registrazioniId : []
@@ -261,14 +249,14 @@ export default async function registrazioneServerAction(prevState: any, formData
 
     let rifiuto: Rifiuto = {
       codiceEER: codiceEER ? codiceEER.toString() : "",
-      provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto as ProvenienzaRifiuto : null,
+      provenienzaRifiuto: provenienzaRifiuto ? provenienzaRifiuto.toString() : null,
       descrizione: descrizioneRifiuto ? descrizioneRifiuto.toString() : "",
-      pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto as PericoloRifiuto : null,
-      statoFisicoRifiuto: statoFisico as StatoFisicoRifiuto,
+      pericoloRifiuto: pericoloRifiuto ? pericoloRifiuto.toString() : null,
+      statoFisicoRifiuto: statoFisico!.toString(),
       quantita: Number(quantita),
-      unitaDiMisura: unitaDiMisura as UnitaMisura,
-      categoriaRAAE: categoriaRAEEconvertita,
-      destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto as CodiceAttivita : null
+      unitaDiMisura: unitaDiMisura!.toString(),
+      categoriaRAAE: categoriaRAEE,
+      destinazioneRifiuto: destinazioneRifiuto ? destinazioneRifiuto.toString() : null
     }
 
     const nuovaRegistrazione = {
@@ -280,11 +268,11 @@ export default async function registrazioneServerAction(prevState: any, formData
       produttoreId: null,
       registroId: registroId!.toString(),
       progressivo: progressivo,
-      tipoAttivita: tipoAttivita as AttivitaENUM,
+      tipoAttivita: tipoAttivita!.toString(),
       isStoccaggioInstant: isStoccaggioInstant ? Boolean(isStoccaggioInstant) : false,
       dataOraRegistrazione: dataOraRegistrazione ? new Date(dataOraRegistrazione.toString()) : new Date(),
-      tipoOperazione: tipoOperazione ? tipoOperazione as TipoOperazione : null,
-      causaleOperazione: causaleOperazione ? causaleOperazione as CausaleOperazione : null,
+      tipoOperazione: tipoOperazione ? tipoOperazione.toString() : null,
+      causaleOperazione: causaleOperazione ? causaleOperazione.toString() : null,
       dataCalcoloStoccaggio: dataCalcoloStoccaggio ? new Date(dataCalcoloStoccaggio.toString()) : null,
       registrazioniFiglie: registrazioniId ? registrazioniId : [],
       rifiuto: rifiuto,
@@ -294,16 +282,16 @@ export default async function registrazioneServerAction(prevState: any, formData
       isIntegratoFIR: isIntegratoFIR ? Boolean(isIntegratoFIR) : false,
       numeroFIR: numeroFIR ? numeroFIR.toString() : null,
       trasportoFrontaliero: trasportoFrontaliero ? Boolean(trasportoFrontaliero) : false,
-      tipoTrasportoFrontaliero: tipoTrasporto as TipoTrasportoFrontaliero,
+      tipoTrasportoFrontaliero: tipoTrasporto?.toString(),
       dataInizioTrasporto: dataInizioTrasporto ? new Date(dataInizioTrasporto.toString()) : null,
       dataFineTrasporto: dataFineTrasporto ? new Date(dataFineTrasporto.toString()) : null,
       isConferito: isConferito ? Boolean(isConferito) : false,
       pesoADestino: pesoADestino ? Number(pesoADestino) : null,
       isRespinto: isRespinto ? Boolean(isRespinto) : false,
-      tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento as TipologiaRespingimento : null,
+      tipologiaRespingimento: tipologiaRespingimento ? tipologiaRespingimento.toString() : null,
       quantitaRespingimento: quantitaRespingimento ? Number(quantitaRespingimento) : null,
-      unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento as UnitaMisura : null,
-      causaleRespingimento: causaleRespingimento ? causaleRespingimento as CausaleRespingimento : null,
+      unitaDiMisuraRespingimento: unitaDiMisuraRespingimento ? unitaDiMisuraRespingimento.toString() : null,
+      causaleRespingimento: causaleRespingimento ? causaleRespingimento.toString() : null,
       causaleRespingimentoDesc: causaleRespingimentoDesc ? causaleRespingimentoDesc.toString() : null,
       annotazioni: annotazioni ? annotazioni.toString() : "",
     };

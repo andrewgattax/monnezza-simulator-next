@@ -182,7 +182,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                                 <b>Quantità</b>
                             </div>
                             <div className="col">
-                                {enumToName(detail.rifiuto.statoFisicoRifiuto)}
+                                {detail.rifiuto.quantita + " " + detail.rifiuto.unitaDiMisura.toUpperCase()}
                             </div>
                         </div>
                     </div>
@@ -197,7 +197,7 @@ const RegistrazioneDetail: React.FC<DetailProps> = ({ registrazione, progressivi
                                 <b>Destinato a</b>
                             </div>
                             <div className="col">
-                                {enumToName(detail.rifiuto.statoFisicoRifiuto)}
+                                {enumToName(detail.rifiuto.destinazioneRifiuto!)}
                             </div>
                         </div>
                     </div>

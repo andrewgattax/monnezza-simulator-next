@@ -6,13 +6,17 @@ import { LuogoProduzione } from '@prisma/client';
 import InputCheckbox from '../../../../../components/InputCheckbox';
 import SelettoreComuniFormComponent from '../../../../../components/SelettoreComuniFormComponent';
 import { SelettoreComuniData } from '../../../../../components/SelettoreComuni';
+import { CodificheStatiResponse, CodificheComuniResponse } from '../../../../../rentri';
+
 
 interface LuogoProduzioneFormProps {
   luogoProduzione?: Partial<LuogoProduzione>;
   onChange: (updatedData: any) => void;
+  comuni: CodificheComuniResponse[];
+  stati: CodificheStatiResponse[];
 }
 
-const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzione, onChange }) => {
+const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzione, onChange, comuni, stati }) => {
   const [formValues, setFormValues] = useState(luogoProduzione || {});
   const [selettoreData, setSelettoreData] = useState<SelettoreComuniData | undefined>(undefined);
 
@@ -69,6 +73,8 @@ const LuogoProduzioneForm: React.FC<LuogoProduzioneFormProps> = ({ luogoProduzio
               country: formValues.nazione || "",
               }
             } 
+            comuni={comuni}
+            stati={stati}
             onChange={handleSelettoreChange} 
           />
         </AccordionItem>

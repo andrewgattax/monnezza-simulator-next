@@ -12,7 +12,7 @@ model Utente {
   nome                  String
   cognome               String
   email                 String            @unique
-  codice_fiscale        String            @unique
+  codiceFiscale         String            @unique
   passwordHash          String
   ruolo                 Ruolo
   totpSecret            String?
@@ -20,6 +20,7 @@ model Utente {
   updatedAt             DateTime          @updatedAt
   unitaLocali           UnitaLocale[]     @relation("ProprietarioUnita")
   unitaLocaliDelegate   UnitaLocale[]     @relation("DelegatiUnita", fields: [unitaLocaliDelegateId], references: [id])
+  bundle                Bundle[]          @relation("ProprietarioBundle")
   unitaLocaliDelegateId String[]          @db.ObjectId
   luoghiDiProduzione    LuogoProduzione[]
   anagrafiche           Anagrafica[]
@@ -97,136 +98,69 @@ model Registro {
 }
 
 model Registrazione {
-  id                                   String                    @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt                            DateTime                  @default(now())
+  id                                   String           @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt                            DateTime         @default(now())
   progressivo                          String
   dataOraRegistrazione                 DateTime
-  isTrasmessa                          Boolean                   @default(false)
-  tipoOperazione                       TipoOperazione?
-  tipoAttivita                         AttivitaENUM
-  causaleOperazione                    CausaleOperazione?
+  isTrasmessa                          Boolean          @default(false)
+  tipoOperazione                       String?
+  tipoAttivita                         String
+  causaleOperazione                    String?
   numeroRegistrazionePubblicaSicurezza String?
   dataRegistrazionePubblicaSicurezza   DateTime?
-  isIntegratoFIR                       Boolean                   @default(false)
+  isIntegratoFIR                       Boolean          @default(false)
   numeroFIR                            String?
-  trasportoFrontaliero                 Boolean                   @default(false)
-  tipoTrasportoFrontaliero             TipoTrasportoFrontaliero?
+  trasportoFrontaliero                 Boolean          @default(false)
+  tipoTrasportoFrontaliero             String?
   dataInizioTrasporto                  DateTime?
   dataFineTrasporto                    DateTime?
-  isVeicoloFuoriUso                    Boolean                   @default(false)
-  isConferito                          Boolean                   @default(false)
+  isVeicoloFuoriUso                    Boolean          @default(false)
+  isConferito                          Boolean          @default(false)
   pesoADestino                         Float?
-  isRespinto                           Boolean                   @default(false)
-  tipologiaRespingimento               TipologiaRespingimento?
+  isRespinto                           Boolean          @default(false)
+  tipologiaRespingimento               String?
   quantitaRespingimento                Float?
-  unitaDiMisuraRespingimento           UnitaMisura?
-  causaleRespingimento                 CausaleRespingimento?
+  unitaDiMisuraRespingimento           String?
+  causaleRespingimento                 String?
   causaleRespingimentoDesc             String?
-  registrazioniFiglie                  String[]                  @db.ObjectId
+  registrazioniFiglie                  String[]         @db.ObjectId
   annotazioni                          String
-  isStoccaggioInstant                  Boolean                   @default(false)
+  isStoccaggioInstant                  Boolean          @default(false)
   dataCalcoloStoccaggio                DateTime?
-  trasportatore                        Anagrafica?               @relation("TrasportatoreRifuto", fields: [trasportatoreId], references: [id])
-  trasportatoreId                      String?                   @db.ObjectId
-  destinatario                         Anagrafica?               @relation("DestinatarioRifiuto", fields: [destinatarioId], references: [id])
-  destinatarioId                       String?                   @db.ObjectId
-  intermediario                        Anagrafica?               @relation("IntermediarioRifiuto", fields: [intermediarioId], references: [id])
-  intermediarioId                      String?                   @db.ObjectId
-  luogoDiProduzione                    LuogoProduzione?          @relation(fields: [luogoDiProduzioneId], references: [id])
-  luogoDiProduzioneId                  String?                   @db.ObjectId
-  produttore                           Anagrafica?               @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
-  produttoreId                         String?                   @db.ObjectId
+  trasportatore                        Anagrafica?      @relation("TrasportatoreRifuto", fields: [trasportatoreId], references: [id])
+  trasportatoreId                      String?          @db.ObjectId
+  destinatario                         Anagrafica?      @relation("DestinatarioRifiuto", fields: [destinatarioId], references: [id])
+  destinatarioId                       String?          @db.ObjectId
+  intermediario                        Anagrafica?      @relation("IntermediarioRifiuto", fields: [intermediarioId], references: [id])
+  intermediarioId                      String?          @db.ObjectId
+  luogoDiProduzione                    LuogoProduzione? @relation(fields: [luogoDiProduzioneId], references: [id])
+  luogoDiProduzioneId                  String?          @db.ObjectId
+  produttore                           Anagrafica?      @relation("ProduttoreRifiuto", fields: [produttoreId], references: [id])
+  produttoreId                         String?          @db.ObjectId
   rifiuto                              Rifiuto
-  registro                             Registro?                 @relation(fields: [registroId], references: [id])
-  registroId                           String                    @db.ObjectId
+  registro                             Registro?        @relation(fields: [registroId], references: [id])
+  registroId                           String           @db.ObjectId
 }
 
-enum CategoriaRAEE {
-  NESSUNA
-  CAT1
-  CAT2
-  CAT3
-  CAT4
-  CAT5
-  CAT6
-  PF
-}
-
-enum TipoOperazione {
-  CARICO
-  SCARICO
-  CARICOSCARICO
-}
-
-enum CausaleOperazione {
-  NP
-  T
-  DT
-  RE
-  I
-  aT
-  M
-  TR
-  T_AT
-}
-
-enum TipologiaRespingimento {
-  PARZIALE
-  TOTALE
-}
-
-enum CausaleRespingimento {
-  NON_CONFORME
-  IRRICEVIBILE
-  ALTRO
-}
-
-enum StatoFisicoRifiuto {
-  FANGOSO
-  IN_POLVERE
-  LIQUIDO
-  SOLIDO
-  VISCHIOSO_SCIROPPOSO
-}
-
-enum PericoloRifiuto {
-  ESPLOSIVO
-  COMBURENTE
-  INFIAMMABILE
-  IRRITANTE
-  TOSSICITA_SPECIFICA
-  TOSSICITA_ACUTA
-  CANCEROGENO
-  CORROSIVO
-  INFETTIVO
-  TOSSICO_PER_RIPRODUZIONE
-  MUTAGENO
-  LIBERAZIONE_DI_GAS
-  SENSIBILIZZANTE
-  ECOTOSSICO
-  NON_DEFINITO
-}
-
-enum ProvenienzaRifiuto {
-  SPECIALE
-  URBANO
-}
-
-enum UnitaMisura {
-  KG
-  L
+model Bundle {
+  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  encodedBundle   String?
+  passkey         String?
+  extractedBundle Bytes?
+  proprietarioId  String @unique @db.ObjectId
+  proprietario    Utente @relation("ProprietarioBundle", fields: [proprietarioId], references: [id])
 }
 
 type Rifiuto {
   codiceEER           String
-  provenienzaRifiuto  ProvenienzaRifiuto?
+  provenienzaRifiuto  String?
   descrizione         String?
-  statoFisicoRifiuto  StatoFisicoRifiuto
-  pericoloRifiuto     PericoloRifiuto?
+  statoFisicoRifiuto  String
+  pericoloRifiuto     String?
   quantita            Float
-  unitaDiMisura       UnitaMisura
-  categoriaRAAE       CategoriaRAEE[]
-  destinazioneRifiuto CodiceAttivita?
+  unitaDiMisura       String
+  categoriaRAAE       String[]
+  destinazioneRifiuto String?
 }
 
 enum Ruolo {
@@ -234,52 +168,7 @@ enum Ruolo {
   USER
 }
 
-enum AttivitaENUM {
-  PRODUZIONE
-  RECUPERO
-  SMALTIMENTO
-  TRASPORTO
-  CENTRO_DI_RACCOLTA
-  INTERMEDIAZIONE
-}
-
-enum TipoTrasportoFrontaliero {
-  DOCUMENTO_DI_ACCOMPAGNAMENTO
-  DOCUMENTO_DI_MOVIMENTO
-}
-
-enum CodiceAttivita {
-  R1
-  R2
-  R3
-  R4
-  R5
-  R6
-  R7
-  R8
-  R9
-  R10
-  R11
-  R12
-  R13
-  D1
-  D2
-  D3
-  D4
-  D5
-  D6
-  D7
-  D8
-  D9
-  D10
-  D11
-  D12
-  D13
-  D14
-  D15
-}
-
 type TipoAttivita {
-  attivita      AttivitaENUM
-  codiciRifiuto CodiceAttivita[]
+  attivita      String
+  codiciRifiuto String[]
 }

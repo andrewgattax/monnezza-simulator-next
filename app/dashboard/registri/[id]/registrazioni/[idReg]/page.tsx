@@ -13,6 +13,7 @@ import { auth } from '../../../../../../auth';
 import ErrorMessage from '../../../../../../components/ErrorMessage';
 import { breadcrumb } from '../page';
 import { getAttivitaByRegistroIdAndUserId } from '@/dashboard/registri/database';
+import { getCodificheAttivitaDestinazione, getCodificheCategorieAEE, getCodificheCausaleRespingimento, getCodifichePericoloRifiuto, getCodificheProvenienzaRifiuto, getCodificheStatoFisico, getCodificheTipologiaRespingimento, getCodificheUnitaMisura, getTrans } from '../../../../../../rentri';
 
 // PAGINA
 export default async function RegistrazioniContainer({
@@ -64,6 +65,17 @@ export default async function RegistrazioniContainer({
     progressivi = await getRegistrazioniFiglieProgressiviByRegistrazioneIdAndUserId(paramId, session?.user?.dbId);
   }
 
+  const causaliRespingimento = getCodificheCausaleRespingimento(session);
+  const pericoliRifiuto = getCodifichePericoloRifiuto(session);
+  const provenienzeRifiuto = getCodificheProvenienzaRifiuto(session);
+  const statiFisiciRifiuto = getCodificheStatoFisico(session);
+  const tipiRespingimento = getCodificheTipologiaRespingimento(session);
+  const tipiTrasportoTrans = getTrans(session);
+  const unitaDiMisura = getCodificheUnitaMisura(session);
+  const attivitaADestinazione = getCodificheAttivitaDestinazione(session);
+  const categorieAEE = getCodificheCategorieAEE(session);
+
+
   const prisma = new PrismaClient()
 
   //TODO: get tipi attivita da registro in utilizzo
@@ -72,7 +84,15 @@ export default async function RegistrazioniContainer({
     return (
       <section>
         <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <RegistrazioneCreateUI tipiAttivita={tipiAttivita} registroId={registroId} />
+        <RegistrazioneCreateUI tipiAttivita={tipiAttivita} registroId={registroId} causaliRespingimento={causaliRespingimento}
+          pericoliRifiuto={pericoliRifiuto}
+          provenienzaRifiuto={provenienzeRifiuto}
+          statiFisiciRifiuto={statiFisiciRifiuto}
+          tipiRespingimento={tipiRespingimento}
+          tipiTrasportoTrans={tipiTrasportoTrans}
+          unitaDiMisura={unitaDiMisura}
+          attivitaADestinazione={attivitaADestinazione}
+          categorieAEE={categorieAEE} />
       </section>
     );
   } else {
@@ -82,7 +102,16 @@ export default async function RegistrazioniContainer({
       <section>
         <BreadcrumbInjector items={breadcrumbModifica} />
         <Suspense fallback={<DbLoading />}>
-          <RegistrazioneCreateUI tipiAttivita={tipiAttivita} registroId={registroId} dbResult={registrazione} objectId={paramId} progressivi={progressivi} />
+          <RegistrazioneCreateUI tipiAttivita={tipiAttivita} registroId={registroId} dbResult={registrazione} objectId={paramId} progressivi={progressivi}
+          causaliRespingimento={causaliRespingimento}
+          pericoliRifiuto={pericoliRifiuto}
+          provenienzaRifiuto={provenienzeRifiuto}
+          statiFisiciRifiuto={statiFisiciRifiuto}
+          tipiRespingimento={tipiRespingimento}
+          tipiTrasportoTrans={tipiTrasportoTrans}
+          unitaDiMisura={unitaDiMisura}
+          attivitaADestinazione={attivitaADestinazione}
+          categorieAEE={categorieAEE} />
         </Suspense>
       </section>
 

@@ -3,7 +3,7 @@ import Accordion from '../../../../../components/Accordion';
 import AccordionItem from '../../../../../components/AccordionItem';
 import InputFloating from '../../../../../components/InputFloating';
 import { Registro, UnitaLocale } from '@prisma/client';
-import SelettoreAttivitaMenoGay from '../../../../../components/SelettoreAttivitaMenoGay';
+import SelettoreAttivitaMenoGay from '../../../../../components/selettoreAttivita/SelettoreAttivitaMenoGay';
 
 interface RegistroFormProps {
   isUpdating: boolean

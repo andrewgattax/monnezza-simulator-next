@@ -8,6 +8,7 @@ import { BreadcrumbItem } from "../../../../components/BreadcrumbContext";
 import BreadcrumbInjector from "../../../../components/BreadcrumbInjector";
 import { breadcrumb as oldBreadcrumb } from '../page';
 import ErrorMessage from '../../../../components/ErrorMessage';
+import { getCodificheComuni, getCodificheStati } from '../../../../rentri';
 
 
 export const metadata = {
@@ -49,11 +50,16 @@ export default async function LuoghiProduzioneContainer({
   const paramId = (await params).id
   const prisma = new PrismaClient()
 
+  const comuniPromise = getCodificheComuni(session);
+  const statiPromise = getCodificheStati(session);
+
   if (paramId == "new") {
     return (
       <section>
         <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <LuogoProduzioneCreateUI />
+        <Suspense fallback={<DbLoading />}>
+          <LuogoProduzioneCreateUI comuniPromise={comuniPromise} statiPromise={statiPromise}/>
+        </Suspense>
       </section>
     );
   } else {
@@ -63,7 +69,12 @@ export default async function LuoghiProduzioneContainer({
       <section>
         <BreadcrumbInjector items={breadcrumbModifica} />
         <Suspense fallback={<DbLoading />}>
-          <LuogoProduzioneCreateUI objectId={paramId} dbResult={luogoProduzione} />
+          <LuogoProduzioneCreateUI 
+            objectId={paramId} 
+            dbResult={luogoProduzione} 
+            comuniPromise={comuniPromise}
+            statiPromise={statiPromise}
+          />
         </Suspense>
       </section>
     )

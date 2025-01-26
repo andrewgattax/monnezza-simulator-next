@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { SelettoreComuniData } from './SelettoreComuni'; // Adjust the path as necessary
+import { SelettoreComuniData } from './SelettoreComuniNuovo'; // Adjust the path as necessary
 import SelettoreComuniModal from './SelettoreComuniModal'; // Adjust the path as necessary
 import InputFloating from './InputFloating';
 import IconB from './IconB';
+import { CodificheStatiResponse, CodificheComuniResponse } from '../rentri';
+
 
 interface SelettoreComuniFormComponentProps {
   data?: SelettoreComuniData;
   onChange?: (data: SelettoreComuniData) => void;
+  comuni: CodificheComuniResponse[];
+  stati: CodificheStatiResponse[];
 }
 
-const SelettoreComuniFormComponent: React.FC<SelettoreComuniFormComponentProps> = ({ data, onChange }) => {
+const SelettoreComuniFormComponent: React.FC<SelettoreComuniFormComponentProps> = ({ data, onChange, comuni, stati }) => {
   const [selectedData, setSelectedData] = useState<SelettoreComuniData>(data!);
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
@@ -34,7 +38,7 @@ const SelettoreComuniFormComponent: React.FC<SelettoreComuniFormComponentProps> 
           <input type="hidden" name="nazione" value={selectedData?.country!} />
         </div>
         <div className="col col-3">
-          <InputFloating disabled type="text" name="regione" label="Regione" value={selectedData?.region!} />
+          <InputFloating disabled type="text" name="regione" label="Stato (Estero)" value={selectedData?.region!} />
           <input type="hidden" name="regione" value={selectedData?.region!} />
         </div>
         <div className="col col-1">
@@ -55,7 +59,13 @@ const SelettoreComuniFormComponent: React.FC<SelettoreComuniFormComponentProps> 
           </button>
         </div>
       </div>
-      <SelettoreComuniModal isOpen={isModalOpen} onSave={handleModalSave} onClose={() => setModalOpen(false)} />
+      <SelettoreComuniModal 
+        comuni={comuni}
+        stati={stati}
+        isOpen={isModalOpen} 
+        onSave={handleModalSave} 
+        onClose={() => setModalOpen(false)} 
+      />
     </div>
   );
 };

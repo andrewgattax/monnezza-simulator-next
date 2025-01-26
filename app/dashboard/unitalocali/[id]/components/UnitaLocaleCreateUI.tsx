@@ -10,16 +10,19 @@ import { UnitaLocale } from '@prisma/client';
 import { use } from 'react';
 import FormAction from '../../../../../components/FormAction';
 import ObjectId from '../../../../../components/ObjectId';
+import { CodificheTipiAttivita } from '../../../../../rentri';
 
 interface UnitaLocaleFormProps {
+  tipiAttivitaPromise: Promise<CodificheTipiAttivita[]>,
   dbResult?: Promise<Partial<UnitaLocale>>;
   objectId?: string;
 }
 
-const UnitaLocaleCreateUI: React.FC<UnitaLocaleFormProps> = ({ dbResult, objectId }) => {
+const UnitaLocaleCreateUI: React.FC<UnitaLocaleFormProps> = ({ dbResult, objectId, tipiAttivitaPromise }) => {
   const [state, formAction, pending] = useActionState(unitaLocaleServerAction, { message: '' });
   const initialFormData = dbResult ? use(dbResult) : {};
   const [formData, setFormData] = useState(initialFormData);
+  const tipiAttivita = use(tipiAttivitaPromise);
 
   const handleFormChange = (updatedData: any) => {
     setFormData(updatedData); // Keep track of form changes
@@ -39,7 +42,7 @@ const UnitaLocaleCreateUI: React.FC<UnitaLocaleFormProps> = ({ dbResult, objectI
       <ConditionalHider hidden={!state.message}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack />
       </ConditionalHider>
-      <UnitaLocaleForm unitaLocale={formData} onChange={handleFormChange} />
+      <UnitaLocaleForm tipiAttivita={tipiAttivita} unitaLocale={formData} onChange={handleFormChange} />
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>

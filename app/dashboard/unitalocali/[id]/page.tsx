@@ -8,6 +8,7 @@ import BreadcrumbInjector from '../../../../components/BreadcrumbInjector';
 import { BreadcrumbItem } from '../../../../components/BreadcrumbContext';
 import { breadcrumb as oldBreadcrumb } from '../page';
 import ErrorMessage from '../../../../components/ErrorMessage';
+import { getCodificheTipiAttivita } from '../../../../rentri';
 
 export const metadata = {
   title: "Aggiunta Luogo di Produzione · Ri.fiuto",
@@ -48,12 +49,16 @@ export default async function UnitaLocaleContainer({
 
   const paramId = (await params).id
   const prisma = new PrismaClient()
+  const tipiAttivita = getCodificheTipiAttivita(session);
+
 
   if (paramId == "new") {
     return (
       <section>
         <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <UnitaLocaleCreateUI />
+        <Suspense fallback={<DbLoading/>}>
+          <UnitaLocaleCreateUI tipiAttivitaPromise={tipiAttivita} />
+        </Suspense>
       </section>
 
     );
@@ -64,7 +69,7 @@ export default async function UnitaLocaleContainer({
       <section>
         <BreadcrumbInjector items={breadcrumbModifica} />
         <Suspense fallback={<DbLoading />}>
-          <UnitaLocaleCreateUI dbResult={unitaLocale} objectId={paramId} />
+          <UnitaLocaleCreateUI dbResult={unitaLocale} objectId={paramId} tipiAttivitaPromise={tipiAttivita} />
         </Suspense>
       </section>
 

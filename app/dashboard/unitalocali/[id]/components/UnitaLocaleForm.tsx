@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Accordion from '../../../../../components/Accordion';
 import AccordionItem from '../../../../../components/AccordionItem';
-import SelettoreComuni, { SelettoreComuniData } from '../../../../../components/SelettoreComuni';
+import SelettoreComuniNuovo, { SelettoreComuniData } from '../../../../../components/SelettoreComuniNuovo';
 import InputFloating from '../../../../../components/InputFloating';
 import { UnitaLocale } from '@prisma/client';
-import SelettoreAttivita from '../../../../../components/SelettoreAttivita';
 import SelettoreComuniFormComponent from '../../../../../components/SelettoreComuniFormComponent';
-import SelettoreAttivitaGay from '../../../../../components/SelettoreAttivitaGay';
+import SelettoreAttivitaGay from '../../../../../components/selettoreAttivita/SelettoreAttivitaGay';
+import { CodificheTipiAttivita } from '../../../../../rentri';
 
 interface UnitaLocaleFormProps {
+  tipiAttivita: CodificheTipiAttivita[],
   unitaLocale?: Partial<UnitaLocale>;
   onChange: (updatedData: any) => void;
 }
 
-const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange }) => {
+const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange, tipiAttivita }) => {
   const [formValues, setFormValues] = useState(unitaLocale || {});
   const [selettoreData, setSelettoreData] = useState<SelettoreComuniData | undefined>(undefined);
 
@@ -74,7 +75,7 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
           <div className="mt-2">
           </div>
           <div className="mt-2">
-          <SelettoreAttivitaGay formValues={formValues} setFormValues={setFormValues} />
+          <SelettoreAttivitaGay tipiAttivita={tipiAttivita} formValues={formValues} setFormValues={setFormValues} />
           <input type="hidden" name="tipiAttivitaJSON" value={JSON.stringify(formValues.tipiAttivita || [])} />
           </div>
         </AccordionItem>

@@ -42,6 +42,10 @@ export default async function DashboardLayout({
                   <NavItem href="/dashboard/registri" name="Gestisci registri" icon="view-list" />
                   <NavItem href="/dashboard/registri/new" name="Nuovo registro" icon="plus-circle" />
                 </NavSection>
+                <NavSection name="Collegamento RENTRI" icon="arrow-left-right">
+                  <NavItem href="/dashboard/rentri" name="Gestisci Certificato" icon="file-earmark-lock" />
+                  <NavItem href="/dashboard/rentri/test" name="Test Comunicazione" icon="cloud-download" />
+                </NavSection>
               </NavBar>
             </SessionProvider>
           </header>

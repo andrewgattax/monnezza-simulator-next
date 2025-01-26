@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CategoriaRAEE, CausaleRespingimento, CodiceAttivita, PericoloRifiuto, ProvenienzaRifiuto, Registrazione, StatoFisicoRifiuto, TipoAttivita, TipologiaRespingimento, TipoOperazione, TipoTrasportoFrontaliero, UnitaMisura } from '@prisma/client';
+import { Registrazione, TipoAttivita } from '@prisma/client';
 import Accordion from '../../../../../../../components/Accordion';
 import AccordionItem from '../../../../../../../components/AccordionItem';
 import InputCheckbox from '../../../../../../../components/InputCheckbox';
@@ -7,8 +7,8 @@ import InputFloating from '../../../../../../../components/InputFloating';
 import { enumToName } from '../../../../../../../utils';
 import EERSelectorFormComponent from '../../../../../../../components/EERSelectorFormComponent';
 import { CodiceEER } from '../../../../../../../components/EERSelectorModal';
-import categorieAEE from  "../../../../../../../categorieAEE.json"
 import MultiSelectDropdown from '../../../../../../../components/MultiSelectDropdown';
+import { CodificheAttivitaDestinazione, CodificheCategorieAEE, CodificheCausaleRespingimento, CodifichePericoloRifiuto, CodificheProvenienzaRifiuto, CodificheStatoFisico, CodificheTipologiaRespingimento, CodificheTrans, CodificheUnitaMisura } from '../../../../../../../rentri';
 
 
 
@@ -16,13 +16,6 @@ interface CausaleOperazione {
   codice: string,
   descrizione: string
 }
-
-const opzioniAEE = categorieAEE.map((c) => {
-  return {
-    value: c.codice,
-    label: c.codice + " - " + c.descrizione
-  }
-})
 
 
 
@@ -36,6 +29,15 @@ const arrayToString = (arr?: string[]): string => {
 };
 
 interface RegistrazioneFormProps {
+  causaliRespingimento: CodificheCausaleRespingimento[],
+  pericoliRifiuto: CodifichePericoloRifiuto[],
+  provenienzaRifiuto: CodificheProvenienzaRifiuto[],
+  statiFisiciRifiuto: CodificheStatoFisico[],
+  tipiRespingimento: CodificheTipologiaRespingimento[],
+  tipiTrasportoTrans: CodificheTrans[],
+  unitaDiMisura: CodificheUnitaMisura[],
+  categorieAEE: CodificheCategorieAEE[],
+  attivitaADestinazione: CodificheAttivitaDestinazione[],
   tipiAttività: TipoAttivita[]
   registrazione?: Partial<Registrazione>;
   progressivi?: String[]
@@ -43,13 +45,21 @@ interface RegistrazioneFormProps {
   onChange: (updatedData: any) => void;
 }
 
-const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, registrazione, integrazioneFIR, progressivi, onChange }) => {
+const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, registrazione, integrazioneFIR, progressivi, onChange, causaliRespingimento, pericoliRifiuto,
+  provenienzaRifiuto, statiFisiciRifiuto, tipiRespingimento, tipiTrasportoTrans, attivitaADestinazione, unitaDiMisura, categorieAEE }) => {
   const [formValues, setFormValues] = useState(registrazione || {});
   const [isIntegratoFIR, setIntegratoFIR] = useState<boolean>(integrazioneFIR || false)
 
   useEffect(() => {
     setFormValues(registrazione || {});
   }, [registrazione]);
+
+  const opzioniAEE = categorieAEE.map((c) => {
+    return {
+      value: c.code,
+      label: c.code + " - " + c.name
+    }
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -93,7 +103,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     let updatedCategoriaRAEE = formValues.rifiuto?.categoriaRAAE ? [...formValues.rifiuto.categoriaRAAE] : [];
 
     if (checked) {
-      updatedCategoriaRAEE.push(value as CategoriaRAEE);
+      updatedCategoriaRAEE.push(value);
     } else {
       updatedCategoriaRAEE = updatedCategoriaRAEE.filter((categoria) => categoria !== value);
     }
@@ -163,9 +173,11 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
     ];
   }
 
-  if(tipiAttività.length == 1){
+  if (tipiAttività.length == 1) {
     formValues.tipoAttivita = tipiAttività[0].attivita;
   }
+
+  attivitaADestinazione.sort((a, b) => a.code.localeCompare(b.code));
 
   return (
     <div>
@@ -207,11 +219,11 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                     <option value="CaricoEScarico" hidden>Carico & Scarico</option>
                     <option value="" disabled>Seleziona</option>
                     <option key="carico" value="CARICO">Carico</option>
-                    <option key="scarico" value="SCARICO">Scarico</option>                 
+                    <option key="scarico" value="SCARICO">Scarico</option>
                   </select>
                   <label htmlFor="tipoOperazione">Tipo Operazione: </label>
                 </div>
-                <input type='hidden' value={formValues.tipoOperazione ? formValues.tipoOperazione : undefined} name='tipoOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
+                <input type='hidden' value={formValues.tipoOperazione ? formValues.tipoOperazione : undefined} name='tipoOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")} />
               </div>
             )}
             {!formValues.isStoccaggioInstant && (
@@ -229,7 +241,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   </select>
                   <label htmlFor="causaleOperazione">Causale Operazione: </label>
                 </div>
-                <input type='hidden' value={formValues.causaleOperazione ? formValues.causaleOperazione : undefined} name='causaleOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")}/>
+                <input type='hidden' value={formValues.causaleOperazione ? formValues.causaleOperazione : undefined} name='causaleOperazione' disabled={(formValues.tipoAttivita != "TRASPORTO") && (formValues.tipoAttivita != "INTERMEDIAZIONE")} />
               </div>
             )}
             {formValues.isStoccaggioInstant && (
@@ -257,8 +269,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="form-floating">
                 <select className="form-select" id="provenienzaRifiuto" name='provenienzaRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.provenienzaRifiuto ?? ""} required disabled={formValues.tipoAttivita === "INTERMEDIAZIONE"}>
                   <option value="" disabled>Seleziona</option>
-                  {Object.values(ProvenienzaRifiuto).map((provenienza) => (
-                    <option key={provenienza} value={provenienza}>{enumToName(provenienza)}</option>
+                  {provenienzaRifiuto.map((provenienza) => (
+                    <option key={provenienza.code} value={provenienza.code}>{provenienza.name}</option>
                   ))}
                 </select>
                 <label htmlFor="provenienzaRifiuto">Provenienza Rifiuto (*)</label>
@@ -273,8 +285,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="form-floating">
                 <select className="form-select" id="pericoloRifiuto" name='pericoloRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.pericoloRifiuto ?? ""} disabled >
                   <option value="">Seleziona</option>
-                  {Object.values(PericoloRifiuto).map((pericolo) => (
-                    <option key={pericolo} value={pericolo}>{enumToName(pericolo)}</option>
+                  {pericoliRifiuto.map((pericolo) => (
+                    <option key={pericolo.code} value={pericolo.code}>{pericolo.name}</option>
                   ))}
                 </select>
                 <label htmlFor="pericoloRifiuto">Caratt. di pericolo (HP): </label>
@@ -286,8 +298,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="form-floating">
                 <select className="form-select" id="statoFisico" name='statoFisico' onChange={handleRifiutoChange} value={formValues.rifiuto?.statoFisicoRifiuto} required>
                   <option value="" disabled>Seleziona</option>
-                  {Object.values(StatoFisicoRifiuto).map((statoFisico) => (
-                    <option key={statoFisico} value={statoFisico}>{enumToName(statoFisico)}</option>
+                  {statiFisiciRifiuto.map((stato) => (
+                    <option key={stato.code} value={stato.code}>{stato.name}</option>
                   ))}
                 </select>
                 <label htmlFor="statoFisico">Stato Fisico (*) </label>
@@ -300,8 +312,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="form-floating">
                 <select className="form-select" id="unitaMisura" name='unitaMisura' onChange={handleRifiutoChange} value={formValues.rifiuto?.unitaDiMisura} required>
                   <option value="" disabled>Seleziona</option>
-                  {Object.values(UnitaMisura).map((unitaMisura) => (
-                    <option key={unitaMisura} value={unitaMisura}>{unitaMisura}</option>
+                  {unitaDiMisura.map((unita) => (
+                    <option key={unita.code} value={unita.code}>{unita.code.toUpperCase()}</option>
                   ))}
                 </select>
                 <label htmlFor="unitaMisura">Unita di Misura (*) </label>
@@ -311,8 +323,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               <div className="form-floating">
                 <select className="form-select" id="destinazioneRifiuto" name='destinazioneRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.destinazioneRifiuto ?? ""} required disabled={formValues.tipoOperazione === "CARICO"}>
                   <option value="" disabled>Seleziona</option>
-                  {Object.values(CodiceAttivita).map((destinazioneRifiuto) => (
-                    <option key={destinazioneRifiuto} value={destinazioneRifiuto}>{enumToName(destinazioneRifiuto)}</option>
+                  {attivitaADestinazione.map((attivita) => (
+                    <option key={attivita.code} value={attivita.code}>{attivita.code}</option>
                   ))}
                 </select>
                 <label htmlFor="destinazioneRifiuto">Destinato a (*) </label>
@@ -328,7 +340,7 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
               </div>
               <input type="hidden" name="categorieAEEJSON" defaultValue={JSON.stringify(formValues.rifiuto?.categoriaRAAE || [])} />
             </div>
-            
+
           )}
 
           {(formValues.tipoOperazione == "CARICO" && formValues.causaleOperazione === "T") && (
@@ -365,8 +377,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   <div className="form-floating">
                     <select className="form-select" id="tipoTrasporto" name='tipoTrasporto' onChange={handleChange} value={formValues.tipoTrasportoFrontaliero ?? undefined} disabled={!formValues.isIntegratoFIR}>
                       <option value="" disabled>Seleziona</option>
-                      {Object.values(TipoTrasportoFrontaliero).map((tipoTrasporto) => (
-                        <option key={tipoTrasporto} value={tipoTrasporto}>{enumToName(tipoTrasporto)}</option>
+                      {tipiTrasportoTrans.map((trasporto) => (
+                        <option key={trasporto.code} value={trasporto.code}>{trasporto.name}</option>
                       ))}
                     </select>
                     <label htmlFor="tipoTrasporto">Tipo trasporto</label>
@@ -404,8 +416,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   <div className="form-floating">
                     <select className="form-select" id="tipologiaRespingimento" name='tipologiaRespingimento' onChange={handleChange} value={formValues.tipologiaRespingimento ?? undefined}>
                       <option value="" disabled>Seleziona</option>
-                      {Object.values(TipologiaRespingimento).map((tipologia) => (
-                        <option key={tipologia} value={tipologia}>{enumToName(tipologia)}</option>
+                      {tipiRespingimento.map((tipo) => (
+                        <option key={tipo.code} value={tipo.code}>{tipo.name}</option>
                       ))}
                     </select>
                     <label htmlFor="tipologiaRespingimento">Tipologia respingimento</label>
@@ -418,8 +430,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   <div className="form-floating">
                     <select className="form-select" id="unitaDiMisuraRespingimento" name='unitaDiMisuraRespingimento' onChange={handleChange} value={formValues.unitaDiMisuraRespingimento ?? undefined}>
                       <option value="" disabled>Seleziona</option>
-                      {Object.values(UnitaMisura).map((unita) => (
-                        <option key={unita} value={unita}>{enumToName(unita)}</option>
+                      {unitaDiMisura.map((unita) => (
+                        <option key={unita.code} value={unita.code}>{unita.code.toUpperCase()}</option>
                       ))}
                     </select>
                     <label htmlFor="unitaDiMisuraRespingimento">UM (*)</label>
@@ -431,8 +443,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
                   <div className="form-floating">
                     <select className="form-select" id="causaleRespingimento" name='causaleRespingimento' onChange={handleChange} value={formValues.causaleRespingimento ?? undefined}>
                       <option value="" disabled>Seleziona</option>
-                      {Object.values(CausaleRespingimento).map((causale) => (
-                        <option key={causale} value={causale}>{enumToName(causale)}</option>
+                      {causaliRespingimento.map((causale) => (
+                        <option key={causale.code} value={causale.code}>{causale.name}</option>
                       ))}
                     </select>
                     <label htmlFor="causaleRespingimento">Causale (*)</label>

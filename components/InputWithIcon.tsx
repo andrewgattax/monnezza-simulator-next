@@ -8,12 +8,13 @@ type Props = {
   required?: boolean;
   iconName: string;
   value?: string;
+  className?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-const InputWithIcon = ({type, name, placeholder, iconName, required, value, onChange}: Props) => {
+const InputWithIcon = ({type, name, placeholder, iconName, required, value, onChange, className}: Props) => {
   return (
-    <div className="mb-3">
+    <div className={className ? className : "mb-3"}>
       <div className="input-group">
         <span className="input-group-text">
           <IconB iconName={iconName} hasPadding={false} />

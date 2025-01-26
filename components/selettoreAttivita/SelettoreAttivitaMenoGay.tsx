@@ -1,7 +1,7 @@
 import React from 'react';
-import InputCheckbox from './InputCheckbox';
+import InputCheckbox from '../InputCheckbox';
 import { Registro, TipoAttivita } from '@prisma/client';
-import { enumToName } from '../utils';
+import { enumToName } from '../../utils';
 
 interface SelettoreAttivitaMenoGayProps {
     listaAttivita: TipoAttivita[];
@@ -25,7 +25,7 @@ const SelettoreAttivitaMenoGay: React.FC<SelettoreAttivitaMenoGayProps> = ({ for
 
     return (
         <div>
-            <p className='mt-3'>Seleziona tipi attività</p>
+            <p className='mt-3'>Seleziona tipi attività gay</p>
             <div className='row g-2 mt-1'>
                 {listaAttivita.map((comba) => (
                     <div className="col" key={comba.attivita}>

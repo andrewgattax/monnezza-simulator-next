@@ -1,15 +1,19 @@
 import React, { FC, useState } from 'react';
-import SelettoreComuni, { SelettoreComuniData } from './SelettoreComuni';
+import SelettoreComuniNuovo, { SelettoreComuniData } from './SelettoreComuniNuovo';
 import IconB from './IconB';
 import {toast} from 'react-toastify';
+import { CodificheStatiResponse, CodificheComuniResponse } from '../rentri';
+
 
 interface ModalProps {
+  comuni: CodificheComuniResponse[];
+  stati: CodificheStatiResponse[];
   isOpen: boolean;
   onClose: () => void;
   onSave: (values: SelettoreComuniData | undefined) => void;
 }
 
-const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
+const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave, comuni, stati }) => {
   const [value, setValue] = useState<SelettoreComuniData | undefined>(undefined);
 
   const handleChange = (data: SelettoreComuniData) => {
@@ -18,7 +22,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      handleSave();
+      //handleSave();
     }
   };
 
@@ -27,6 +31,7 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
       onSave(value);
       onClose();
     } else {
+      console.log(value);
       toast.error('Per favore, compila tutti i campi');
     }
   };
@@ -42,7 +47,11 @@ const Modal: FC<ModalProps> = ({ isOpen, onClose, onSave }) => {
             <button type="button" className="btn-close" onClick={onClose} aria-label="Close" />
           </div>
           <div className="modal-body">
-            <SelettoreComuni onChange={handleChange} />
+            <SelettoreComuniNuovo
+              onChange={handleChange} 
+              comuni={comuni}
+              stati={stati}
+            />
           </div>
           <div className="modal-footer">
             <button type="button" className="btn btn-secondary px-3" onClick={onClose}>

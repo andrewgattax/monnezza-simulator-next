@@ -10,15 +10,20 @@ import ConditionalHider from '../../../../../components/ConditionalHider';
 import { LuogoProduzione } from '@prisma/client';
 import { use, useState, useEffect } from 'react';
 import FormAction from '../../../../../components/FormAction';
+import { CodificheStatiResponse, CodificheComuniResponse } from '../../../../../rentri';
 
 interface LuogoProduzioneFormProps {
+  comuniPromise: Promise<CodificheComuniResponse[]>;
+  statiPromise: Promise<CodificheStatiResponse[]>;
   dbResult?: Promise<Partial<LuogoProduzione>>;
   objectId?: string;
 }
 
-const LuogoProduzioneCreateUI: React.FC<LuogoProduzioneFormProps> = ({ dbResult, objectId }) => {
+const LuogoProduzioneCreateUI: React.FC<LuogoProduzioneFormProps> = ({ dbResult, objectId, comuniPromise, statiPromise }) => {
   const [state, formAction, pending] = useActionState(luogoProduzioneServerAction, {message: ''});
   const initialFormData = dbResult ? use(dbResult) : {};
+  const comuniResponse = use(comuniPromise);
+  const statiResponse = use(statiPromise);
   const [formData, setFormData] = useState(initialFormData);
 
   const handleFormChange = (updatedData: any) => {
@@ -39,7 +44,12 @@ const LuogoProduzioneCreateUI: React.FC<LuogoProduzioneFormProps> = ({ dbResult,
       <ConditionalHider hidden={!state.message || pending}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack/>
       </ConditionalHider>
-      <LuogoProduzioneForm luogoProduzione={formData} onChange={handleFormChange}/>
+      <LuogoProduzioneForm 
+        luogoProduzione={formData} 
+        onChange={handleFormChange}
+        comuni={comuniResponse}
+        stati={statiResponse}
+      />
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>
