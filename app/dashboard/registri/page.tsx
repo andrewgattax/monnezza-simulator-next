@@ -82,7 +82,6 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
     }
   }
 
-
   return (
     <section>
       <BreadcrumbInjector items={breadcrumb} />

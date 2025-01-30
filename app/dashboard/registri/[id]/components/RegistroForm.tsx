@@ -6,13 +6,14 @@ import { Registro, UnitaLocale } from '@prisma/client';
 import SelettoreAttivitaMenoGay from '../../../../../components/selettoreAttivita/SelettoreAttivitaMenoGay';
 
 interface RegistroFormProps {
-  isUpdating: boolean
-  unitaLocali: UnitaLocale[]
+  isUpdating: boolean;
+  unitaLocali: UnitaLocale[];
+  initSelectedUnitaLocale?: string;
   registro?: Partial<Registro>;
   onChange: (updatedData: any) => void;
 }
 
-const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLocali, isUpdating }) => {
+const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLocali, isUpdating, initSelectedUnitaLocale }) => {
   const [formValues, setFormValues] = useState(registro || {});
   const [selectedUnitaLocale, setSelectedUnitaLocale] = useState(() => {
     if (isUpdating && registro?.unitaLocaleId) {
@@ -20,6 +21,10 @@ const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLo
     }
     return unitaLocali[0];
   });
+
+  useEffect(() => {
+    //TODO: asdasdsad
+  }, [initSelectedUnitaLocale]);
 
   useEffect(() => {
     setFormValues(registro || {});

@@ -40,9 +40,11 @@ export const metadata = {
 export default async function RegistriContainer({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string, ulId: string }>;
 }) {
-  const paramId = (await params).id
+  const par = await params;
+  const paramId = par.id;
+  const selectedUnitaLocale = par.ulId;
   const prisma = new PrismaClient();
   const session = await auth();
 
@@ -56,7 +58,7 @@ export default async function RegistriContainer({
     return (
       <section>
         <BreadcrumbInjector items={breadcrumbAggiungi} />
-        <RegistroCreateUI unitaLocali={unitaLocali}/>
+        <RegistroCreateUI unitaLocali={unitaLocali} selectedUnitaLocale={selectedUnitaLocale}/>
       </section>
 
     );

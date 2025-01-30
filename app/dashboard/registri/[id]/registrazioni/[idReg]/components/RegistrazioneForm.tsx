@@ -321,7 +321,8 @@ const RegistrazioneForm: React.FC<RegistrazioneFormProps> = ({ tipiAttività, re
             </div>
             <div className="col-4">
               <div className="form-floating">
-                <select className="form-select" id="destinazioneRifiuto" name='destinazioneRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.destinazioneRifiuto ?? ""} required disabled={formValues.tipoOperazione === "CARICO"}>
+                <select className="form-select" id="destinazioneRifiuto" name='destinazioneRifiuto' onChange={handleRifiutoChange} value={formValues.rifiuto?.destinazioneRifiuto ?? ""} required
+                        disabled={formValues.tipoOperazione === "CARICO" && (formValues.tipoAttivita !== "SMALTIMENTO" || formValues.tipoAttivita !== "RECUPERO"}>
                   <option value="" disabled>Seleziona</option>
                   {attivitaADestinazione.map((attivita) => (
                     <option key={attivita.code} value={attivita.code}>{attivita.code}</option>
