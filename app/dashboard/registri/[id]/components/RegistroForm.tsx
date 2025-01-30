@@ -74,13 +74,33 @@ const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLo
               <input type='hidden' defaultValue={selectedUnitaLocale.id} name='unitaLocaleId' disabled={!isUpdating} />
             </div>
             <div className='col-4 mt-0'>
-              <InputFloating name='descrizione' label='Descrizione Registro' type='text' required value={formValues.descrizione} onChange={handleChange} />
+              <InputFloating
+                name='descrizione'
+                label='Descrizione Registro'
+                type='text'
+                required
+                value={formValues.descrizione}
+                onChange={handleChange}
+              />
             </div>
-            <div className='col-4 mt-0'>
-              <InputFloating info="Progressivo di inizio" name='progressivoCounter' label='Progressivo di Inizio' type='number' value={formValues.progressivoCounter?.toString()} onChange={handleChange} disabled={isUpdating}/>
+            <div className='col-4 mt-0 mb-2'>
+              <InputFloating
+                info="Inserisci il numero progressivo da cui iniziare le nuove registrazioni,
+                  se già esiste un registro cartaceo o su altra piattaforma."
+                name='progressivoCounter'
+                label='Progressivo di Inizio'
+                type='number'
+                value={formValues.progressivoCounter?.toString()}
+                onChange={handleChange}
+                disabled={isUpdating}
+              />
             </div>
           </div>
-          <SelettoreAttivitaMenoGay formValues={formValues} listaAttivita={selectedUnitaLocale.tipiAttivita} setFormValues={setFormValues} />
+          <SelettoreAttivitaMenoGay
+            formValues={formValues}
+            listaAttivita={selectedUnitaLocale.tipiAttivita}
+            setFormValues={setFormValues}
+          />
           <input type="hidden" name="tipiAttivitaJSON" defaultValue={JSON.stringify(formValues.tipiAttivita || [])} />
         </AccordionItem>
       </Accordion>
