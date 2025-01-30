@@ -19,9 +19,10 @@ import { toNiceDate, toNiceString } from '../../../utils';
 interface RegistroTableProps {
   dataPromise: Promise<Registro[]>;
   usingSearchQuery?: boolean;
+  selectedUnitaLocaleId?: string;
 }
 
-const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise, usingSearchQuery}) => {
+const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise, usingSearchQuery, selectedUnitaLocaleId}) => {
   const tableData = use(dataPromise);
   const router = useRouter();
   const [data, setData] = useState<Registro[]>(tableData);
@@ -32,7 +33,11 @@ const RegistroTable: React.FC<RegistroTableProps> = ({ dataPromise, usingSearchQ
   });
 
   const handleNew = () => {
-    router.push('/dashboard/registri/new');
+    if(selectedUnitaLocaleId) {
+      router.push(`/dashboard/registri/new?ulId=${selectedUnitaLocaleId}`);
+    } else {
+      router.push(`/dashboard/registri/new`);
+    }
   };
 
   // inietto la colonna delle unitaLocali solo se sto usando la query di ricerca

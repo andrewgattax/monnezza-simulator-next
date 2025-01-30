@@ -143,12 +143,12 @@ model Registrazione {
 }
 
 model Bundle {
-  id              String @id @default(auto()) @map("_id") @db.ObjectId
+  id              String  @id @default(auto()) @map("_id") @db.ObjectId
   encodedBundle   String?
   passkey         String?
   extractedBundle Bytes?
-  proprietarioId  String @unique @db.ObjectId
-  proprietario    Utente @relation("ProprietarioBundle", fields: [proprietarioId], references: [id])
+  proprietarioId  String  @unique @db.ObjectId
+  proprietario    Utente  @relation("ProprietarioBundle", fields: [proprietarioId], references: [id])
 }
 
 type Rifiuto {

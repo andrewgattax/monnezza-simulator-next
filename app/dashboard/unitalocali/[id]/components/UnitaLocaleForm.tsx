@@ -6,15 +6,17 @@ import InputFloating from '../../../../../components/InputFloating';
 import { UnitaLocale } from '@prisma/client';
 import SelettoreComuniFormComponent from '../../../../../components/SelettoreComuniFormComponent';
 import SelettoreAttivitaGay from '../../../../../components/selettoreAttivita/SelettoreAttivitaGay';
-import { CodificheTipiAttivita } from '../../../../../rentri';
+import {CodificheComuniResponse, CodificheStatiResponse, CodificheTipiAttivita} from '../../../../../rentri';
 
 interface UnitaLocaleFormProps {
   tipiAttivita: CodificheTipiAttivita[],
   unitaLocale?: Partial<UnitaLocale>;
+  comuni: CodificheComuniResponse[];
+  stati: CodificheStatiResponse[];
   onChange: (updatedData: any) => void;
 }
 
-const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange, tipiAttivita }) => {
+const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange, tipiAttivita, comuni, stati }) => {
   const [formValues, setFormValues] = useState(unitaLocale || {});
   const [selettoreData, setSelettoreData] = useState<SelettoreComuniData | undefined>(undefined);
 
@@ -36,7 +38,7 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
         comune: updatedData.comune || undefined,
         provincia: updatedData.province || undefined,
         regione: updatedData.region || undefined,
-        nazione: updatedData.country,
+        nazione: updatedData.country || undefined,
       });
     };
 
@@ -69,7 +71,9 @@ const UnitaLocaleForm: React.FC<UnitaLocaleFormProps> = ({ unitaLocale, onChange
               region: formValues.regione || "",
               country: formValues.nazione || "",
               }
-            } 
+            }
+            comuni={comuni}
+            stati={stati}
             onChange={handleSelettoreChange} 
           />
           <div className="mt-2">

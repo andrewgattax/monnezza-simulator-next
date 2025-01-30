@@ -12,12 +12,13 @@ import RegistroForm from './RegistroForm';
 import ObjectId from '../../../../../components/ObjectId';
 
 interface RegistroFormProps {
-  unitaLocali: UnitaLocale[]
+  unitaLocali: UnitaLocale[];
+  selectedUnitaLocale?: string;
   dbResult?: Promise<Partial<Registro>>;
   objectId?: string;
 }
 
-const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId, unitaLocali }) => {
+const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId, unitaLocali, selectedUnitaLocale }) => {
   const [state, formAction, pending] = useActionState(registroServerAction, { message: '' });
   const initialFormData = dbResult ? use(dbResult) : {};
   const [formData, setFormData] = useState(initialFormData);
@@ -40,7 +41,13 @@ const RegistroCreateUI: React.FC<RegistroFormProps> = ({ dbResult, objectId, uni
       <ConditionalHider hidden={!state.message}>
         <ErrorMessage title='Errore nel salvataggio' message={state.message} noBack />
       </ConditionalHider>
-      <RegistroForm registro={formData} onChange={handleFormChange} unitaLocali={unitaLocali} isUpdating={dbResult ? true : false} />
+      <RegistroForm
+          registro={formData}
+          onChange={handleFormChange}
+          unitaLocali={unitaLocali}
+          isUpdating={!!dbResult}
+          initSelectedUnitaLocale={selectedUnitaLocale}
+      />
       <ConditionalHider hidden={pending}>
         <center>
           <button className='btn btn-primary btn-overcolor px-3' type='submit'>
