@@ -102,7 +102,11 @@ export default async function RegistriPage({ searchParams }: { searchParams: { [
         </Suspense>
       )}
       <Suspense fallback={<section className="mt-3"><DbLoading /></section>} key={renderKey}>
-        <RegistroTable dataPromise={registri} usingSearchQuery={sp.regQuery !== ""} />
+        <RegistroTable
+          dataPromise={registri}
+          usingSearchQuery={sp.regQuery !== ""}
+          selectedUnitaLocaleId={selectedUnitaLocale}
+        />
       </Suspense>
     </section>
   );

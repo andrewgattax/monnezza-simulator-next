@@ -39,12 +39,13 @@ export const metadata = {
 // PAGINA
 export default async function RegistriContainer({
   params,
+  searchParams,
 }: {
-  params: Promise<{ id: string, ulId: string }>;
+  params: Promise<{ id: string }>;
+  searchParams: { [ulId: string]: string };
 }) {
-  const par = await params;
-  const paramId = par.id;
-  const selectedUnitaLocale = par.ulId;
+  const paramId = (await params).id;
+  const selectedUnitaLocale = (await searchParams).ulId;
   const prisma = new PrismaClient();
   const session = await auth();
 

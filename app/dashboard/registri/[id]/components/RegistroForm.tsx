@@ -23,7 +23,10 @@ const RegistroForm: React.FC<RegistroFormProps> = ({ registro, onChange, unitaLo
   });
 
   useEffect(() => {
-    //TODO: asdasdsad
+    if (initSelectedUnitaLocale) {
+      const selectedUnita = unitaLocali.find((ul) => ul.id === initSelectedUnitaLocale);
+      setSelectedUnitaLocale(selectedUnita!);
+    }
   }, [initSelectedUnitaLocale]);
 
   useEffect(() => {
